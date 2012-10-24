@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="49" height="45" tilewidth="16" tileheight="16">
+ <properties>
+  <property name="music" value="lightlessdawn.ogg"/>
+ </properties>
+ <tileset firstgid="1" source="controlset.tsx"/>
+ <tileset firstgid="1905" name="level0" tilewidth="16" tileheight="16">
+  <image source="../tilesets/level0.png" width="256" height="128"/>
+  <tile id="16">
+   <properties>
+    <property name="walkSound" value="step.wav"/>
+   </properties>
+  </tile>
+  <tile id="17">
+   <properties>
+    <property name="walkSound" value="step.wav"/>
+   </properties>
+  </tile>
+  <tile id="18">
+   <properties>
+    <property name="walkSound" value="step.wav"/>
+   </properties>
+  </tile>
+  <tile id="19">
+   <properties>
+    <property name="walkSound" value="step.wav"/>
+   </properties>
+  </tile>
+  <tile id="20">
+   <properties>
+    <property name="walkSound" value="step.wav"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="Background 1" width="49" height="45">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+2XMQ7CMAxFu/W8ZQDBBhSYywAnghuUG8A5MFIrLCsQEE5rhz88xWk9+JE6CVVZFBUxJxZd7BU42CAnh7pj5SCOrcPeQHwizqw2OffwLbXEhdUm5x4crsSN1SbncBgWWRscbDvUhpFnl+Y6tD/+vv1e+eq97OEUDkMwycCB1/ZPDmvDeFwHecfz6CDveB4dctlbeW1w8OEw9r75jk8dQv+xrfDNvXXsWuEABzjAAQ42HR5n4rJ8no9W49g6NOyZ1TjmMCVmgZHnauVofVvSYUvsAiPP1cpJ5XAgjoGR52rlpHCw0K/oafQ0elrHYeOQvvY7XtwEaXQiAAA=
+  </data>
+ </layer>
+ <layer name="Background 2" width="49" height="45">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+2YvW4CMQzHb7s3pgOFbjC0wEaHfvAA0PYB+BID7Ax0Z2ifo3+kWkRWSuODy/mCf5JFovxzZ6OzEznLDMNImXWeZZu8ai/OYwf/P2sewxf8//4jhruaxHYqhrqwUuQ/9yXUt60ghnHJ8XJfQn3bO7opxrPf+QK/S/aMkPVT8HW+f//PPGUktXUXoKvivJHktKttYHzjmdN/wtdD3lW0vkhy2tV2MO565lSr+XrIuyS+uEjyxtUOMX70zCkGvh7yrmvKYY7d+XRg96XLEqO2lk2M2lo2mnwxjljd10EKdV/yLTWhu4W1YO3c38+IqSEk39I9dA+wHqwPG3j2xdQQkm/pCbpn2AvsFTby7IupISTn9qFfMYG9wd5hH569MTWE5NymfsU89/crYmsIO7fLQ1JrtJ7TRfsomijaR9FE0T6KUR0p3Fu15rQErTktIeWc/gGg2T2ydCIAAA==
+  </data>
+ </layer>
+ <layer name="Foreground" width="49" height="45">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+2YOQ4CMQxF6XJotpq9HfYDsNXsEh2UFByAk/CRiDTyQCaJSHCGPOlLY+yM8gubkRNRKiWQJBHhKnrgoSJ5CImQPKxxv43Ixv/koYxcBapCNagu/Oa/4aGFXBvqQF2oJ/zmn5zx20VkY5WHUyoe4nkEjaEJNCW1rvMnRazycE3FMzzPoQW0hFak1nX+qoiphwbUfOXvqbotnnfQHjpAR/JO1/n7m7vJOKS51Mf9BiIbUw+0b3S5/dC/bk/nYVJrc16V1+3pPExqbc6r8ro9nYdJrc152tNpqAfaNyEQ0lyi3xqS6MEvn+b+t2ara3zMVtf4mK2ueTdbi/y9FCLRAw+iBx5ED79Dd6/BGdVegzNF2GtQ4v+0G2z3KJw82O5ROHkw3aPEnuZFqB649rQJXHvahKL0tETe/QHF0BDedCIAAA==
+  </data>
+ </layer>
+ <layer name="Elevators" width="49" height="45" visible="0">
+  <properties>
+   <property name="visible" value="false"/>
+  </properties>
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3Puw2AMBTF0BRvQX77r0JxlSZVGhQDPpIHcGuxV3ozHxh8YPCBwQcG8sNRqdsqjXx41uwD2Z8ezkpEPjB84WHkA4MPa1yVOh/WmH0g84HBBwYfGHxg8IHJBwYfGHxg8IHBB4bx4QbtF2aedCIAAA==
+  </data>
+ </layer>
+ <layer name="Control" width="49" height="45" visible="0" opacity="0.97">
+  <properties>
+   <property name="visible" value="false"/>
+  </properties>
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+2WQQqAMAwEo4J3n+IT/JL/P4gHUQrWNK1kU3Yg0INtd7ShiogMcvMcR4IOGETN/SR1GAJVzgGFNC8dfKh1WH5Np8PqoGEd67K1oLc7oReH3JnzrjSn1sHyLizPfM0vcfiTVuvToX7vVutoHbx7uKTHcw4oWHuaDu2xnCVU6ICB9l8DsUocIkAHDOiAAR3woAMGke7pK+s13qZ3By9K9s71tBf7bJ+L9B2s9OqAXhqHaNABg14dItbJAVMUzGd0IgAA
+  </data>
+ </layer>
+</map>

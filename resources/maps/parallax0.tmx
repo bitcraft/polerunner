@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="25" height="25" tilewidth="16" tileheight="16">
+ <properties>
+  <property name="music" value="lightlessdawn.ogg"/>
+ </properties>
+ <tileset firstgid="1" source="controlset.tsx"/>
+ <tileset firstgid="1905" name="level0" tilewidth="16" tileheight="16">
+  <image source="../tilesets/level0-dark.png" width="256" height="128"/>
+  <tile id="16">
+   <properties>
+    <property name="walkSound" value="step.wav"/>
+   </properties>
+  </tile>
+  <tile id="17">
+   <properties>
+    <property name="walkSound" value="step.wav"/>
+   </properties>
+  </tile>
+  <tile id="18">
+   <properties>
+    <property name="walkSound" value="step.wav"/>
+   </properties>
+  </tile>
+  <tile id="19">
+   <properties>
+    <property name="walkSound" value="step.wav"/>
+   </properties>
+  </tile>
+  <tile id="20">
+   <properties>
+    <property name="walkSound" value="step.wav"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="Background 1" width="25" height="25">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAAytiZ2AoGsXDChcDcQkQl0IxMWqQ+cSYS4x6avlhoMNzsMTlQLtlKLhrMGD0sBksYVWM5pbB4KahitHDcqDdQys/Dmf/YYvHoehXAHyaNaTECQAA
+  </data>
+ </layer>
+</map>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="100" height="25" tilewidth="16" tileheight="16">
+ <tileset firstgid="1" source="../tilesets/controlset.tsx"/>
+ <tileset firstgid="1905" name="level0" tilewidth="16" tileheight="16">
+  <image source="../tilesets/level0.png" width="256" height="128"/>
+ </tileset>
+ <layer name="Full Background" width="100" height="25">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3Yuw2AMAwA0XTMSwktS2QhRmCE7EEKKIhC7ZN8xestnax86lJK7bZu785uVZg69LhsgurRnibRc2U169EAc2VlD5ZZj+iZMrMHiz1Yxh7ede0he1DZg8UeLLP/q+iZMnM/WP7241AI94PF84PF/xIWe7CMPaLnyc4eLPZgeXtE37v1fX+I4Qaj+tihECcAAA==
+  </data>
+ </layer>
+ <layer name="Partial Background" width="100" height="25">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3RMQ0AMAgAQbb6l4SESqiTrgQDMNwp+OQjAAAAAAAAAIAuz3QB1fVjlecHsNQHCPFKIxAnAAA=
+  </data>
+ </layer>
+ <layer name="Foreground" width="100" height="25">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3WOQoCURCE4ck8tFvsuB3AZQ7gdgA3MPAABh7AwHNYoEHD07Cxgv+DgmY664LhVVXp2vryEX9DH17owwt9eLnTh5UnfVjhf+WFPrzQhxf68EIfXnjveuG964X/lRf68EIfXujDC314ie/dtuaO0lV6Sj95h1J87w41j5SxMlGmyTuULuE+M81zZaEslSZ5h9It3Gelea1slK2yS97hbaCb1J+7PMJ99poPylE5KefkHQD88gKUIL0zECcAAA==
+  </data>
+ </layer>
+ <layer name="Control" width="100" height="25" visible="0">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3WQQqAIABFQT1C979sy0CopT5oBv6infgQmmOMOR5z+Wav9f71OEuPFj1a9GjRo0WPFj1a9GjRo0WPFj1a9GjRo0WPlrcednZvfdhLjxY9Wr56XPuP83veQ4seLXq0nP7PNivvBrClLGEQJwAA
+  </data>
+ </layer>
+</map>

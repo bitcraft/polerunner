@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="25" height="25" tilewidth="16" tileheight="16">
+ <properties>
+  <property name="music" value="lightlessdawn.ogg"/>
+ </properties>
+ <tileset firstgid="1" source="controlset.tsx"/>
+ <tileset firstgid="1905" name="level0" tilewidth="16" tileheight="16">
+  <image source="../tilesets/level0-dark.png" width="256" height="128"/>
+  <tile id="16">
+   <properties>
+    <property name="walkSound" value="step.wav"/>
+   </properties>
+  </tile>
+  <tile id="17">
+   <properties>
+    <property name="walkSound" value="step.wav"/>
+   </properties>
+  </tile>
+  <tile id="18">
+   <properties>
+    <property name="walkSound" value="step.wav"/>
+   </properties>
+  </tile>
+  <tile id="19">
+   <properties>
+    <property name="walkSound" value="step.wav"/>
+   </properties>
+  </tile>
+  <tile id="20">
+   <properties>
+    <property name="walkSound" value="step.wav"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="Background 1" width="25" height="25">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA8VWQQ7CMAzjtge3AcEVCX4A36VIRDLGybIxwcGKmnbJ4jjr+rTbtReOA6eBDj6DdRfwM2of40W+RpZjNcphcM4gHp7BHPuBQ/DuVWCONn3WcRm4ilq2yvFc3wbutM8cOicdrMpxBijfN8h6voYXpbeKrhBGz6Ou2J/p1H2K2+hdVb/W1LGEO0viWZJjDj5LzKHqb8aV8vmzPkvZfGT8ZZz52meJ/f+ejy1mI4qn+lHVFN4BUY5KP7L+88xU63BNsq1ylmnX165JtqoupbnKDLom2Wbx1Zz/Qrt436h7i/s4pynFi8phQdzq9zjqb6Td6L/Gpve7Vu1numqEJbOo6ngAViJ8gsQJAAA=
+  </data>
+ </layer>
+</map>
