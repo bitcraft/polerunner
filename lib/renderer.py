@@ -132,11 +132,10 @@ class LevelCamera(Element):
 
         # quadtree collision testing would be good here
         for entity, body in self.area.bodies.items():
-            x, y = body.position
-            x, y = self.area.worldToPixel((x, y))
+            w, h = entity.size
+            x, y = self.area.worldToPixel(body.position + (w, -h))
             x -= self.extent.left
             y -= self.extent.top
-            w, h = entity.avatar.image.get_size()
             onScreen.append((entity.avatar.image, Rect((x, y), (w, h)), 1))
 
         # should not be sorted every frame

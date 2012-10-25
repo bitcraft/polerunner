@@ -3,6 +3,7 @@ from lib2d.avatar import Avatar
 from lib2d.animation import Animation, StaticAnimation
 from lib2d.objects import AvatarObject
 from lib2d.image import Image, ImageTile
+from lib2d.sound import Sound
 from lib2d import res
 from lib.buildarea import fromTMX
 from lib.level import Level
@@ -30,6 +31,9 @@ def build():
         Animation('brake',
             Image('hero-brake.png'),
             range(6), 1, 30),
+        Animation('unbrake',
+            Image('hero-brake.png'),
+            range(5,-1,-1), 1, 30),
         Animation('walk',
             Image('hero-walk.png'),
             range(10), 1, 70),
@@ -48,29 +52,29 @@ def build():
         Animation('wait',
             Image('hero-wait.png'),
             range(6), 1, 100),
-        Animation('jump',
-            Image('hero-jump.png'),
-            range(4), 1, 20),
         Animation('die',
             Image('hero-die.png'),
             range(3), 1, 85),
+        StaticAnimation('jumping',
+            ImageTile('hero-jump.png', (2,0), (32,32))),
         StaticAnimation('falling',
             ImageTile('hero-die.png', (0,0), (32,32))),
         StaticAnimation('roll',
             Image('hero-roll.png')),
-            #range(8), 1, 30),
-        
     ])
 
     npc = Entity(
         avatar,
         [],
-        Image('face0.png')
+        Image('face0.png'),
+        sounds = [
+            'stop.wav',
+        ]
     )
 
     npc.setName("Brahbrah")
     npc.setGUID(1)
-    npc.size = (16,12,32)
+    npc.size = (12,18)
     npc.move_speed = 1   #.025
     npc.jump_strength = 400
     uni.add(npc)

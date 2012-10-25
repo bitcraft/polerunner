@@ -39,12 +39,6 @@ w/avatar.  just check it as needed.
 state = (animation object, current frame)
 """
 
-
-STICKY = 1
-ANIMATION_CHANGE_TOKEN = 0
-HOLD_TOKEN = 1
-UNHOLD_TOKEN = 2
-
 from lib2d.buttons import *
 from collections import deque
 

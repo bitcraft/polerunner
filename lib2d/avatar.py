@@ -42,7 +42,6 @@ class Avatar(GameObject):
         self.curAnimation = None
         self.animations   = {}
         self.looped     = 0
-        self.loop       = -1
         self.timer      = 0.0
         self.ttl = 0
         self.flip = 0
@@ -122,7 +121,6 @@ class Avatar(GameObject):
             self.curAnimation = temp
 
         self.callback = (callback, [], {})
-        self.loop = loop
         self.looped = 0
         self.timer  = 0
 

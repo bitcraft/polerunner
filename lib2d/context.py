@@ -21,7 +21,6 @@ along with lib2d.  If not, see <http://www.gnu.org/licenses/>.
 import gfx
 import pygame
 from lib2d.objects import GameObject
-from playerinput import KeyboardPlayerInput, MousePlayerInput
 from collections import deque
 from itertools import cycle, islice
 from pygame.locals import *
@@ -164,14 +163,11 @@ class ContextDriver(object):
     etc.
     """
 
-    def __init__(self, parent, inputs, target_fps=30):
+    def __init__(self, parent, target_fps=30):
         self.parent = parent
         self._stack = deque()
         self.target_fps = target_fps
-        self.inputs = inputs
-
-        self.inputs.append(KeyboardPlayerInput())
-        #self.inputs.append(MousePlayerInput())
+        self.inputs = []
 
         if parent != None:
             self.reload_screen()

@@ -269,7 +269,7 @@ class PlatformArea(AbstractArea, PlatformMixin):
         self.space.add(geometry)
 
         for entity, body in self.bodies.items():
-            shape = pymunk.Poly.create_box(body, size=(32,64))
+            shape = pymunk.Poly.create_box(body, size=entity.size)
             self.space.add(body, shape)
 
 
@@ -284,8 +284,6 @@ class PlatformArea(AbstractArea, PlatformMixin):
         body = pymunk.Body(5, pymunk.inf)
         body.position = pos
         self.bodies[entity] = body
-
-
 
         self.changedAvatars = True
 
@@ -361,7 +359,7 @@ class PlatformArea(AbstractArea, PlatformMixin):
         if filename not in [ s.filename for s in self.sounds ]:
             self.sounds.append(Sound(filename, ttl))
             if entity:
-                pos = self.bodies[entity].bbox.center
+                pos = self.bodies[entity].position
             for sub in self.subscribers:
                 sub.emitSound(filename, pos)
 

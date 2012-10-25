@@ -125,7 +125,7 @@ class KeyboardPlayerInput(PlayerInput):
                 if self.rev_keymap[P1_UP] in self.held:
                     return self.__class__, P1_UP, BUTTONDOWN
                         
-        return self.__class__, key, state
+        return self, key, state
 
 
 

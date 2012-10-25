@@ -27,8 +27,9 @@ class Entity(InteractiveObject):
     move_speed = .001      # m/s
     jump_strength = .5  # for low gravity
 
-    def __init__(self, avatar, builders, face):
+    def __init__(self, avatar, builders, face, sounds=[]):
         super(Entity, self).__init__(avatar, builders)
         self.faceImage = face
         self.held = None
         self.grounded = False
+        self.sounds = sounds

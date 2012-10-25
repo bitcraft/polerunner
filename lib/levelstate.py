@@ -2,6 +2,7 @@ from renderer import LevelCamera
 
 from lib2d.buttons import *
 from lib2d.signals import *
+from lib2d.playerinput import KeyboardPlayerInput, MousePlayerInput
 from lib2d import res, ui, gfx, context
 
 from lib.controllers import HeroController
@@ -101,7 +102,13 @@ class LevelState(context.Context):
         self.area.subscribe(self)
 
         self.controllers = []
+
+        keyboard = KeyboardPlayerInput()
+
         c1 = HeroController(self.hero)
+        c1.setup(keyboard)
+
+        self.parent.inputs.append(keyboard)
         self.controllers.append(c1)
 
 
@@ -137,9 +144,9 @@ class LevelState(context.Context):
 
 
     def emitSound(self, filename, position):
-        x1, y1, z1 = position
-        x2, y2, z2 = self.hero_body.bbox.origin
-        d = math.sqrt(pow(x1-x2, 2) + pow(y1-y2, 2) + pow(z1-z2, 2))
+        x1, y1 = position
+        x2, y2 = self.hero_body.position
+        d = math.sqrt(pow(x1-x2, 2) + pow(y1-y2, 2))
         try:
             vol = 1/d * 20 
         except ZeroDivisionError:
