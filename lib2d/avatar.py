@@ -25,6 +25,14 @@ from pygame.transform import flip
 import itertools
 
 
+class RenderGroup(object):
+    """
+    optional class from managing groups of avatars
+    """
+
+    pass
+
+
 class Avatar(GameObject):
     """
     Avatar is a sprite-like class that supports multiple animations, animation
@@ -32,11 +40,8 @@ class Avatar(GameObject):
     update must be called occasionally for animations and rotations to work.
     """
 
-    time_update = True
-
     def __init__(self, animations):
         GameObject.__init__(self)
-        self.default      = None
         self.curImage     = None    # cached for drawing ops
         self.curFrame     = None    # current frame number
         self.curAnimation = None
@@ -45,31 +50,26 @@ class Avatar(GameObject):
         self.timer      = 0.0
         self.ttl = 0
         self.flip = 0
+        self.speed_mod = 1.0
         self._prevAngle = None
+        self._changed = False
 
         for animation in animations:
             self.add(animation)
             self.animations[animation.name] = animation
 
-        self.setDefault(animations[0])
-        self.play()
-
 
     def _updateCache(self):
-        #angle = self.getOrientation()
         angle = 0
         self.curImage = self.curAnimation.getImage(self.curFrame, angle) 
         if self.flip: self.curImage = flip(self.curImage, 1, 0)
 
+
     @property
     def image(self):
-        self._updateCache()
-        return self.curImage
-
-
-    @property
-    def state(self):
-        return (self.curAnimation, self.curFrame)
+        if self._changed:
+            self._updateCache()
+            return self.curImage
 
 
     def unload(self):
@@ -92,13 +92,20 @@ class Avatar(GameObject):
 
             try:
                 self.ttl, self.curFrame = next(self.iterator)
+                self.ttl *= self.speed_mod
             except StopIteration:
                 if self.callback:
                     self.callback[0](*self.callback[1], **self.callback[2])
 
-            # needed to handle looping
-            if self.ttl < 0:
-                return
+            else:
+                self.changed = True
+
+                # needed to handle looping
+                if self.ttl < 0:
+                    return
+
+        else:
+            self.changed = False
 
  
     def isPlaying(self, name):
@@ -114,7 +121,7 @@ class Avatar(GameObject):
             if name == self.curAnimation: return
             self.curAnimation = name
         elif name is None:
-            self.curAnimation = self.default
+            self.play(self.animations.keys()[0])
         else:
             temp = self.getAnimation(name)
             if temp == self.curAnimation: return
@@ -140,27 +147,8 @@ class Avatar(GameObject):
                 self.iterator = itertools.cycle(iter(self.curAnimation))
 
         self.ttl, self.curFrame = next(self.iterator)
-
-
-    def remove(self, other):
-        playing = False
-        if isinstance(other, (animation.Animation, animation.StaticAnimation)):
-            if self.isPlaying(other):
-                playing = True
-            del self.animations[other.name]
-        
-        GameObject.remove(self, other)
-
-        # handle when there are no animations left
-        if len(self.animations) == 0:
-            self.curAnimation = None
-            self.curImage = None
-            self.curFrame = None
-            self.default = None
-            self._is_paused = True
-        elif playing:
-            self.setDefault(self.animations.keys()[0])
-            self.reset()
+        self.ttl *= self.speed_mod
+        self._changed = True
 
 
     def getAnimation(self, name):
@@ -174,22 +162,6 @@ class Avatar(GameObject):
             raise
 
 
-    def setDefault(self, name):
-        """
-        set the defualt animation to play if the avatar has nothing else to do
-        """
-
-        if isinstance(name, (animation.Animation, animation.StaticAnimation)):
-            self.default = name
-        else:
-            try:
-                self.default = self.getAnimation(name)
-            except KeyError:
-                return
-
-
     def __str__(self):
         return "<Avatar %s>" % id(self)
-
-
 

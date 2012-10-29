@@ -53,7 +53,6 @@ def fromTMX(parent, mapname):
     # load the level geometry from the 'control' layer 
     rects = []
     for rect in buildDistributionRects(data, "Control", real_gid=1):
-        print rect
         rects.append(Rect(rect))
 
     area.setLayerGeometry(0, rects)

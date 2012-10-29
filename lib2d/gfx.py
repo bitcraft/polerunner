@@ -128,7 +128,8 @@ def set_scale(scale, transform="scale"):
 
 
     if threaded:
-        thread = ScalingThread(update_display, None)
+        update_func = update_display
+        thread = ScalingThread(update_display_scaled, None)
         update_display = update_display_threaded
         thread.start()
 

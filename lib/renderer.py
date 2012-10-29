@@ -9,9 +9,10 @@ import pygame
 import weakref
 
 from pymunk.pygame_util import draw_space, from_pygame, to_pygame
+import pymunk
 
 
-DEBUG = 0
+DEBUG = 1
 
 parallax = True
 
@@ -131,9 +132,21 @@ class LevelCamera(Element):
             self.maprender.blank = True
 
         # quadtree collision testing would be good here
-        for entity, body in self.area.bodies.items():
-            w, h = entity.size
-            x, y = self.area.worldToPixel(body.position + (w, -h))
+        for entity, shape in self.area.shapes.items():
+            points = shape.get_points()
+            l = 99999
+            t = 99999
+            r = 0
+            b = 0
+            for x, y in points:
+                if x < l: l = x
+                if x > r: r = x
+                if y < t: t = y
+                if y > b: b = y
+            w = r - l
+            h = b - t
+            w, h = entity.avatar.image.get_size()
+            x, y = self.area.worldToPixel((l-8,b-h))
             x -= self.extent.left
             y -= self.extent.top
             onScreen.append((entity.avatar.image, Rect((x, y), (w, h)), 1))
@@ -147,14 +160,15 @@ class LevelCamera(Element):
         dirty = self.maprender.draw(surface, rect, onScreen)
 
         if DEBUG:
-            for bbox in self.area.rawGeometry:
-                x, y, z, d, w, h = bbox
-                y -= self.extent.left
-                z -= self.extent.top
-                draw.rect(surface, (255,100,100), (y, z, w, h))
+            def translate((x, y)):
+                return x - self.extent.left, y - self.extent.top
 
-            for i in onScreen:
-                draw.rect(surface, (100,255,100), i[1])
+            for shape in self.area.space.shapes:
+                points = [ translate(i) for i in shape.get_points() ]
+                draw.aalines(surface, (255,100,100), 1, points)
+
+            #for i in onScreen:
+            #    draw.rect(surface, (100,255,100), i[1])
 
         return dirty
 

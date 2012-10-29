@@ -74,7 +74,7 @@ def build():
 
     npc.setName("Brahbrah")
     npc.setGUID(1)
-    npc.size = (12,18)
+    npc.size = (16,32)
     npc.move_speed = 1   #.025
     npc.jump_strength = 400
     uni.add(npc)
@@ -144,7 +144,7 @@ def build():
 
     npc.setName("bot0")
     npc.setGUID(516)
-    npc.size = (16,16,16)
+    npc.size = (16,32,16)
     npc.move_speed = .5   #.025
     npc.jump_strength = .5
     uni.add(npc)

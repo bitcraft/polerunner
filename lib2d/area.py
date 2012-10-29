@@ -236,6 +236,11 @@ class PlatformArea(AbstractArea, PlatformMixin):
 
 
     def load(self):
+        def toChipPoly(rect):
+            return (rect.topleft, rect.topright,
+                    rect.bottomright, rect.bottomleft)
+
+
         import pytmx
 
         self.tmxdata = pytmx.tmxloader.load_pygame(
@@ -260,16 +265,18 @@ class PlatformArea(AbstractArea, PlatformMixin):
         geometry = []
         for layer, rects in self.geometry.items():
             for rect in rects:
-                temp = rect.topleft, rect.topright, 5
-                body = pymunk.Segment(self.space.static_body, *temp)
+                body = pymunk.Poly(self.space.static_body, toChipPoly(rect))
                 body.friction = 1.0
                 body.group = 1
                 geometry.append(body)
 
         self.space.add(geometry)
 
+        self.shapes = {}
+
         for entity, body in self.bodies.items():
             shape = pymunk.Poly.create_box(body, size=entity.size)
+            self.shapes[entity] = shape
             self.space.add(body, shape)
 
 

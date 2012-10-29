@@ -148,14 +148,11 @@ class StaticAnimation(Animation):
     Immutable
     """
 
-    def __init__(self, name, image, tile=None, size=None):
+    def __init__(self, name, image):
         GameObject.__init__(self)
 
         self.image = image
         self.name = name
-        self.tile = tile
-        self.size = size
-
         self.frames = [0]
         self.timing = [-1]
 
@@ -165,20 +162,8 @@ class StaticAnimation(Animation):
         load the images for use with pygame
         """
 
-        image = self.image.load()
+        self.image = self.image.load()
       
-        if self.tile:
-            x, y = self.tile
-            x *= self.size[0]
-            y *= self.size[1]
-            ck = image.get_colorkey()
-            self.image = pygame.Surface(self.size)
-            self.image.blit(image,(0,0),area=(x,y, self.size[0], self.size[1]))
-            image.set_colorkey(ck, pygame.RELACCEL) 
-
-        else:
-            self.image = image
-
 
     def returnNew(self):
         return self

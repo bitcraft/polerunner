@@ -6,6 +6,7 @@ from lib2d.buttons import *
 from lib2d.fsa.flags import *
 import lib2d
 import pygame
+import pymunk
 
 
 INITIAL_WALK_SPEED = 10
@@ -83,14 +84,31 @@ class crouchState(state):
         self.entity.avatar.play('crouch', loop_frame=4)
         body = self.entity.parent.getBody(self.entity)
         body.velocity.x = 0
-
+        space = self.entity.parent.space
+        for shape in space.shapes:
+            if shape.body is body:
+                break
+        space.remove(shape)
+        w, h = self.entity.size
+        shape = pymunk.Poly.create_box(body, size=(w, h/2))
+        self.entity.parent.shapes[self.entity] = shape
+        body.position.y += 8
+        space.add(shape)
 
 class uncrouchState(state):
     def enter(self, cmd):
         self.entity.avatar.play('uncrouch', callback=self.abort, loop=0)
         body = self.entity.parent.getBody(self.entity)
         body.velocity.x = 0
-
+        space = self.entity.parent.space
+        for shape in space.shapes:
+            if shape.body is body:
+                break
+        space.remove(shape)
+        w, h = self.entity.size
+        shape = pymunk.Poly.create_box(body, size=(w, h))
+        self.entity.parent.shapes[self.entity] = shape
+        space.add(shape)
 
 class jumpState(state):
     def enter(self, cmd):
@@ -209,6 +227,17 @@ class rollingState(state):
     def enter(self, cmd):
         self.entity.avatar.play('roll')
         self.angle = 0.0
+        body = self.entity.parent.getBody(self.entity)
+        space = self.entity.parent.space
+        for shape in space.shapes:
+            if shape.body is body:
+                break
+        space.remove(shape)
+        w, h = self.entity.size
+        shape = pymunk.Poly.create_box(body, size=(w, h/3))
+        self.entity.parent.shapes[self.entity] = shape
+        space.add(shape)
+        body.position.y += 8
 
     def update(self, time):
         self.angle -= 1.5
