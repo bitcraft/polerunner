@@ -2,7 +2,7 @@ Platforming Game in Python
 
 
 Goals of project:
-
 	Use fsa.py for clean input and possible use for ai agents
-
-
+	Nice graphics
+	Metroidvania concept
+	Smooth input handling and fast paced gameplay

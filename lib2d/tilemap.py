@@ -29,13 +29,15 @@ class BufferedTilemapRenderer(GameObject):
 
     The class supports differed rendering and multiple layers
 
-    Jitter is unavoidable becuase python's interpreter is not time sensitive
+    Jitter is unavoidable because python's interpreter is not time sensitive
     and will sometimes just slow everything down.
 
     This class works well for maps that operate on a small display and where
     the map is much larger than the display.
 
     For differed rendering to work, you will need to call update() often.
+
+    Sprites and layers are supported and is quickly managed with a quadtree.
 
     The original library for this, Lib2d updates 4 times for every draw.  To
     take advantage of the processing done inbetween screen updates, update()

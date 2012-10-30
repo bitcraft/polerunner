@@ -1,8 +1,0 @@
-Lib2d is a game engine that I have been developing to create PyWeek games.  It is poorly documented, awkward, and probably not usable.
-
-What it does do is:
-	State (context) management
-	Animated Sprites with multiple animations and automatic flipping
-	TMX level importing
-	Basic GUI features
-	Physics simulation (pure python)
