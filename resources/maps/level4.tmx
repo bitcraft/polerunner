@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="200" height="60" tilewidth="16" tileheight="16">
+ <tileset firstgid="1" source="controlset.tsx"/>
+ <tileset firstgid="1905" name="level0" tilewidth="16" tileheight="16">
+  <image source="../tilesets/level0.png" width="256" height="128"/>
+ </tileset>
+ <layer name="Full Background" width="200" height="60">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3ZMU4EMRQFwc32vIRszCHmuEzAECB1gGTJzKeCyi35tRz4eD4ex+n99Dq9fTmAb/qA9rOPDyD7gN+Yuh99sMLU/eiDFabuRx+sMHU/+mCFqfvRBytM3Y8+WGHqfvTBClP3ow9WmLqfq4/d/5Tc29XH7nOsdvWxu1Pubfr7sfsc3Js+oOkDmj6g6QOaPuD/0Qc0fUDTBzR9QNMHNH1A0wc0fUDTBzR9QNMHNH1A0wc0fUDTBzR9QNMHNH1A0wc0fUDTBzR9QNMHNH1A0wc0fUDTBzR9QNMHNH1A0wc0fUDTBzR9QNMHNH1A0wc0fUDTB7SD7XfA3/UJQy3OLIC7AAA=
+  </data>
+ </layer>
+ <layer name="Partial Background" width="200" height="60">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3YsQoCMQwG4G59cV9MRHcR3UX0ObztMLQHlU6574MMHQMJl/tL+XWupVxqARruy2487Ac0vZfd+NgPaHJfMSLOS/b5cV8xIs5L9vlxXzEizkv2+cn+fWQu9xX0ua+gb2/31TFxb8x3qtvvbK7J+2OuW91+Z/NM3h9zver2GwBa4v949vwKRtgP6It5lfwTVjGvkn/CKuZVWfPPQ1Xq/wIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA9usLMDiWZIC7AAA=
+  </data>
+ </layer>
+ <layer name="Foreground" width="200" height="60">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3YOU4FMRAFwMl8aLaYPWY/ANsB2CTECRAnQByEFxA5+AM20nzNVEkvsDpo2WonPQwAAAAAAMzVRhmGzWQr2U52Sn9tHXtCi/3M2EFymBwlx6W/to494Tdeq5k6y/k8uUguk6vSXxszRU/avFVvXM/P3LxX97vO+Sa5Te6S+9JfGzNFT9p8VG9cz88c7OZOez/3+qzu95DzY/KUPCcvpb82ZoqetPkqq+cHlu4kf+LUvwAA+BdL21/BXyxhfwWt7K9gNfsrAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFiub39GWrOAuwAA
+  </data>
+ </layer>
+ <layer name="Control" width="200" height="60" visible="0">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3ZQYqEUAxAQT1C3/+ysxJBeAND92+HWAVZuDOQt9F927Z9O+2XZ3iyaw/6gFP1YYw553B9ht9Mv5/p+7HW9PuZvh9rTb+f6fux1vT7mb4fa02/n+n7sdb0+zn2ed39IvAPTesdPkkf0O7+L2lmzOHu91i9H/xF9THFtH34Ln3Ac+kDmj6g3f1dwMyYqabvB+/QBzR9QNMHNH1A0wc0fUDTBzR9QNMHNH1A0wc0fUDTBzR9QNMHNH1A0wc0fUDTBzR9QNMHNH1A0wc0fUDTBzR9QNMHNH1A0wc0fUDTBzR9QNMHNH1A0wc0fUDTBzR9QNMHNH1A+wEvD385gLsAAA==
+  </data>
+ </layer>
+ <objectgroup name="Zones" width="200" height="60">
+  <object name="Welcome Zone" type="Zone" x="448" y="0" width="160" height="192">
+   <properties>
+    <property name="TouchMessage" value="Testing!"/>
+   </properties>
+  </object>
+ </objectgroup>
+</map>

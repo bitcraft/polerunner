@@ -6,7 +6,9 @@ class InteractiveObject(AvatarObject):
     these objects supply a list of actions that other objects can call
     """
 
-    def __init__(self, avatar, builders):
+    physics = False
+
+    def __init__(self, avatar, builders=None):
         AvatarObject.__init__(self, avatar)
         self.actionBuilders = builders
 
@@ -24,6 +26,7 @@ class Entity(InteractiveObject):
     moved
     """
 
+    physics = True
     move_speed = .001      # m/s
     jump_strength = .5  # for low gravity
 

@@ -4,6 +4,8 @@ from objects import GameObject
 from pygame import Rect
 from pathfinding import astar
 from lib2d.signals import *
+from lib2d.objects import AvatarObject
+from lib2d.zone import Zone
 import math
 
 import pymunk
@@ -147,6 +149,21 @@ class PlatformMixin(object):
         return xx, yy, zz
 
 
+"""
+    G R O U P S
+
+
+    1:  LEVEL GEOMETRY
+    2:  ZONES
+
+
+
+    T Y P E S
+
+    1:  THE PLAYER (AS SET BY THE LEVEL STATE)
+    2:  ZONES
+
+"""
 
 class PlatformArea(AbstractArea, PlatformMixin):
     """
@@ -227,8 +244,12 @@ class PlatformArea(AbstractArea, PlatformMixin):
         self.inUpdate = False
         self._removeQueue = []
 
+        # temporary storage of physics stuff
+        self.temp_positions = {}
+
         # internal physics stuff
         self.geometry = {}
+        self.shapes = {}
         self.bodies = {}
         self.physicsgroup = None
         self.extent = None          # absolute boundaries of the area
@@ -261,38 +282,71 @@ class PlatformArea(AbstractArea, PlatformMixin):
         self.space = pymunk.Space()
         self.space.gravity = self.gravity
 
-        # will not work with multiple layers
+        # transform the saved geometry into chipmunk geometry and add it
+        # bug: will not work with multiple layers
         geometry = []
         for layer, rects in self.geometry.items():
             for rect in rects:
-                body = pymunk.Poly(self.space.static_body, toChipPoly(rect))
-                body.friction = 1.0
-                body.group = 1
-                geometry.append(body)
+                shape = pymunk.Poly(self.space.static_body, toChipPoly(rect))
+                shape.friction = 1.0
+                shape.group = 1
+                #shape.layers = layer
+                geometry.append(shape)
 
         self.space.add(geometry)
 
+        # dont worry about setting the player group, that will be set by the
+        # levelstate
+        self.groups = 2
+
+        # just assume we have the correct types under us
+        for child in self._children:
+            if isinstance(child, AvatarObject):
+                if child.physics:
+                    body = pymunk.Body(5, pymunk.inf)
+                    body.position = self.temp_positions[child]
+                    body.friction = 1.0
+                    shape = pymunk.Poly.create_box(body, size=child.size[:2])
+                    self.bodies[child] = body
+                    self.shapes[child] = shape
+                    self.space.add(body, shape)
+
+                else:
+                    rect = Rect(self.temp_positions[child], child.size[:2])
+                    shape = pymunk.Poly(self.space.static_body, toChipPoly(rect))
+                    shape.friction = 1.0
+                    self.shapes[child] = shape
+                    self.space.add(shape)
+
+            elif isinstance(child, Zone):
+                points = toChipPoly(child.extent)
+                shape = pymunk.Poly(self.space.static_body, points)
+                shape.collision_type = 2
+                self.shapes[child] = shape
+                self.space.add(shape)
+
+
+    def unload(self):
+        self.bodies = {}
         self.shapes = {}
-
-        for entity, body in self.bodies.items():
-            shape = pymunk.Poly.create_box(body, size=entity.size)
-            self.shapes[entity] = shape
-            self.space.add(body, shape)
+        self.physicsgroup = None
+        self.space = None
 
 
-    def add(self, entity, pos=None):
-        AbstractArea.add(self, entity)
+    def add(self, child, pos=None):
+        AbstractArea.add(self, child)
 
-        if pos is None:
-            pos = self.defaultPosition().origin
-        else:
-            pos = self.translate(pos)
+        # don't do anything with the physics engine here
+        # handle it in load(), where the area is prepped for use
 
-        body = pymunk.Body(5, pymunk.inf)
-        body.position = pos
-        self.bodies[entity] = body
+        if isinstance(child, AvatarObject):
+            if pos is None:
+                pos = self.defaultPosition()
+            else:
+                pos = self.translate(pos)
 
-        self.changedAvatars = True
+            self.temp_positions[child] = pos
+            self.changedAvatars = True
 
 
     def remove(self, entity):

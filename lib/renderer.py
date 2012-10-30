@@ -12,9 +12,9 @@ from pymunk.pygame_util import draw_space, from_pygame, to_pygame
 import pymunk
 
 
-DEBUG = 0
+DEBUG = 1
 
-parallax = True
+parallax = 1
 
 
 def screenSorter(a):
@@ -57,7 +57,7 @@ class LevelCamera(Element):
             self.maprender.buffer.set_colorkey(colorkey)
             #self.maprender.buffer = self.maprender.buffer.convert_alpha()
             par_tmx = pytmx.tmxloader.load_pygame(
-            lib2d.res.mapPath('parallax0.tmx'), force_colorkey=(128,128,0))
+            lib2d.res.mapPath('parallax4.tmx'), force_colorkey=(128,128,0))
             self.parallaxrender = BufferedTilemapRenderer(par_tmx, (w, h))
  
 
@@ -133,28 +133,30 @@ class LevelCamera(Element):
 
         # quadtree collision testing would be good here
         for entity, shape in self.area.shapes.items():
-            w, h = entity.avatar.image.get_size()
-            try:
-                points = shape.get_points()
-            except AttributeError:
-                temp_rect = entity.avatar.image.get_rect()
-                temp_rect.center = shape.body.position
-                x, y = self.area.worldToPixel(temp_rect.topleft)
-            else:
-                l = 99999
-                t = 99999
-                r = 0
-                b = 0
-                for x, y in points:
-                    if x < l: l = x
-                    if x > r: r = x
-                    if y < t: t = y
-                    if y > b: b = y
-                x, y = self.area.worldToPixel((l-8,b-h))
+            if hasattr(entity, 'avatar'):
+                w, h = entity.avatar.image.get_size()
+                try:
+                    points = shape.get_points()
+                except AttributeError:
+                    temp_rect = entity.avatar.image.get_rect()
+                    temp_rect.center = shape.body.position
+                    x, y = self.area.worldToPixel(temp_rect.topleft)
+                else:
+                    l = 99999
+                    t = 99999
+                    r = 0
+                    b = 0
+                    for x, y in points:
+                        if x < l: l = x
+                        if x > r: r = x
+                        if y < t: t = y
+                        if y > b: b = y
+                    ax, ay = entity.avatar.axis
+                    x, y = self.area.worldToPixel((l-ax,b-ay))
 
-            x -= self.extent.left
-            y -= self.extent.top
-            onScreen.append((entity.avatar.image, Rect((x, y), (w, h)), 1))
+                x -= self.extent.left
+                y -= self.extent.top
+                onScreen.append((entity.avatar.image, Rect((x, y), (w, h)), 1))
 
         # should not be sorted every frame
         #onScreen.sort(key=screenSorter)

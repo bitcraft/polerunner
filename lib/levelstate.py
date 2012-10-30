@@ -5,7 +5,9 @@ from lib2d.signals import *
 from lib2d.playerinput import KeyboardPlayerInput, MousePlayerInput
 from lib2d import res, ui, gfx, context
 
+from lib2d.zone import Zone
 from lib.controllers import HeroController
+from lib.dialog import *
 
 import pygame, math, time
 
@@ -75,14 +77,6 @@ class LevelState(context.Context):
     def __init__(self, parent, area):
         super(LevelState, self).__init__(parent)
         self.area = area
-        self.hero = area.getChildByGUID(1)
-        self.hero_body = self.area.getBody(self.hero)
-
-        # awkward input handling
-        self.player_vector = [0,0,0]
-        self.wants_to_stop_on_landing = False
-        self.input_changed = False
-        self.jumps = 0
 
 
     def activate(self):
@@ -105,16 +99,55 @@ class LevelState(context.Context):
 
         keyboard = KeyboardPlayerInput()
 
+        self.hero = self.area.getChildByGUID(1)
+        self.hero_body = self.area.getBody(self.hero)
+
+        # set so player doesn't collide with zones
+        self.area.shapes[self.hero].collision_type = 1
+
         c1 = HeroController(self.hero)
-        c1.setup(keyboard)
+        c1.program(keyboard)
+        c1.primestack()
 
         self.parent.inputs.append(keyboard)
         self.controllers.append(c1)
 
+        self.area.space.add_collision_handler(1,2, begin=self.overlap_zone)
+
+        self.paused = False
+
+        self.queued_state = None
+
+
+    def overlap_zone(self, space, arbiter):
+        for zone in [i for i in self.area._children if isinstance(i, Zone)]:
+            if self.area.shapes[zone] is arbiter.shapes[1]:
+                if not zone.entered:
+                    self.enter_zone(zone)
+                    zone.entered = True
+                    break
+
+        return False
+
+
+    def enter_zone(self, zone):
+        ctx = TextDialog(self.parent)
+        ctx.prompt(zone.properties['TouchMessage'])
+        self.queued_state = ctx
+
+    def reactivate(self):
+        [ c.reset() for c in self.controllers ]
+        pass
 
     def update(self, time):
-        self.area.update(time)
-        [ c.update(time) for c in self.controllers ]
+        if not self.paused:
+            self.area.update(time)
+            [ c.update(time) for c in self.controllers ]
+
+        if self.queued_state:
+            self.parent.push(self.queued_state)
+            self.queued_state = None
+            return
 
 
     def draw(self, surface):
@@ -122,12 +155,10 @@ class LevelState(context.Context):
         self.ui.draw(surface)
 
 
-    def handle_commandlist(self, cmdlist):
+    def handle_command(self, cmd):
         #self.ui.handle_commandlist(cmdlist)
         #self.handleMovementKeys(cmdlist)
-
-        for cmd in cmdlist:
-            [ c.process(cmd) for c in self.controllers ]
+        [ c.process(cmd) for c in self.controllers ]
 
             #if cmd == P1_ACTION1:
             #    for thing, body in getNearby(self.hero, 8):

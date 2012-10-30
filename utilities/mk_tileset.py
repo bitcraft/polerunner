@@ -63,7 +63,7 @@ colorsets.append(("DOOR", (255,255,255), (180,10,20)))
 colorsets.append(("ITEM", (255,255,255), (0,120,10)))
 
 # black on light-blue
-colorsets.append(("", (0,0,0), (200,200,255)))
+colorsets.append(("ELEVATOR", (0,0,0), (200,200,255)))
 
 # black on light-pink
 colorsets.append(("", (0,0,0), (255,200,200)))
@@ -72,7 +72,7 @@ colorsets.append(("", (0,0,0), (255,200,200)))
 colorsets.append(("", (0,0,0), (200,255,200)))
 
 # black on light-grey
-colorsets.append(("", (0,0,0), (200,200,200)))
+colorsets.append(("GUIDE", (0,0,0), (200,200,200)))
 
 # file name of the image
 path = "../resources/tilesets/"

@@ -60,20 +60,21 @@ class fsa(object):
         self.button_history = []
         self.time = 0
         self.holds = {}                 # keep track of state changes from holds
-        self.hold = 0                   # keep track of buttons held down
 
         self.stack = []
 
-        self.setup()
 
+    def program(self):
+        pass
 
-    def setup(self):
+    def primestack(self):
         pass
 
 
     def reset(self):
+        self.time = 0
+        self.stack = []
         self.holds = {}
-        self.hold =  0
         self.move_history = []
 
 
@@ -156,8 +157,6 @@ class fsa(object):
     def process(self, trigger):
         cls, cmd, arg = trigger
 
-        self.hold += cmd
-
         state=self.get_transition((cmd, arg), self.stack[-1].__class__)
         if not state == None:
             self.change_state(state[0], (cmd, arg))
@@ -168,7 +167,6 @@ class fsa(object):
             del self.holds[(cmd, arg)]
         except:
             pass
-
 
 
     @property

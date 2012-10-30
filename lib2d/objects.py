@@ -146,8 +146,13 @@ class GameObject(object):
 
     def add(self, other):
         self._children.append(other)
-        if other._parent:
-            other._parent.remove(other)
+        try:
+            if other._parent:
+                other._parent.remove(other)
+        except:
+            print 'Error taking {} from parent.  Ignored'.format(other)
+            pass
+
         other.setParent(self)
 
 

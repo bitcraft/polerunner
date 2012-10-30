@@ -11,6 +11,7 @@ from lib.entity import Entity
 
 from items import *
 from enemies import *
+from guide import *
 
 
 def build():
@@ -60,8 +61,9 @@ def build():
         StaticAnimation('falling',
             ImageTile('hero-die.png', (0,0), (32,32))),
         StaticAnimation('roll',
-            Image('hero-roll.png')),
-    ])
+            Image('hero-roll.png'))],
+        axis_offset = (8,0)
+    )
 
     npc = Entity(
         avatar,
@@ -72,6 +74,7 @@ def build():
         ]
     )
 
+    npc.avatar.axis_offset = (8,0)
     npc.setName("Brahbrah")
     npc.setGUID(1)
     npc.size = (16,32)
@@ -126,6 +129,15 @@ def build():
     uni.add(blue_key)
 
 
+    # =========================================================================
+    # Guides
+    
+    uni.add(Guide(1537, "TEST"))
+
+
+
+    # =========================================================================
+
     # floating security bot
     # =========================================================================
 
@@ -153,7 +165,7 @@ def build():
 
     # =========================================================================
     # levels
-    level = fromTMX(uni, "level2.tmx")
+    level = fromTMX(uni, "level4.tmx")
     level.setName("Level 1")
     level.setGUID(5001)
 

@@ -92,6 +92,8 @@ class crouchState(state):
         space.remove(shape)
         w, h = self.entity.size
         shape = pymunk.Poly.create_box(body, size=(w, h/2))
+        shape.collision_type = 1
+        shape.friction = 1.0
         self.entity.parent.shapes[self.entity] = shape
         body.position.y += 8
         space.add(shape)
@@ -108,6 +110,8 @@ class uncrouchState(state):
         space.remove(shape)
         w, h = self.entity.size
         shape = pymunk.Poly.create_box(body, size=(w, h))
+        shape.collision_type = 1
+        shape.friction = 1.0
         self.entity.parent.shapes[self.entity] = shape
         body.position.y -= 4
         space.add(shape)
@@ -160,6 +164,8 @@ class fallRecoverState(state):
         space.remove(shape)
         w, h = self.entity.size
         shape = pymunk.Poly.create_box(self.body, size=(w, h/2))
+        shape.collision_type = 1
+        shape.friction = 1.0
         self.entity.parent.shapes[self.entity] = shape
         self.body.position.y += 8
         space.add(shape)
@@ -192,8 +198,8 @@ class idleState(state):
 
     def update(self, time):
         pass
-        #if body.velocity.y > 0:
-        #    self.abort()
+        if self.body.velocity.y > 0:
+            self.abort()
 
 
 class brakeState(state):
@@ -247,6 +253,7 @@ class rollingState(state):
         space.remove(shape)
         w, h = self.entity.size
         shape = pymunk.Circle(self.body, radius=8)
+        shape.collision_type = 1
         shape.friction = 1.0
         self.entity.parent.shapes[self.entity] = shape
         space.add(shape)
@@ -300,6 +307,11 @@ class checkFallingT(transition):
 
 class idleT(transition):
     def pick(self, fsa, entity):
+        body = entity.parent.getBody(entity)
+        if body.velocity.y > 0:
+            fsa.push_state(idleState(fsa, entity), None)
+            return fallingState(fsa, entity)
+
         return idleState(fsa, entity)
 
 
@@ -376,7 +388,7 @@ checkFalling = checkFallingT()
 
 class HeroController(lib2d.fsa.fsa):
 
-    def setup(self, source):
+    def program(self, source):
 
         # position and movement
         self.at(*stickyTrigger(source, P1_LEFT, idleState, move))
@@ -434,7 +446,17 @@ class HeroController(lib2d.fsa.fsa):
 
         #self.at((STATE_VIRTUAL, STATE_FINISHED), jumpingState, idle)
 
+        # sanity, also falling
+        self.at(*endState(idleState, idle))
 
+    def primestack(self):
         # set our initial state
         self.push_state(idleState(self, self.entity), None)
 
+
+    def reset(self):
+        self.time = 0
+        self.stack = []
+        self.holds = {}
+        self.move_history = []
+        self.primestack()

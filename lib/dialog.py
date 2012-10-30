@@ -19,21 +19,16 @@ along with lib2d.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from lib2d.buttons import *
-from lib2d.banner import TextBanner, OutlineTextBanner
-from lib2d.cmenu import cMenu 
-from lib2d.gamestate import GameState
-from lib2d.statedriver import driver as sd
-from lib2d import res, gui
+from lib2d.ui import Menu
+from lib2d.image import Image
+from lib2d.objects import loadObject
+from lib2d import res, draw, context
 
-from pygame.locals import *
-from pygame.surface import Surface
-import pygame.draw as draw
-import pygame
-
-from textwrap import wrap
+import pygame, os
 
 
-class TextDialog(GameState):
+
+class TextDialog(context.Context):
     """
     State that takes focus and waits for player to press a key
     after displaying some some text.
@@ -45,34 +40,35 @@ class TextDialog(GameState):
     wait_sound = res.loadSound("select0.wav")
     wait_sound.set_volume(0.40)
 
+    borderImage = Image("lpc-border0.png", colorkey=True)
 
-    def __init__(self, text, title=None):
-        GameState.__init__(self)
-        self.font = "dpcomic.ttf"
+
+    def activate(self):
+        self.background = (109, 109, 109)
+        self.border = draw.GraphicBox(self.borderImage)
+        self.redraw = True
+        self.activated = True
+
+
+    # just write the text and wait for a keypress
+    def prompt(self, text, title=None):
         self.text = text
         self.title = title
-        self.blank = True
-
-
-    # when given focus for first time
-    def activate(self):
-        from lib2d.gui import GraphicBox
-        self.border = GraphicBox("dialog2.png")
 
 
     def draw(self, surface):
-        if self.blank:
-            self.blank = False
+        if self.redraw:
+            self.redraw = False
 
             sw, sh = surface.get_size()
-            fontSize = int(0.0667 * sh)
 
             # draw the border
             x, y = 0.0313 * sw, 0.6667 * sh
             w, h = 0.9375 * sw, 0.2917 * sh
-            self.border.draw(surface, (x, y, w, h))
+            self.border.draw(surface, (x, y, w, h), fill=True)
            
             fullpath = res.fontPath("dpcomic.ttf")
+            fontSize = int(0.0667 * sh)
             font = pygame.font.Font(fullpath, fontSize)
 
             # adjust the margins of text if there is a title
@@ -80,8 +76,8 @@ class TextDialog(GameState):
                 x = 0.0625 * sw
                 y = 0.7 * sh
 
-            gui.drawText(surface, self.text, (0,0,0), (x+10,y+8,w-18,h-12),
-                         font, aa=1, bkg=self.border.background)
+            draw.drawText(surface, self.text, (0,0,0), (x+10,y+8,w-18,h-12),
+                         font, aa=1, bkg=self.background)
             
             # print the title
             if self.title != None:
@@ -101,13 +97,12 @@ class TextDialog(GameState):
             self.wait_sound.play()
 
 
-    def handle_commandlist(self, cmdlist):
-        for cls, cmd, arg in cmdlist:
-            if arg == BUTTONDOWN and cmd == P1_ACTION1 and not self.blank:
-                sd.done()   
+    def handle_command(self, cmd):
+        if cmd[1] == P1_ACTION1 and cmd[2] == BUTTONDOWN:
+            self.done()
 
 
-class ChoiceDialog(GameState):
+class ChoiceDialog(context.Context):
     #wrap_width = 58 # font 12
     
     text_size = 14
@@ -119,7 +114,7 @@ class ChoiceDialog(GameState):
     wait_sound.set_volume(0.20)
 
     def __init__(self, text, choices, title=None):
-        GameState.__init__(self)
+        context.Context.__init__(self)
         self.text = text
         self.state = 0
         self.counter = 0
@@ -220,11 +215,6 @@ class ChoiceDialog(GameState):
     def handle_event(self, event):
         if self.state > 2:
             self.menu.handle_event(event)
-
-    def handle_commandlist(self, cmdlist):
-        for cls, cmd, arg in cmdlist:
-            if (cmd == P1_ACTION1) and arg:
-                sd.done()   
 
     def choice0(self): pass
     def choice1(self): pass

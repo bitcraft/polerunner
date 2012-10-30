@@ -47,13 +47,39 @@ class GraphicBox(object):
         ox, oy, w, h = Rect(rect)
 
         if fill:
-            if isinstance(fill, int):
+            if fill == True:
+                pass
+            elif isinstance(fill, int):
+                print "int"
                 self.tiles['c'].set_alpha(fill)
 
-            p = product(range(ox, w-ox, self.tw),
-                        range(oy, h-oy, self.th))
-        
+            wmod = 0
+            hmod = 0
+
+            if float(w) % self.tw > 0:
+                wmod = self.tw
+
+            if float(h) / self.th> 0:
+                hmod = self.th
+
+            p = product(range(ox+4, ox+w-wmod, self.tw),
+                        range(oy+4, oy+h-hmod, self.th))
+      
+ 
             [ surface.blit(self.tiles['c'], (x, y)) for x, y in p ]
+
+            # we were unable to fill it completly due to size restrictions
+            if wmod:
+                for y in range(oy+4, oy+h-hmod, self.th):
+                    surface.blit(self.tiles['c'], (ox+w-self.tw-4, y))
+
+            if hmod:
+                for x in range(ox+4, ox+w-wmod, self.tw):
+                    surface.blit(self.tiles['c'], (x, oy+h-self.th-4))
+
+            if hmod or wmod:
+                surface.blit(self.tiles['c'], (ox+w-self.tw-4, oy+h-self.th-4))
+
 
         for x in range(self.tw+ox, w-self.tw+ox, self.tw):
             surface.blit(self.tiles['n'], (x, oy))

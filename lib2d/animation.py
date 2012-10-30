@@ -1,5 +1,5 @@
 from objects import GameObject
-from image import Image
+from image import Image, ImageTile
 from sound import Sound
 import res
 
@@ -51,8 +51,8 @@ class Animation(GameObject):
 
         assert isinstance(image, Image)
 
-        if sound:
-            assert(sound, Sound)
+        #if sound:
+        #    assert(sound, Sound)
 
 
         self.name = name
@@ -151,6 +151,12 @@ class StaticAnimation(Animation):
     def __init__(self, name, image):
         GameObject.__init__(self)
 
+        try:
+            assert isinstance(image, Image) or isinstance(image, ImageTile)
+        except AssertionError:
+            print name, image
+            raise
+
         self.image = image
         self.name = name
         self.frames = [0]
@@ -163,7 +169,7 @@ class StaticAnimation(Animation):
         """
 
         self.image = self.image.load()
-      
+        print "loading, static", self, self.image 
 
     def returnNew(self):
         return self
@@ -178,6 +184,9 @@ class StaticAnimation(Animation):
         return the frame by number with the correct image for the direction
         direction should be expressed in radians
         """
+
+        if self.image is None:
+            raise Exception, "Avatar hasn't loaded images yet"
 
         return self.image
 

@@ -1,6 +1,7 @@
 from pytmx import tmxloader, buildDistributionRects
 from lib2d.area import PlatformArea
 from lib2d.bbox import BBox
+from lib2d.zone import Zone
 from lib2d import res
 from pygame import Rect
 
@@ -20,7 +21,7 @@ def fromTMX(parent, mapname):
     # for platformer maps
     def toWorld(data, (x, y, z)):
         """ translate tiled map coordinates to world coordinates """
-        return z, x*data.tilewidth, (y-2)*data.tileheight
+        return z, x*data.tilewidth, (y-1)*data.tileheight
 
     # for zelda-style games
     #def toWorld(data, (x, y, l)):
@@ -104,8 +105,31 @@ def fromTMX(parent, mapname):
             x, y, z = toWorld(data, pos)
 
             area.add(body, (x, y, z))
-            area.setOrientation(body, "south")
             copy = True 
+
+
+    # level guides
+    guides = [ p for p in props if p[1].get('group', None) == 'guide' ] 
+
+    for (gid, prop) in guides:
+        pos = data.getTileLocation(gid)
+        if len(pos) > 1:
+            msg = "control gid: {} is used in more than one locaton"
+            raise Exception, msg.format(gid)
+
+        x, y, z = toWorld(data, pos.pop())
+        thing = area._parent.getChildByGUID(int(prop['guid']))
+        debug("adding guide {} at {}".format(thing, (x, y, z)))
+        area.add(thing, (x, y, z))
+
+
+    # Zones
+    # Zones should be configured in Tiled
+    for og in data.objectgroups:
+        if og.name.lower() == 'zones':
+            for zone in og:
+                area.add(Zone(zone))
+
 
     # handle the exits
     # here only the exits and positions are saved

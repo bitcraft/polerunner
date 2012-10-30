@@ -23,6 +23,7 @@ from objects import GameObject
 import res, animation
 from pygame.transform import flip
 import itertools
+from pymunk import Vec2d
 
 
 class RenderGroup(object):
@@ -40,8 +41,10 @@ class Avatar(GameObject):
     update must be called occasionally for animations and rotations to work.
     """
 
-    def __init__(self, animations):
+    def __init__(self, animations, axis_offset=(0,0)):
         GameObject.__init__(self)
+        self.axis_offset = Vec2d(axis_offset)
+
         self.curImage     = None    # cached for drawing ops
         self.curFrame     = None    # current frame number
         self.curAnimation = None
@@ -52,16 +55,21 @@ class Avatar(GameObject):
         self.flip = 0
         self.speed_mod = 1.0
         self._prevAngle = None
-        self._changed = False
+        self._changed = True
+        self.axis = Vec2d(0,0)
 
         for animation in animations:
             self.add(animation)
             self.animations[animation.name] = animation
 
+        self.play(self.animations.keys()[0])
+
 
     def _updateCache(self):
         angle = 0
         self.curImage = self.curAnimation.getImage(self.curFrame, angle) 
+        self.axis = Vec2d(0, self.curImage.get_size()[1])
+        self.axis += self.axis_offset
         if self.flip: self.curImage = flip(self.curImage, 1, 0)
 
 

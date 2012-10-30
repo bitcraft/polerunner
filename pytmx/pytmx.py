@@ -35,6 +35,9 @@ class TiledElement(object):
                 raise ValueError
             setattr(self, k, types[str(k)](v))
 
+        # hack
+        self.properties = parse_properties(node)
+
 
 class TiledMap(TiledElement):
     """

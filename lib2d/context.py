@@ -102,17 +102,6 @@ class Context(object):
         pass
 
 
-    def handle_event(self, event):
-        """
-        Called when there is an pygame event to process
-
-        Better to use handle_command() or handle_commandlist()
-        for player input
-        """
-
-        pass
-
-
     def handle_command(self, command):
         """
         Called when there is an input command to process
@@ -121,16 +110,12 @@ class Context(object):
         pass
 
 
-    def handle_commandlist(self, cmdlist):
-        """
-        Called when there are multiple input commands to process
-        This is more effecient that handling them one at a time
-        """
-
+    def update(self, time):
         pass
 
 
-
+    def done(self):
+        self.parent.done()
 
 
 def flush_cmds(cmds):
@@ -168,6 +153,9 @@ class ContextDriver(object):
         self._stack = deque()
         self.target_fps = target_fps
         self.inputs = []
+
+        self.lameduck = None
+
 
         if parent != None:
             self.reload_screen()
@@ -207,34 +195,15 @@ class ContextDriver(object):
         deactivate the current state and activate the next state, if any
         """
 
-        self.getCurrentState().deactivate()
-        self._stack.pop()
-        state = self.getCurrentState()
+        if self.lameduck is None:
+            self.lameduck = self._stack.pop()
 
-        if isinstance(state, StatePlaceholder):
-            self.replace(state.klass())
-           
-        elif state is not None:
-            if state.activated:
-                state.reactivate()
-            else:
-                state.activate()
 
     def getCurrentState(self):
         try:
             return self._stack[-1]
         except:
             return None
-
-
-    def replace(self, state):
-        """
-        start a new state and deactivate the current one
-        """
-
-        self.getCurrentState().deactivate()
-        self._stack.pop()
-        self.start(state)
 
 
     def start(self, state):
@@ -269,7 +238,7 @@ class ContextDriver(object):
 
 
     def push(self, state):
-        self._stack.appendleft(state)
+        self._stack.append(state)
 
 
     def roundrobin(*iterables):
@@ -309,71 +278,70 @@ class ContextDriver(object):
         pygame.event.set_allowed(None)
         pygame.event.set_allowed(allowed)
 
-        # set an event to flush out commands
-        event_flush = pygame.USEREVENT
-        pygame.time.set_timer(event_flush, 20)
-
         # set an event to update the game state
-        debug_output = pygame.USEREVENT + 1
+        debug_output = pygame.USEREVENT
         pygame.time.set_timer(debug_output, 2000)
 
         # make sure our custom events will be triggered
-        pygame.event.set_allowed([event_flush, debug_output])
+        pygame.event.set_allowed([debug_output])
 
-        # some stuff to handle the command queue
-        rawcmds = 0
-        cmdlist = []
-        checkedcmds = []
-        
-        currentState = current_state()
+        currentState = current_state()       
+        lastState = currentState
+
+        # this will loop until the end of the program
         while currentState:
+
+            if self.lameduck:
+                self.lameduck = None
+                currentState = self._stack[-1]
+                if currentState.activated:
+                    currentState.reactivate()
+                else:
+                    currentState.activate()
+
+            elif currentState is not lastState:
+                if currentState.activated:
+                    currentState.reactivate()
+                else:
+                    currentState.activate()
+
+            lastState = currentState
+
             time = clock.tick(self.target_fps)
+
+
+# =============================================================================
+# EVENT HANDLING ==============================================================
 
             event = event_poll()
             while event:
-
-                # check each input for something interesting
-                for cmd in [ c.getCommand(event) for c in self.inputs ]:
-                    rawcmds += 1
-                    if (cmd != None) and (cmd[:2] not in checkedcmds):
-                        checkedcmds.append(cmd[:2])
-                        cmdlist.append(cmd)
 
                 # we should quit
                 if event.type == QUIT:
                     currentState = None
                     break
 
-                # do we flush input now?
-                elif event.type == event_flush:
-                    currentState.handle_commandlist(cmdlist)
-                    [ currentState.handle_commandlist(i.getHeld())
-                    for i in self.inputs ]
-                    rawcmds = 0
-                    checkedcmds = []
-                    cmdlist = []
+                # check each input for something interesting
+                for cmd in [ c.getCommand(event) for c in self.inputs ]:
+                    if cmd is not None:
+                        currentState.handle_command(cmd)
 
-
-                # do we flush input now?
-                elif event.type == debug_output:
+                if event.type == debug_output:
                     print "current FPS: \t{0:.1f}".format(clock.get_fps())
 
                 # back out of this state, or send event to the state
                 elif event.type == KEYDOWN:
                     if event.key == K_ESCAPE:
-                        self.done()
+                        currentState = None
                         break
-                    else:
-                        currentState.handle_event(event)
-                else:
-                    currentState.handle_event(event)
 
                 event = event_poll()
 
-            originalState = current_state()
-            if currentState: currentState = originalState
+# =============================================================================
+# STATE UPDATING AND DRAWING HANDLING =========================================
 
-            if currentState:
+            if current_state() is currentState:
+
                 dirty = currentState.draw(self._screen)
                 gfx.update_display(dirty)
                 #gfx.update_display()
@@ -382,19 +350,18 @@ class ContextDriver(object):
                 # to each object so we don't draw too often.
 
                 time = time / 5.0
-                #print time, self.target_fps / 10.0
 
                 currentState.update(time)
                 currentState = current_state()
-                if not currentState == originalState: continue
+                if not currentState == lastState: continue
                 currentState.update(time)
                 currentState = current_state()
-                if not currentState == originalState: continue
+                if not currentState == lastState: continue
                 currentState.update(time)
                 currentState = current_state()
-                if not currentState == originalState: continue
+                if not currentState == lastState: continue
                 currentState.update(time)
                 currentState = current_state()
-                if not currentState == originalState: continue
+                if not currentState == lastState: continue
                 currentState.update(time)
                 currentState = current_state()
