@@ -7,6 +7,7 @@ from lib2d.fsa.flags import *
 import lib2d
 import pygame
 import pymunk
+import math
 
 
 INITIAL_WALK_SPEED = 10
@@ -233,31 +234,30 @@ class fallingState(state):
 
 class rollingState(state):
     def init(self):
-        self.original = self.entity.avatar.animations['roll'].image
+        self.original = self.entity.avatar.animations['roll'].image.convert_alpha()
 
     def enter(self, cmd):
         self.entity.avatar.play('roll')
         self.angle = 0.0
-        body = self.entity.parent.getBody(self.entity)
+        self.body = self.entity.parent.getBody(self.entity)
         space = self.entity.parent.space
         for shape in space.shapes:
-            if shape.body is body:
+            if shape.body is self.body:
                 break
         space.remove(shape)
         w, h = self.entity.size
-        shape = pymunk.Poly.create_box(body, size=(w, h/3))
+        shape = pymunk.Circle(self.body, radius=8)
+        shape.friction = 1.0
         self.entity.parent.shapes[self.entity] = shape
         space.add(shape)
-        body.position.y += 4
+        self.body.position.y += 4
 
     def update(self, time):
-        self.angle -= 1.5
-        body = self.entity.parent.getBody(self.entity)
-        body.velocity.x *= ROLLING_FRICTION
+        self.angle -= 3
         colorkey = self.original.get_at((0,0))
-        rotated = pygame.transform.rotate(self.original, self.angle)
+        rotated = pygame.transform.rotozoom(self.original, self.angle, 1)
         self.entity.avatar.animations['roll'].image = rotated
-        if abs(body.velocity.x) < INITIAL_WALK_SPEED:
+        if abs(self.body.velocity.x) < INITIAL_WALK_SPEED:
             self.entity.avatar.animations['roll'].image = self.original
             self.abort()
 
@@ -382,9 +382,6 @@ class HeroController(lib2d.fsa.fsa):
         self.at(*stickyTrigger(source, P1_LEFT, idleState, move))
         self.at(*stickyTrigger(source, P1_RIGHT, idleState, move))
 
-        #self.at(*stickyTrigger(P1_LEFT, walkState, brake))
-        #self.at(*stickyTrigger(P1_RIGHT, walkState, brake))
-
         self.at(*endState(walkState, brake))
 
         self.at(*stickyTrigger(source, P1_LEFT, unbrakeState, move), flags=QUEUED)
@@ -396,6 +393,7 @@ class HeroController(lib2d.fsa.fsa):
         self.at(*stickyTrigger(source, P1_RIGHT, uncrouchState, move))
 
         self.at(*endState(brakeState, unbrakeState))
+
 
         # self.crouch / elevator control
         self.at(*stickyTrigger(source, P1_DOWN, idleState, crouch))
@@ -410,7 +408,6 @@ class HeroController(lib2d.fsa.fsa):
 
         self.at(*endState(rollingState, uncrouch))
 
-
         # elevator control 
         #self.at((P1_UP, BUTTONDOWN), idleState, up)
         #self.at((P1_UP, BUTTONUP), upState, idle)
@@ -420,8 +417,10 @@ class HeroController(lib2d.fsa.fsa):
         self.at((source, P1_ACTION2, BUTTONDOWN), idleState, jump)
         self.at((source, P1_ACTION2, BUTTONDOWN), walkState, jump)
 
+
         # double jump
         self.at((source, P1_ACTION2, BUTTONDOWN), jumpingState, jump, flags=STUBBORN)
+        self.at((source, P1_ACTION2, BUTTONDOWN), fallingState, jump, flags=STUBBORN)
 
         self.at(*endState(jumpingState, checkFalling))
         self.at(*endState(fallingState, checkFalling))
@@ -436,10 +435,6 @@ class HeroController(lib2d.fsa.fsa):
         #self.at((STATE_VIRTUAL, STATE_FINISHED), jumpingState, idle)
 
 
-        # meh
-        #self.at((STATE_VIRTUAL, STATE_FINISHED), idleState, idle)
-
-        #self.push_state((idle, None), None)
-
+        # set our initial state
         self.push_state(idleState(self, self.entity), None)
 

@@ -12,7 +12,7 @@ from pymunk.pygame_util import draw_space, from_pygame, to_pygame
 import pymunk
 
 
-DEBUG = 1
+DEBUG = 0
 
 parallax = True
 
@@ -133,20 +133,25 @@ class LevelCamera(Element):
 
         # quadtree collision testing would be good here
         for entity, shape in self.area.shapes.items():
-            points = shape.get_points()
-            l = 99999
-            t = 99999
-            r = 0
-            b = 0
-            for x, y in points:
-                if x < l: l = x
-                if x > r: r = x
-                if y < t: t = y
-                if y > b: b = y
-            w = r - l
-            h = b - t
             w, h = entity.avatar.image.get_size()
-            x, y = self.area.worldToPixel((l-8,b-h))
+            try:
+                points = shape.get_points()
+            except AttributeError:
+                temp_rect = entity.avatar.image.get_rect()
+                temp_rect.center = shape.body.position
+                x, y = self.area.worldToPixel(temp_rect.topleft)
+            else:
+                l = 99999
+                t = 99999
+                r = 0
+                b = 0
+                for x, y in points:
+                    if x < l: l = x
+                    if x > r: r = x
+                    if y < t: t = y
+                    if y > b: b = y
+                x, y = self.area.worldToPixel((l-8,b-h))
+
             x -= self.extent.left
             y -= self.extent.top
             onScreen.append((entity.avatar.image, Rect((x, y), (w, h)), 1))
@@ -164,8 +169,23 @@ class LevelCamera(Element):
                 return x - self.extent.left, y - self.extent.top
 
             for shape in self.area.space.shapes:
-                points = [ translate(i) for i in shape.get_points() ]
-                draw.aalines(surface, (255,100,100), 1, points)
+                try:
+                    points = [ translate(i) for i in shape.get_points() ]
+                except AttributeError:
+                    pass
+                else:
+                    draw.aalines(surface, (255,100,100), 1, points)
+                    continue
+
+                try:
+                    radius = shape.radius
+                    pos = shape.body.position
+                    pos = translate((int(pos.x), int(pos.y)))
+                except AttributeError:
+                    pass
+                else:
+                    draw.circle(surface, (255,100,100), pos, int(radius), 1)
+                    continue
 
             #for i in onScreen:
             #    draw.rect(surface, (100,255,100), i[1])
