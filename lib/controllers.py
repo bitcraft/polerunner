@@ -108,6 +108,7 @@ class uncrouchState(state):
         w, h = self.entity.size
         shape = pymunk.Poly.create_box(body, size=(w, h))
         self.entity.parent.shapes[self.entity] = shape
+        body.position.y -= 4
         space.add(shape)
 
 class jumpState(state):
@@ -151,6 +152,16 @@ class fallRecoverState(state):
         self.entity.avatar.play('crouch', loop_frame=4)
         self.body = self.entity.parent.getBody(self.entity)
         self.body.velocity.x /= 3.0
+        space = self.entity.parent.space
+        for shape in space.shapes:
+            if shape.body is self.body:
+                break
+        space.remove(shape)
+        w, h = self.entity.size
+        shape = pymunk.Poly.create_box(self.body, size=(w, h/2))
+        self.entity.parent.shapes[self.entity] = shape
+        self.body.position.y += 8
+        space.add(shape)
 
     def update(self, time):
         self.body.velocity.x *= STOPPING_FRICTION
@@ -237,7 +248,7 @@ class rollingState(state):
         shape = pymunk.Poly.create_box(body, size=(w, h/3))
         self.entity.parent.shapes[self.entity] = shape
         space.add(shape)
-        body.position.y += 8
+        body.position.y += 4
 
     def update(self, time):
         self.angle -= 1.5
