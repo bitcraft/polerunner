@@ -1,7 +1,6 @@
 from lib2d.area import AbstractArea
 from lib2d.avatar import Avatar
 from lib2d.animation import Animation, StaticAnimation
-from lib2d.objects import AvatarObject
 from lib2d.image import Image, ImageTile
 from lib2d.sound import Sound
 from lib2d import res
@@ -18,9 +17,9 @@ def build():
     res.defaults.colorkey = True
 
     # build the initial environment
-    uni = AbstractArea()
+    # the name is not important, but the GUID should always be 0
+    uni = AbstractArea(guid=0)
     uni.name = 'universe'
-    uni.setGUID(0)
 
     # =========================================================================
     # our charming hero
@@ -66,19 +65,16 @@ def build():
     )
 
     npc = Entity(
-        avatar,
-        [],
-        Image('face0.png'),
-        sounds = [
-            'stop.wav',
-        ]
+        (   
+            avatar,
+            Sound('stop.wav'),
+        ),
+        guid=1
     )
 
-    npc.avatar.axis_offset = (8,0)
+    #npc.avatar.axis_offset = (8,0)
     npc.setName("Brahbrah")
-    npc.setGUID(1)
     npc.size = (16,32)
-    npc.move_speed = 1   #.025
     npc.jump_strength = 400
     uni.add(npc)
 
@@ -99,9 +95,8 @@ def build():
             range(12), 1, 100)
     ])
 
-    red_key = Key(avatar)
+    red_key = Key(avatar, guid=513)
     red_key.setName('Red Key')
-    red_key.setGUID(513)
     uni.add(red_key)
 
 
@@ -111,9 +106,8 @@ def build():
             Image('green-key.png'))
     ])
 
-    green_key = Key(avatar)
+    green_key = Key(avatar, guid=514)
     green_key.setName('Green Key')
-    green_key.setGUID(514)
     uni.add(green_key)
 
 
@@ -123,16 +117,15 @@ def build():
             Image('blue-key.png'))
     ])
 
-    blue_key = Key(avatar)
+    blue_key = Key(avatar, guid=515)
     blue_key.setName('Blue Key')
-    blue_key.setGUID(515)
     uni.add(blue_key)
 
 
     # =========================================================================
     # Guides
     
-    uni.add(Guide(1537, "TEST"))
+    uni.add(Guide("TEST", guid=1537))
 
 
 
@@ -148,11 +141,7 @@ def build():
             Image('bot0-hover-0001.png')),
     ])
 
-    npc = HoverBot(
-        avatar,
-        [],
-        Image('face0.png')
-    )
+    npc = HoverBot((avatar, Sound('Hover0.wav')))
 
     npc.setName("bot0")
     npc.setGUID(516)

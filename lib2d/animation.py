@@ -42,18 +42,12 @@ class Animation(GameObject):
 
     The animation loader expects the image to be in a specific format.
     Loader only supports animations where each frame is the same size.
-
-    TODO: implement some sort of timing, rather than relying on frames
     """
+    acceptableChildren = (Image, ImageTile)
 
     def __init__(self,name,image,frames,directions=1,timing=100,sound=None):
         GameObject.__init__(self)
-
-        assert isinstance(image, Image)
-
-        #if sound:
-        #    assert(sound, Sound)
-
+        self.add(image)
 
         self.name = name
         self.image = image
@@ -75,6 +69,9 @@ class Animation(GameObject):
         else:
             self.timing = tuple(self.timing)
 
+        if (self.images is not None) and (not force):
+            return
+
 
     def __iter__(self):
         return itertools.izip(self.timing, self.frames)
@@ -89,9 +86,6 @@ class Animation(GameObject):
         load the images for use with pygame
         returns a new Animation Object
         """
-
-        if (self.images is not None) and (not force):
-            return
 
         image = self.image.load()
 

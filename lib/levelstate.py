@@ -1,9 +1,8 @@
 from renderer import LevelCamera
 
-from lib2d.buttons import *
 from lib2d.signals import *
-from lib2d.playerinput import KeyboardPlayerInput, MousePlayerInput
-from lib2d import res, ui, gfx, context
+from lib2d.playerinput import KeyboardPlayerInput
+from lib2d import res, ui, gfx, context, sound
 
 from lib2d.zone import Zone
 from lib.controllers import HeroController
@@ -22,7 +21,7 @@ movt_fix = 1/math.sqrt(2)
 
 
 def getNearby(thing, d):
-    p = thing.parent
+    p = thing.driver
     body = p.getBody(thing)
     bbox = body.bbox.inflate(64,d,d)
     x1, y1, z1 = body.bbox.center
@@ -30,30 +29,27 @@ def getNearby(thing, d):
     for other in p.testCollideObjects(bbox, skip=[body]): 
         x2, y2, z2 = other.bbox.center
         dist = math.sqrt(pow(x1-x2, 2) + pow(y1-y2, 2) + pow(z1-z2, 2))
-        nearby.append((d, (other.parent, other)))
+        nearby.append((d, (other.driver, other)))
 
     return [ i[1] for i in sorted(nearby) ]
 
 
 class SoundManager(object):
     def __init__(self):
-        self.sounds = {}
+        self.sound_map = {}
         self.last_played = {}
 
-    def loadSound(self, filename):
-        self.sounds[filename] = res.loadSound(filename)
-        self.last_played[filename] = 0
+    def loadSound(self, sound):
+        self.sound_map[sound.filename] = sound
+        self.last_played[sound.filename] = 0
 
     def play(self, filename, volume=1.0):
-        now = time.time()
-        if self.last_played[filename] + .05 <= now:
-            self.last_played[filename] = now
-            sound = self.sounds[filename]
-            sound.set_volume(volume)
-            sound.play()
+        sound = self.sound_map[filename]
+        sound.volume = volume
+        sound.play()
 
     def unload(self):
-        self.sounds = {}
+        self.sound_map = {}
         self.last_played = {}
 
 
@@ -74,8 +70,8 @@ class LevelState(context.Context):
     much of the work done here is in the Standard UI class.
     """
 
-    def __init__(self, parent, area):
-        super(LevelState, self).__init__(parent)
+    def __init__(self, driver, area):
+        super(LevelState, self).__init__(driver)
         self.area = area
 
 
@@ -89,8 +85,8 @@ class LevelState(context.Context):
 
         self.camera = vp.camera
 
-        for filename in self.area.soundFiles:
-            SoundMan.loadSound(filename)
+        [ SoundMan.loadSound(c) for c in self.area.getChildren()
+          if isinstance(c, sound.Sound) ]
 
         # hackish pub/sub
         self.area.subscribe(self)
@@ -109,7 +105,7 @@ class LevelState(context.Context):
         c1.program(keyboard)
         c1.primestack()
 
-        self.parent.inputs.append(keyboard)
+        self.driver.inputs.append(keyboard)
         self.controllers.append(c1)
 
         self.area.space.add_collision_handler(1,2, begin=self.overlap_zone)
@@ -131,7 +127,7 @@ class LevelState(context.Context):
 
 
     def enter_zone(self, zone):
-        ctx = TextDialog(self.parent)
+        ctx = TextDialog(self.driver)
         ctx.prompt(zone.properties['TouchMessage'])
         self.queued_state = ctx
 
@@ -145,7 +141,7 @@ class LevelState(context.Context):
             [ c.update(time) for c in self.controllers ]
 
         if self.queued_state:
-            self.parent.push(self.queued_state)
+            self.driver.push(self.queued_state)
             self.queued_state = None
             return
 
@@ -168,10 +164,10 @@ class LevelState(context.Context):
             #elif cmd == P1_ACTION3:
             #    for thing, body in getNearby(self.hero, 6):
             #        if thing.pushable and not self.hero.held:
-            #            self.hero.parent.join(hero_body, body)
+            #            self.hero.driver.join(hero_body, body)
             #            self.hero.held = body
             #            msg = self.text['grab'].format(thing.name) 
-            #            self.hero.parent.emitText(msg, thing=self.hero)
+            #            self.hero.driver.emitText(msg, thing=self.hero)
 
 
     def emitSound(self, filename, position):

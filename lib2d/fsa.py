@@ -178,6 +178,8 @@ class fsa(object):
         self.time += time
         [ i.update(time) for i in self.stack ]
 
+        print self.stack
+
         ok = True
         for trigger, candidate_state in self.holds.items():
             if candidate_state[0].__class__ in [i.__class__ for i in self.stack]:

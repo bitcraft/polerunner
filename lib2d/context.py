@@ -42,11 +42,11 @@ class Context(object):
     of a game.
     """
 
-    def __init__(self, parent):
+    def __init__(self, driver):
         """
         Called when object is instanced.
 
-        parent is a ref to the statedriver
+        driver is a ref to the statedriver
 
         Not a good idea to load large objects here since it is possible
         that the state is simply instanced and placed in a queue.
@@ -55,7 +55,7 @@ class Context(object):
         that is the point when assets will be required.
         """        
 
-        self.parent = parent
+        self.driver = driver
         self.activated = False
 
 
@@ -115,7 +115,7 @@ class Context(object):
 
 
     def done(self):
-        self.parent.done()
+        self.driver.done()
 
 
 def flush_cmds(cmds):
@@ -148,8 +148,8 @@ class ContextDriver(object):
     etc.
     """
 
-    def __init__(self, parent, target_fps=30):
-        self.parent = parent
+    def __init__(self, driver, target_fps=30):
+        self.driver = driver
         self._stack = deque()
         self.target_fps = target_fps
         self.inputs = []
@@ -157,7 +157,7 @@ class ContextDriver(object):
         self.lameduck = None
 
 
-        if parent != None:
+        if driver != None:
             self.reload_screen()
 
 
@@ -169,7 +169,7 @@ class ContextDriver(object):
         is set to scale.
         """
 
-        return self.parent.get_screen().get_size()
+        return self.driver.get_screen().get_size()
 
 
     def get_screen(self):
@@ -179,7 +179,7 @@ class ContextDriver(object):
         * This may not be the pygame display surface
         """
 
-        return self.parent.get_screen()
+        return self.driver.get_screen()
 
 
     def reload_screen(self):
@@ -187,7 +187,7 @@ class ContextDriver(object):
         Called when the display changes mode.
         """
 
-        self._screen = self.parent.get_screen()
+        self._screen = self.driver.get_screen()
 
 
     def done(self):

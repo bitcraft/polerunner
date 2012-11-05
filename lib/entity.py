@@ -1,15 +1,12 @@
-from lib2d.objects import AvatarObject
+from lib2d.objects import GameObject
 
-
-class InteractiveObject(AvatarObject):
+class InteractiveObject(GameObject):
     """
     these objects supply a list of actions that other objects can call
     """
 
-    physics = False
-
-    def __init__(self, avatar, builders=None):
-        AvatarObject.__init__(self, avatar)
+    def __init__(self, avatar, builders=None, **kwargs):
+        GameObject.__init__(self, avatar, **kwargs)
         self.actionBuilders = builders
 
 
@@ -22,17 +19,9 @@ class InteractiveObject(AvatarObject):
 
 class Entity(InteractiveObject):
     """
-    Game object that is capable of containing other objects and moving/being
-    moved
+    GameObject that is interactive.
+    Is capable of receiving events.
     """
 
     physics = True
-    move_speed = .001      # m/s
-    jump_strength = .5  # for low gravity
 
-    def __init__(self, avatar, builders, face, sounds=[]):
-        super(Entity, self).__init__(avatar, builders)
-        self.faceImage = face
-        self.held = None
-        self.grounded = False
-        self.sounds = sounds

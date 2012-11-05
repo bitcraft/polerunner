@@ -1,5 +1,5 @@
 from lib2d.tilemap import BufferedTilemapRenderer
-from lib2d.objects import AvatarObject, GameObject
+from lib2d.objects import GameObject
 from lib2d.bbox import BBox
 from lib2d.ui import Element
 from lib2d import vec
@@ -29,7 +29,6 @@ class AvatarLayer(GameObject):
 class LevelCamera(Element):
     """
     The level camera manages sprites on the screen and a tilemap renderer.
-    it will be mangled some to use the 3d coordinate system of the engine
     """
 
     name = 'LevelCamera'
@@ -133,7 +132,7 @@ class LevelCamera(Element):
 
         # quadtree collision testing would be good here
         for entity, shape in self.area.shapes.items():
-            if hasattr(entity, 'avatar'):
+            if entity.avatar:
                 w, h = entity.avatar.image.get_size()
                 try:
                     points = shape.get_points()

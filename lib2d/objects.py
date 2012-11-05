@@ -1,7 +1,6 @@
 import res
 import pygame, types, os
 
-
 unsupported = [pygame.Surface, types.MethodType]
 
 
@@ -20,33 +19,61 @@ def loadObject(name):
 
 class GameObject(object):
     """
-    the most basic object that can be stored in the game.
+    Essentially, game objects are part of a simple tree data structure.
+    Each gameobject must have a unique GUID.
     the top level object should have _parent set to None.
+
+    Sounds and avatars are added to an object by calling the object's add
+    method.
+
+    If a subclass of gameobject is defined with guid being None, then a GUID
+    will be assinged when the tree is pickled and written to disk.
 
     VERY IMPORTANT!
     if you are going to specially handle any object that will become a child of
     the object, YOU MUST HANDLE IT IN add().  failure to do so will cause
     difficult to track bugs.
     """
+    acceptableChildren = None
 
-    population = []
-    sounds = []
-    gravity = True
-    pushable = False
-    time_update = False
+    def __init__(self, children=[], parent=None, guid=None):
+        # hack
+        if self.acceptableChildren == None:
+            self.acceptableChildren = (GameObject,)
 
-
-    def __init__(self, parent=None):
-        self.short_name = str(self.__class__)
-        self.size       = (32, 32, 32)
         self._children  = []
-        self._parent    = parent
-        self._childrenGUID = []  # children of this object by guid !dont use
-        self.guid = None
+        self._parent    = None
+        self.guid = guid
 
-        if self.time_update:
-            self.population.append(self)
+        if parent is not None:
+            self.setParent(parent)
 
+        if not isinstance(children, (list, tuple)):
+            children = [children]
+
+        [ self.add(child) for child in children ]
+
+        # cache
+        self._avatar = None
+
+    @property
+    def avatar(self):
+        if self._avatar is None:
+            import avatar
+            for child in self._children:
+                if isinstance(child, avatar.Avatar):
+                    self._avatar = child
+                    return child
+            else:
+                self._avatar = False
+                return None
+        else:
+            return self._avatar
+
+    @property
+    def sounds(self):
+        import sound
+        return (c for c in self._children if isinstance(c, sound.Sound))
 
     def __repr__(self):
         return "<{}: \"{}\">".format(self.__class__.__name__, id(self))
@@ -145,6 +172,15 @@ class GameObject(object):
 
 
     def add(self, other):
+        ok=False
+        for klass in self.acceptableChildren:
+            if isinstance(other, klass):
+                ok=True
+                break
+        else:
+            print self, other.__class__, self.acceptableChildren
+            raise valueError
+
         self._children.append(other)
         try:
             if other._parent:
@@ -215,25 +251,10 @@ class GameObject(object):
         pass
 
 
-    def set_flag(self):
-        """
-        flags are binary values that are attached to the object
-
-        use to set a flag as true  or false
-        other values will be evaluated as a bool according to python's rules
-        """
-
-        pass
-
-
     def serialize(self, pickler, callback=None):
         """
         pickle this object, and continue with the children
         """
-
-        # last chance we have to make sure children can be accessed in another
-        # life!
-        self.childrenGUID = [ c.guid for c in self._children ]
 
         pickler.dump(self)
 
@@ -242,16 +263,6 @@ class GameObject(object):
 
         for child in self._children:
             child.serialize(pickler, callback)
-
-
-    def get_image(self):
-        """
-        return an image suitable for drawing onto a surface.
-
-        it is up to the drawing party to know where/how to draw it.  =)
-        """
-
-        return self.icon
 
 
     def destroy(self, parent=None):
@@ -294,6 +305,9 @@ class GameObject(object):
                         raise ValueError
 
         # generate unique ID's for all the objects (if not already assigned)
+        # saving is only ever done for the top level node
+        # if saving children of it, then guid may not be unique
+
         i = 0
         used = set([ child.guid for child in self.getChildren() ])
         used.add(self.guid)
@@ -321,6 +335,14 @@ class GameObject(object):
         #    pickler.dump(toc)
 
 
+class PhysicalObject(GameObject):
+    """
+    object that can be seen or manipulated by the player
+    """
+    pass
+    
+
+
 class InteractiveObject(GameObject):
     """
     object that exists in the game world
@@ -328,22 +350,5 @@ class InteractiveObject(GameObject):
     don't require things like physics simulation
     """
 
-class AvatarObject(GameObject):
-    def __init__(self, avatar):
-        from avatar import Avatar
-
-        GameObject.__init__(self)
-
-        if isinstance(avatar, Avatar):
-            self.add(avatar)
-            self._avatar = avatar
-
-
-    @property    
-    def avatar(self):
-        return self._avatar
-
-
-class InteractiveObject(AvatarObject):
     def use(self, user=None):
         pass

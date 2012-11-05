@@ -14,7 +14,7 @@ INITIAL_WALK_SPEED = 10
 RUN_SPEED = 50
 SPRINT_SPEED = 110
 WALK_SPEED_INCREMENT = .5
-STOPPING_FRICTION = 0.991
+STOPPING_FRICTION = 0.994
 ROLLING_FRICTION = 0.99
 
 
@@ -206,7 +206,6 @@ class brakeState(state):
     def enter(self, cmd):
         self.entity.avatar.play('brake', loop_frame=5)
         self.body = self.entity.parent.getBody(self.entity)
-        self.body.velocity.x /= 5.0
         self.entity.parent.emitSound('stop.wav', entity=self.entity)
 
     def update(self, time):
@@ -308,6 +307,7 @@ class checkFallingT(transition):
 class idleT(transition):
     def pick(self, fsa, entity):
         body = entity.parent.getBody(entity)
+        print body.velocity.y
         if body.velocity.y > 0:
             fsa.push_state(idleState(fsa, entity), None)
             return fallingState(fsa, entity)

@@ -36,10 +36,12 @@ class RenderGroup(object):
 
 class Avatar(GameObject):
     """
-    Avatar is a sprite-like class that supports multiple animations, animation
+    Avatar is a graphics class that supports multiple animations, animation
     controls, directions, is pickleable, and has lazy image loading. 
     update must be called occasionally for animations and rotations to work.
     """
+    acceptableChildren = (animation.Animation,
+                          animation.StaticAnimation)
 
     def __init__(self, animations, axis_offset=(0,0)):
         GameObject.__init__(self)
@@ -125,6 +127,12 @@ class Avatar(GameObject):
 
 
     def play(self, name=None, loop=-1, loop_frame=None, callback=None):
+        """
+        if a callback is supplied here, it will be called when animation
+        finishes.  callbacks are only supported when 'loop' is passed since
+        animations will loop forever by default
+        """
+
         if isinstance(name, (animation.Animation, animation.StaticAnimation)):
             if name == self.curAnimation: return
             self.curAnimation = name

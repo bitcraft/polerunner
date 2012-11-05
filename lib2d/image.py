@@ -1,3 +1,4 @@
+from lib2d import GameObject
 from lib2d import res
 import pygame
 
@@ -10,12 +11,14 @@ def get_defaults():
     return res.defaults.__dict__.copy()
 
 
-class Image(object):
+class Image(GameObject):
     """
     Surface class that is pickable.  :)
     """
 
     def __init__(self, filename, *args, **kwargs):
+        GameObject.__init__(self)
+
         self.filename = filename
         self.args = args
         self.kwargs = get_defaults()
@@ -27,12 +30,14 @@ class Image(object):
         return res.loadImage(self.filename, *self.args, **self.kwargs)
 
 
-class ImageTile(object):
+class ImageTile(GameObject):
     """
     Allows you to easily pull tiles from other images
     """
 
     def __init__(self, filename, tile, tilesize):
+        GameObject.__init__(self)
+
         self.image = Image(filename)
         self.tile = tile
         self.tilesize = tilesize

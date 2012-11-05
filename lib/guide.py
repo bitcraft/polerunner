@@ -10,9 +10,8 @@ avatar = Avatar([
 
 
 class Guide(InteractiveObject):
-    def __init__(self, guid, text):
-        InteractiveObject.__init__(self, avatar)
-        self.setGUID(guid)
+    def __init__(self, text, **kwargs):
+        InteractiveObject.__init__(self, avatar, **kwargs)
         self.setName(text[:12])
         self.text = text
         self.size = (16,16,16)

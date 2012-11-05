@@ -4,8 +4,8 @@ from objects import GameObject
 from pygame import Rect
 from pathfinding import astar
 from lib2d.signals import *
-from lib2d.objects import AvatarObject
 from lib2d.zone import Zone
+from lib2d.sound import Sound
 import math
 
 import pymunk
@@ -41,7 +41,7 @@ class AbstractArea(GameObject):
     pass
 
 
-class Sound(object):
+class EmitSound(object):
     """
     Class that manages how sounds are played and emitted from the area
     """
@@ -61,47 +61,6 @@ class Sound(object):
     @property
     def done(self):
         return self._done
-
-
-
-class AdventureMixin(object):
-    """
-    Mixin class that contains methods to translate world coordinates to screen
-    or surface coordinates.
-    The methods will translate coordinates of the tiled map
-
-    TODO: manipulate the tmx loader to swap the axis
-    """
-
-    def tileToWorld(self, (x, y, z)):
-        xx = int(x) * self.tmxdata.tileheight
-        yy = int(y) * self.tmxdata.tilewidth
-        return xx, yy, z
-
-
-    def pixelToWorld(self, (x, y)):
-        return Vec3d(y, x, 0)
-
-
-    def toRect(self, bbox):
-        # return a rect that represents the object on the xy plane
-        # currently this is used for geometry collision detection
-        return Rect((bbox.x, bbox.y, bbox.depth, bbox.width))
-
-
-    def worldToPixel(self, (x, y, z)):
-        return Vec2d((y, x))
-
-
-    def worldToTile(self, (x, y, z)):
-        xx = int(x) / self.tmxdata.tilewidth
-        yy = int(y) / self.tmxdata.tileheight
-        zz = 0
-        return xx, yy, zz
-
-
-    def setForce(self, body, (x, y, z)):
-        body.acc = Vec2d(x, y)
 
 
 class PlatformMixin(object):
@@ -172,29 +131,12 @@ class PlatformArea(AbstractArea, PlatformMixin):
 
     Physics simulation is handled by pymunk/chipmunk 2d physics.
 
-    Bodies can exits in layers, just like maps.  since the y values can
-    vary, when testing for collisions the y value will be truncated and tested
-    against the quadtree that is closest.  if there is no quadtree, no
-    collision testing will be done.
-
-    There are a few hacks to be aware of:
-        bodies move in 3d space, but level geometry is 2d space
-        when using pygame rects, the y value maps to the z value in the area
-
-    a word on the coordinate system:
-        coordinates are 'right handed'
-        x axis moves toward viewer
-        y axis move left right
-        z axis is height
-
     Expects to load a specially formatted TMX map created with Tiled.
     Layers:
         Control Tiles
         Upper Partial Tiles
         Lower Partial Tiles
         Lower Full Tiles
-
-    Contains a very basic discrete collision system.
 
     The control layer is where objects and boundries are placed.  It will not
     be rendered.  Your map must not have any spaces that are open.  Each space
@@ -206,9 +148,6 @@ class PlatformArea(AbstractArea, PlatformMixin):
     correctly.
 
     REWRITE: FUNCTIONS HERE SHOULD NOT CHANGE STATE
-
-    Handle mapping of physics bodies to game entities
-
 
     NOTE: some of the code is specific for maps from the tmxloader
     """
@@ -226,12 +165,11 @@ class PlatformArea(AbstractArea, PlatformMixin):
         self.subscribers = []
 
         self.exits    = {}
-        self.messages = []
         self.tmxdata = None
         self.mappath = None
-        self.sounds = []
-        self.soundFiles = []
+        self.soundmap = {}
         self.inUpdate = False
+        self.currentSounds = []
         self.drawables = []         # HAAAAKCCCCKCK
         self.changedAvatars = True  #hack
         self.time = 0
@@ -275,10 +213,6 @@ class PlatformArea(AbstractArea, PlatformMixin):
                     if key[4:].lower() == "sound":
                         self.soundFiles.append(value)
 
-        # get sounds from objects
-        for i in [ i for i in self.getChildren() if i.sounds ]:
-            self.soundFiles.extend(i.sounds)
-
         self.space = pymunk.Space()
         self.space.gravity = self.gravity
 
@@ -301,7 +235,7 @@ class PlatformArea(AbstractArea, PlatformMixin):
 
         # just assume we have the correct types under us
         for child in self._children:
-            if isinstance(child, AvatarObject):
+            if child.avatar:
                 if child.physics:
                     body = pymunk.Body(5, pymunk.inf)
                     body.position = self.temp_positions[child]
@@ -339,7 +273,7 @@ class PlatformArea(AbstractArea, PlatformMixin):
         # don't do anything with the physics engine here
         # handle it in load(), where the area is prepped for use
 
-        if isinstance(child, AvatarObject):
+        if child.avatar:
             if pos is None:
                 pos = self.defaultPosition()
             else:
@@ -416,9 +350,9 @@ class PlatformArea(AbstractArea, PlatformMixin):
         if pos==entity==None:
             raise ValueError, "emitSound requires a position or entity"
 
-        self.sounds = [ s for s in self.sounds if not s.done ]
-        if filename not in [ s.filename for s in self.sounds ]:
-            self.sounds.append(Sound(filename, ttl))
+        self.currentSounds = [ s for s in self.currentSounds if not s.done ]
+        if filename not in [ s.filename for s in self.currentSounds ]:
+            self.currentSounds.append(EmitSound(filename, ttl))
             if entity:
                 pos = self.bodies[entity].position
             for sub in self.subscribers:
@@ -459,8 +393,7 @@ class PlatformArea(AbstractArea, PlatformMixin):
             else:
                 entity.grounded = False
 
-            if entity.time_update:
-                entity.update(time)
+            #entity.update(time)
 
         self.space.step(1.0/60)
 
