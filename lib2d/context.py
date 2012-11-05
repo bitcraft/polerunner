@@ -26,16 +26,6 @@ from itertools import cycle, islice
 from pygame.locals import *
 
 
-"""
-player's input doesn't get checked every loop.  it is checked every 15ms and
-then handled.  this prevents the game logic from dealing with input too often
-and slowing down rendering.
-"""
-
-
-
-
-
 class Context(object):
     """
     Game states are a logical way to break up distinct portions

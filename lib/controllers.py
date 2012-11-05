@@ -63,13 +63,15 @@ class walkState(state):
             self.x = INITIAL_WALK_SPEED
 
 
-    def update(self, tine):
-        self.body.velocity.x = self.x
+    def update(self, time):
+        desired_vel = self.body.velocity + (self.x, 0)
+        delta = desired_vel - self.body.velocity
+        self.body.apply_impulse(delta)
 
-        if self.x > 0:
-            self.x += WALK_SPEED_INCREMENT
-        else:
-            self.x -= WALK_SPEED_INCREMENT
+        #if self.x > 0:
+        #    self.x += WALK_SPEED_INCREMENT
+        #else:
+        #    self.x -= WALK_SPEED_INCREMENT
 
         vel = abs(self.body.velocity.x)
         if vel < RUN_SPEED:
