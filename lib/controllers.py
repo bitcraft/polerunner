@@ -4,6 +4,7 @@ command tree for the main character
 
 from lib2d.buttons import *
 from lib2d.fsa.flags import *
+from lib2d import context
 import lib2d
 import pygame
 import pymunk
@@ -18,11 +19,11 @@ STOPPING_FRICTION = 0.994
 ROLLING_FRICTION = 0.99
 
 
-class state(object):
-    flags = 0
+class State(context.Context):
     forbidden = []
 
     def __init__(self, fsa, entity, *args, **kwargs):
+        context.Context.__init__(self, fsa)
         self.fsa = fsa
         self.entity = entity
         self.cmd = None
@@ -47,9 +48,7 @@ class state(object):
         pass
 
 
-class walkState(state):
-    flags = STICKY + REPLACE_OWN_CLASS
-
+class walkState(State):
     def enter(self, cmd):
         self.body = self.entity.parent.getBody(self.entity)
         if self.cmd is None:
@@ -82,7 +81,7 @@ class walkState(state):
             self.entity.avatar.play('sprint')
 
 
-class crouchState(state):
+class crouchState(State):
     def enter(self, cmd):
         self.entity.avatar.play('crouch', loop_frame=4)
         body = self.entity.parent.getBody(self.entity)
@@ -100,7 +99,8 @@ class crouchState(state):
         body.position.y += 8
         space.add(shape)
 
-class uncrouchState(state):
+
+class uncrouchState(State):
     def enter(self, cmd):
         self.entity.avatar.play('uncrouch', callback=self.abort, loop=0)
         body = self.entity.parent.getBody(self.entity)
@@ -118,12 +118,13 @@ class uncrouchState(state):
         body.position.y -= 4
         space.add(shape)
 
-class jumpState(state):
+
+class jumpState(State):
     def enter(self, cmd):
         pass
 
 
-class jumpingState(state):
+class jumpingState(State):
     max_jumps = 2
 
     def init(self):
@@ -141,8 +142,7 @@ class jumpingState(state):
 
         if self.entity.grounded:
             self.jumps = 1
-            if not self.entity.held:
-                self.body.apply_impulse((0, -self.entity.jump_strength))
+            self.body.apply_impulse((0, -self.entity.jump_strength))
         else:
             if self.jumps <= self.max_jumps:
                 self.jumps += 2
@@ -154,7 +154,7 @@ class jumpingState(state):
             self.abort()
 
 
-class fallRecoverState(state):
+class fallRecoverState(State):
     def enter(self, cmd):
         self.entity.avatar.play('crouch', loop_frame=4)
         self.body = self.entity.parent.getBody(self.entity)
@@ -178,22 +178,22 @@ class fallRecoverState(state):
             self.abort()
 
 
-class deadState(state):
+class deadState(State):
     def enter(self, cmd):
         self.entity.avatar.play('die', loop_frame=2)
 
 
-class upState(state):
+class upState(State):
     pass
 
-class runState(state):
+class runState(State):
     pass
 
-class sprintState(state):
+class sprintState(State):
     pass
 
 
-class idleState(state):
+class idleState(State):
     def enter(self, cmd):
         self.entity.avatar.play('idle')
         self.body = self.entity.parent.getBody(self.entity)
@@ -204,7 +204,7 @@ class idleState(state):
             self.abort()
 
 
-class brakeState(state):
+class brakeState(State):
     def enter(self, cmd):
         self.entity.avatar.play('brake', loop_frame=5)
         self.body = self.entity.parent.getBody(self.entity)
@@ -216,14 +216,14 @@ class brakeState(state):
             self.abort()
 
 
-class unbrakeState(state):
+class unbrakeState(State):
     def enter(self, cmd):
         self.entity.avatar.play('unbrake', callback=self.abort, loop=0)
         body = self.entity.parent.getBody(self.entity)
         body.velocity.x = 0
 
 
-class fallingState(state):
+class fallingState(State):
     def enter(self, cmd):
         self.entity.avatar.play('falling')
         self.body = self.entity.parent.getBody(self.entity)
@@ -239,7 +239,7 @@ class fallingState(state):
         self.old_vel = self.body.velocity.y 
 
 
-class rollingState(state):
+class rollingState(State):
     def init(self):
         self.original = self.entity.avatar.animations['roll'].image.convert_alpha()
 
@@ -292,18 +292,14 @@ class checkFallingT(transition):
 
         body = entity.parent.getBody(entity)
 
-        # best guess that we are grounded
-        if round(body.velocity.y, 1) == 0:
-            return fallRecover(fsa, entity)
-
-        elif body.velocity.y > 0:
+        if body.velocity.y > 0:
             return fallingState(fsa, entity)
 
         elif body.velocity.y < 0:
             return fallingState(fsa, entity)
 
         else:
-            return fallRecoverT(fsa, entity)
+            return fallRecoverState(fsa, entity)
 
 
 class idleT(transition):
@@ -333,6 +329,7 @@ class moveT(transition):
     def pick(self, fsa, entity):
         return walkState(fsa, entity)
 
+
 class crouchT(transition):
     def pick(self, fsa, entity):
         body = entity.parent.getBody(entity)
@@ -341,9 +338,11 @@ class crouchT(transition):
         else:
             return crouchState(fsa, entity)
 
+
 class uncrouchT(transition):
     def pick(self, fsa, entity):
         return uncrouchState(fsa, entity)
+
 
 class upT(transition):
     def pick(self, fsa, entity):
@@ -363,8 +362,6 @@ class jumpT(transition):
         return jumpingState(fsa, entity)
 
 
-# STICKY means that state will be readded to the fsa stack when possible if it
-# is ejected AND the the alternate trigger has not happened yet.
 def stickyTrigger(source, trigger, state, picker):
     return (source, trigger, BUTTONDOWN), state, picker, (source, trigger, BUTTONUP)
 
@@ -398,8 +395,8 @@ class HeroController(lib2d.fsa.fsa):
 
         self.at(*endState(walkState, brake))
 
-        self.at(*stickyTrigger(source, P1_LEFT, unbrakeState, move), flags=QUEUED)
-        self.at(*stickyTrigger(source, P1_RIGHT, unbrakeState, move), flags=QUEUED)
+        self.at(*stickyTrigger(source, P1_LEFT, unbrakeState, move))
+        self.at(*stickyTrigger(source, P1_RIGHT, unbrakeState, move))
         self.at(*stickyTrigger(source, P1_LEFT, brakeState, move), flags=QUEUED)
         self.at(*stickyTrigger(source, P1_RIGHT, brakeState, move), flags=QUEUED)
 
@@ -417,8 +414,8 @@ class HeroController(lib2d.fsa.fsa):
 
         self.at((source, P1_DOWN, BUTTONDOWN), walkState, crouch)
 
-        self.at((source, P1_DOWN, BUTTONDOWN), fallRecoverState, crouch, flags=QUEUED)
-        self.at((source, P1_DOWN, BUTTONDOWN), rollingState, crouch, flags=QUEUED)
+        self.at((source, P1_DOWN, BUTTONDOWN), fallRecoverState, crouch)
+        self.at((source, P1_DOWN, BUTTONDOWN), rollingState, crouch)
 
         self.at(*endState(rollingState, uncrouch))
 
@@ -439,14 +436,6 @@ class HeroController(lib2d.fsa.fsa):
         self.at(*endState(jumpingState, checkFalling))
         self.at(*endState(fallingState, checkFalling))
         self.at(*endState(fallRecoverState, uncrouch))
-
-        #self.at((STATE_VIRTUAL, STATE_FINISHED), jumpingState, checkFalling)
-        #self.at((STATE_VIRTUAL, STATE_FINISHED), fallingState, checkFalling)
-        #self.at((STATE_VIRTUAL, STATE_FINISHED), fallRecoverState,uncrouch)
-
-        #self.at((P1_ACTION2, BUTTONUP), jumpingState, idle)
-
-        #self.at((STATE_VIRTUAL, STATE_FINISHED), jumpingState, idle)
 
         # sanity, also falling
         self.at(*endState(idleState, idle))

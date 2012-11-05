@@ -10,7 +10,7 @@ import pygame, os
 
 
 class InstructionScreen(context.Context):
-    def activate(self):
+    def enter(self):
         self.foreground = (0,0,0)
         self.background = (109, 109, 109)
         self.border = draw.GraphicBox("border0.png", hollow=True)
@@ -38,18 +38,16 @@ class InstructionScreen(context.Context):
 class TitleScreen(context.Context):
     borderImage = Image("lpc-border0.png", colorkey=True)
 
-    def activate(self):
+    def init(self):
         self.background = (109, 109, 109)
         self.border = draw.GraphicBox(self.borderImage)
         self.counter = 0
         self.game = None
-        self.activated = True
-        #self.reactivate()
 
         self.new_game()
 
 
-    def reactivate(self):
+    def enter(self):
         if self.game:
             self.menu = Menu(20, -5, 'vertical', 100,
                 [('New Game', self.new_game),
@@ -69,7 +67,6 @@ class TitleScreen(context.Context):
 
         self.menu.rect = pygame.Rect(12,12,20,100)
         self.redraw = True
-        #res.playMusic("oneslymove.ogg")
 
 
     def handle_event(self, event):
@@ -89,7 +86,7 @@ class TitleScreen(context.Context):
         res.fadeoutMusic(1000)
         self.game = world.build()
         level = self.game.getChildByGUID(5001)
-        self.driver.start(LevelState(self.driver, level))
+        self.driver.append(LevelState(self.driver, level))
 
 
     def save_game(self):

@@ -75,7 +75,7 @@ class LevelState(context.Context):
         self.area = area
 
 
-    def activate(self):
+    def enter(self):
         self.ui = LevelUI()
         vpm = ui.Frame(self.ui, ui.GridPacker())
         vp = ui.ViewPort(self.ui, self.area)
@@ -131,7 +131,7 @@ class LevelState(context.Context):
         ctx.prompt(zone.properties['TouchMessage'])
         self.queued_state = ctx
 
-    def reactivate(self):
+    def reenter(self):
         [ c.reset() for c in self.controllers ]
         pass
 
@@ -141,7 +141,7 @@ class LevelState(context.Context):
             [ c.update(time) for c in self.controllers ]
 
         if self.queued_state:
-            self.driver.push(self.queued_state)
+            self.driver.append(self.queued_state)
             self.queued_state = None
             return
 

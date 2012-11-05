@@ -27,19 +27,15 @@ from pygame.locals import *
 
 
 class Context(object):
-    """
-    Game states are a logical way to break up distinct portions
-    of a game.
-    """
 
     def __init__(self, driver):
         """
         Called when object is instanced.
 
-        driver is a ref to the statedriver
+        driver is a ref to the contextdriver
 
         Not a good idea to load large objects here since it is possible
-        that the state is simply instanced and placed in a queue.
+        that the context is simply instanced and placed in a queue.
 
         Ideally, any initialization will be handled in activate() since
         that is the point when assets will be required.
@@ -49,27 +45,23 @@ class Context(object):
         self.activated = False
 
 
-    def activate(self):
+    def init(self):
         """
-        Called when focus is given to the state for the first time
-
-        *** When overriding this method, set activated to true ***
+        Called when context is placed in a stack
         """
 
-        pass
 
-
-    def reactivate(self):
+    def enter(self):
         """
-        Called with focus is given to the state again
+        Called before focus is given to the context
         """
 
         pass
 
 
-    def deactivate(self):
+    def exit(self):
         """
-        Called when focus is being lost
+        Called before focus is lost
         """
 
         pass
@@ -77,8 +69,7 @@ class Context(object):
 
     def terminate(self):
         """
-        Called when the state is no longer needed
-        The state will be lost after this is called
+        Called when the context is removed from a stack
         """
 
         pass
@@ -86,7 +77,7 @@ class Context(object):
 
     def draw(self, surface):
         """
-        Called when state can draw to the screen
+        Called when context can draw to the screen
         """
 
         pass
@@ -104,17 +95,13 @@ class Context(object):
         pass
 
 
-    def done(self):
-        self.driver.done()
-
-
 def flush_cmds(cmds):
     pass
 
 
 class StatePlaceholder(object):
     """
-    holds a ref to a state
+    holds a ref to a context
 
     when found in the queue, will be instanced
     """
@@ -122,30 +109,82 @@ class StatePlaceholder(object):
     def __init__(self, klass):
         self.klass = klass
 
-    def activate(self):
+    def enter(self):
         pass
 
-    def deactivate(self):
+    def exit(self):
         pass
 
 
 class ContextDriver(object):
-    """
-    A state driver controls what is displayed and where input goes.
 
-    A state is a logical way to break up "modes" of use for a game.
+    def __init__(self):
+        self._stack = []
+
+
+    def remove(self, context):
+        self._stack.remove(context)
+
+
+    def append(self, context):
+        """
+        start a new context and hold the current context.
+
+        when the new context finishes, the previous one will continue
+        where it was left off.
+
+        idea: the old context could be pickled and stored to disk.
+        """
+
+        context.init()
+        context.enter()
+        self._stack.append(context)
+
+
+    def roundrobin(*iterables):
+        """
+        create a new schedule for concurrent contexts
+        roundrobin('ABC', 'D', 'EF') --> A D E B F C
+
+        NOT USED
+
+        Recipe credited to George Sakkis
+        """
+
+        pending = len(iterables)
+        nexts = cycle(iter(it).next for it in iterables)
+        while pending:
+            try:
+                for next in nexts:
+                    yield next()
+            except StopIteration:
+                pending -= 1
+                nexts = cycle(islice(nexts, pending))
+
+
+    @property
+    def current_context(self):
+        try:
+            return self._stack[0]
+        except IndexError:
+            return None
+
+
+class GameDriver(ContextDriver):
+    """
+    accepts contexts that control game flow
+    A context is a logical way to break up "modes" of use for a game.
     For example, a title screen, options screen, normal play, pause,
     etc.
     """
 
     def __init__(self, driver, target_fps=30):
+        ContextDriver.__init__(self)
         self.driver = driver
-        self._stack = deque()
         self.target_fps = target_fps
         self.inputs = []
 
         self.lameduck = None
-
 
         if driver != None:
             self.reload_screen()
@@ -180,85 +219,14 @@ class ContextDriver(object):
         self._screen = self.driver.get_screen()
 
 
-    def done(self):
-        """
-        deactivate the current state and activate the next state, if any
-        """
-
-        if self.lameduck is None:
-            self.lameduck = self._stack.pop()
-
-
-    def getCurrentState(self):
-        try:
-            return self._stack[-1]
-        except:
-            return None
-
-
-    def start(self, state):
-        """
-        start a new state and hold the current state.
-
-        when the new state finishes, the previous one will continue
-        where it was left off.
-
-        idea: the old state could be pickled and stored to disk.
-        """
-
-        self._stack.append(state)
-        self.getCurrentState().activate()
-        self.getCurrentState().activated = True
-
-
-    def start_restart(self, state):
-        """
-        start a new state and hold the current state.
-
-        the current state will be terminated and a placeholder will be
-        placed on the stack.  when the new state finishes, the previous
-        state will be re-instanced.  this can be used to conserve memory.
-        """
-
-        prev = self.getCurrentState()
-        prev.deactivate()
-        self._stack.pop()
-        self._stack.append(StatePlaceholder(prev.__class__))
-        self.start(state)
-
-
-    def push(self, state):
-        self._stack.append(state)
-
-
-    def roundrobin(*iterables):
-        """
-        create a new schedule for concurrent states
-        roundrobin('ABC', 'D', 'EF') --> A D E B F C
-
-        Recipe credited to George Sakkis
-        """
-
-        pending = len(iterables)
-        nexts = cycle(iter(it).next for it in iterables)
-        while pending:
-            try:
-                for next in nexts:
-                    yield next()
-            except StopIteration:
-                pending -= 1
-                nexts = cycle(islice(nexts, pending))
-
-
     def run(self):
         """
-        run the state driver.
+        run the context driver.
         """
 
         # deref for speed
         event_poll = pygame.event.poll
         event_pump = pygame.event.pump
-        current_state = self.getCurrentState
         clock = pygame.time.Clock()
 
         # streamline event processing by filtering out stuff we won't use
@@ -268,37 +236,29 @@ class ContextDriver(object):
         pygame.event.set_allowed(None)
         pygame.event.set_allowed(allowed)
 
-        # set an event to update the game state
+        # set an event to update the game context
         debug_output = pygame.USEREVENT
         pygame.time.set_timer(debug_output, 2000)
 
         # make sure our custom events will be triggered
         pygame.event.set_allowed([debug_output])
 
-        currentState = current_state()       
-        lastState = currentState
+        this_context = self.current_context       
 
         # this will loop until the end of the program
-        while currentState:
+        while self.current_context and this_context:
+
+            print self._stack
 
             if self.lameduck:
                 self.lameduck = None
-                currentState = self._stack[-1]
-                if currentState.activated:
-                    currentState.reactivate()
-                else:
-                    currentState.activate()
+                this_context = self.current_context
+                this_context.enter()
 
-            elif currentState is not lastState:
-                if currentState.activated:
-                    currentState.reactivate()
-                else:
-                    currentState.activate()
-
-            lastState = currentState
+            elif this_context is not this_context:
+                this_context.enter()
 
             time = clock.tick(self.target_fps)
-
 
 # =============================================================================
 # EVENT HANDLING ==============================================================
@@ -308,21 +268,21 @@ class ContextDriver(object):
 
                 # we should quit
                 if event.type == QUIT:
-                    currentState = None
+                    this_context = None
                     break
 
                 # check each input for something interesting
                 for cmd in [ c.getCommand(event) for c in self.inputs ]:
                     if cmd is not None:
-                        currentState.handle_command(cmd)
+                        this_context.handle_command(cmd)
 
                 if event.type == debug_output:
                     print "current FPS: \t{0:.1f}".format(clock.get_fps())
 
-                # back out of this state, or send event to the state
+                # back out of this context, or send event to the context
                 elif event.type == KEYDOWN:
                     if event.key == K_ESCAPE:
-                        currentState = None
+                        this_context = None
                         break
 
                 event = event_poll()
@@ -330,28 +290,28 @@ class ContextDriver(object):
 # =============================================================================
 # STATE UPDATING AND DRAWING HANDLING =========================================
 
-            if current_state() is currentState:
+            if self.current_context is this_context:
 
-                dirty = currentState.draw(self._screen)
+                dirty = this_context.draw(self._screen)
                 gfx.update_display(dirty)
                 #gfx.update_display()
 
                 # looks awkward?  because it is.  forcibly give small updates
-                # to each object so we don't draw too often.
+                # to the context so we don't draw too often.
 
                 time = time / 5.0
 
-                currentState.update(time)
-                currentState = current_state()
-                if not currentState == lastState: continue
-                currentState.update(time)
-                currentState = current_state()
-                if not currentState == lastState: continue
-                currentState.update(time)
-                currentState = current_state()
-                if not currentState == lastState: continue
-                currentState.update(time)
-                currentState = current_state()
-                if not currentState == lastState: continue
-                currentState.update(time)
-                currentState = current_state()
+                this_context.update(time)
+                if not self.current_context == this_context: continue
+
+                this_context.update(time)
+                if not self.current_context == this_context: continue
+
+                this_context.update(time)
+                if not self.current_context == this_context: continue
+
+                this_context.update(time)
+                if not self.current_context == this_context: continue
+
+                this_context.update(time)
+                current_context = self.current_context

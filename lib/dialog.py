@@ -43,7 +43,7 @@ class TextDialog(context.Context):
     borderImage = Image("lpc-border0.png", colorkey=True)
 
 
-    def activate(self):
+    def enter(self):
         self.background = (109, 109, 109)
         self.border = draw.GraphicBox(self.borderImage)
         self.redraw = True
@@ -122,7 +122,7 @@ class ChoiceDialog(context.Context):
         self.choices = choices
 
     # when given focus for first time
-    def activate(self):
+    def enter(self):
         xsize = 300
         ysize = 70
         bkg = Surface((xsize, ysize))
@@ -149,14 +149,6 @@ class ChoiceDialog(context.Context):
             self.title_image.set_alpha(96)
 
         self.arrow = res.loadImage("wait_arrow.png", colorkey=1)
-
-    # when focus is given again
-    def reactivate(self):
-        pass
-
-    # when losing focus
-    def deactivate(self):
-        pass
 
     def draw(self, surface):
         # fade in the dialog box background

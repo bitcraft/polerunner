@@ -10,8 +10,10 @@ import math
 
 import pymunk
 
-cardinalDirs = {"north": math.pi*1.5, "east": 0.0, "south": math.pi/2, "west": math.pi}
-
+cardinalDirs = {"north": math.pi*1.5,
+                "east": 0.0,
+                "south": math.pi/2,
+                "west": math.pi}
 
 
 class PathfindingSentinel(object):
@@ -74,27 +76,6 @@ class PlatformMixin(object):
 
     def translate(self, (x, y, z)):
         return y, z
-
-
-    def toRect(self, bbox):
-        # return a rect that represents the object on the zy plane
-        return Rect((bbox.y, bbox.z+bbox.height, bbox.width, bbox.height))
-
-
-    """
-    the underlying physics 'engine' is only capable of calculating 2 axises.
-    for playformer type games, we use the zy plane for calculations
-    """
-
-    def grounded(self, body):
-        try:
-            return self._grounded[body]
-        except:
-            return False
-
-
-    def applyForce(self, body, (x, y, z)):
-        body.acc += Vec2d(y, z)
 
 
     def worldToPixel(self, (x, y)):
@@ -170,7 +151,6 @@ class PlatformArea(AbstractArea, PlatformMixin):
         self.soundmap = {}
         self.inUpdate = False
         self.currentSounds = []
-        self.drawables = []         # HAAAAKCCCCKCK
         self.changedAvatars = True  #hack
         self.time = 0
         self.music_pos = 0
