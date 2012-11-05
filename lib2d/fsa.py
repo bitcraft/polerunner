@@ -19,28 +19,9 @@ along with lib2d.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 modified state machine.  controls player input
-
-output an animation if input is valid
-
-usage:
-    add states and transitions
-
-when input is recv'd, call process with the input
-
-check the avatar's state
-determin if we can continue
-return animation if ok, else return False
-
-internal state should generally match the avatar.
-
-lazy internal state.  ie: don't really spend too much trying to keep in sync
-w/avatar.  just check it as needed.
-
-state = (animation object, current frame)
 """
 
 from lib2d.buttons import *
-from collections import deque
 
 
 # only have one child, an avatar.
@@ -78,8 +59,6 @@ class fsa(object):
         self.move_history = []
 
 
-    # sticky means the avartar should finish the previous animation
-    # used for stances, (crouch to sweep, block to punch, etc)
     def add_transition(self, trigger0, state0, state1, trigger1=None):
         """
         add new "transition".
