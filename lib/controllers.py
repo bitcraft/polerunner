@@ -11,9 +11,9 @@ import pymunk
 import math
 
 
-INITIAL_WALK_SPEED = 10
-RUN_SPEED = 50
-SPRINT_SPEED = 110
+INITIAL_WALK_SPEED = 2.5
+RUN_SPEED = 80
+SPRINT_SPEED = 150
 WALK_SPEED_INCREMENT = .5
 STOPPING_FRICTION = 0.994
 ROLLING_FRICTION = 0.99
@@ -65,7 +65,7 @@ class walkState(State):
     def update(self, time):
         desired_vel = self.body.velocity + (self.x, 0)
         delta = desired_vel - self.body.velocity
-        self.body.apply_impulse(delta)
+        self.body.apply_impulse(delta * self.body.mass)
 
         #if self.x > 0:
         #    self.x += WALK_SPEED_INCREMENT
@@ -209,9 +209,10 @@ class brakeState(State):
         self.entity.avatar.play('brake', loop_frame=5)
         self.body = self.entity.parent.getBody(self.entity)
         self.entity.parent.emitSound('stop.wav', entity=self.entity)
+        self.body.velocity.x /= 2
 
     def update(self, time):
-        self.body.velocity.x *= STOPPING_FRICTION
+        #self.body.velocity.x *= STOPPING_FRICTION
         if abs(self.body.velocity.x) < INITIAL_WALK_SPEED/4.0:
             self.abort()
 
@@ -414,8 +415,8 @@ class HeroController(lib2d.fsa.fsa):
 
         self.at((source, P1_DOWN, BUTTONDOWN), walkState, crouch)
 
-        self.at((source, P1_DOWN, BUTTONDOWN), fallRecoverState, crouch)
-        self.at((source, P1_DOWN, BUTTONDOWN), rollingState, crouch)
+        #self.at((source, P1_DOWN, BUTTONDOWN), fallRecoverState, crouch)
+        #self.at((source, P1_DOWN, BUTTONDOWN), rollingState, crouch)
 
         self.at(*endState(rollingState, uncrouch))
 
@@ -430,12 +431,12 @@ class HeroController(lib2d.fsa.fsa):
 
 
         # double jump
-        self.at((source, P1_ACTION2, BUTTONDOWN), jumpingState, jump, flags=STUBBORN)
-        self.at((source, P1_ACTION2, BUTTONDOWN), fallingState, jump, flags=STUBBORN)
+        #self.at((source, P1_ACTION2, BUTTONDOWN), jumpingState, jump, flags=STUBBORN)
+        #self.at((source, P1_ACTION2, BUTTONDOWN), fallingState, jump, flags=STUBBORN)
 
         self.at(*endState(jumpingState, checkFalling))
-        self.at(*endState(fallingState, checkFalling))
-        self.at(*endState(fallRecoverState, uncrouch))
+        #self.at(*endState(fallingState, checkFalling))
+        #self.at(*endState(fallRecoverState, uncrouch))
 
         # sanity, also falling
         self.at(*endState(idleState, idle))

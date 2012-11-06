@@ -202,7 +202,7 @@ class PlatformArea(AbstractArea, PlatformMixin):
         for layer, rects in self.geometry.items():
             for rect in rects:
                 shape = pymunk.Poly(self.space.static_body, toChipPoly(rect))
-                shape.friction = 1.0
+                shape.friction = 2.0
                 shape.group = 1
                 #shape.layers = layer
                 geometry.append(shape)
@@ -219,8 +219,8 @@ class PlatformArea(AbstractArea, PlatformMixin):
                 if child.physics:
                     body = pymunk.Body(5, pymunk.inf)
                     body.position = self.temp_positions[child]
-                    body.friction = 1.0
                     shape = pymunk.Poly.create_box(body, size=child.size[:2])
+                    shape.friction = 1.0
                     self.bodies[child] = body
                     self.shapes[child] = shape
                     self.space.add(body, shape)
@@ -228,7 +228,7 @@ class PlatformArea(AbstractArea, PlatformMixin):
                 else:
                     rect = Rect(self.temp_positions[child], child.size[:2])
                     shape = pymunk.Poly(self.space.static_body, toChipPoly(rect))
-                    shape.friction = 1.0
+                    shape.friction = 0.5
                     self.shapes[child] = shape
                     self.space.add(shape)
 

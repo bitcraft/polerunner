@@ -26,6 +26,14 @@ usage:
     add states and transitions
 
 when input is recv'd, call process with the input
+
+
+
+
+TO DO
+
+integrate context.py or pygoap action types
+
 """
 
 from lib2d.buttons import *
@@ -193,7 +201,7 @@ class fsa(object):
 
             if new_state is not None:
                 # allow for state 'self canceling':
-                # state can be stopped and replaced with new instance
+                # state can be replaced with new instance of same class
                 #existing = [stack for stack in self.all_stacks
                 #            if new_state.__class__ in [i.__class__ for i in stack]]
 
@@ -201,16 +209,20 @@ class fsa(object):
                 if transition.flags & BREAK == BREAK:
                     self.eject(self.current_state, terminate=False)
 
+                # STUBBORN will add the state to the stack even if it already
+                # exists.
                 if transition.flags & STUBBORN == STUBBORN:
                     self.current_state.enter(trigger)
 
                 else:
 
-                    # queued transitions are placed before the current state
+                    # QUEUED transitions are placed before the current state
                     self.push_state(new_state, trigger,
                         queue=transition.flags & QUEUED == QUEUED)
 
-                    # support 'toggled' transitions
+                    # support 'toggled' (STICKY) transitions
+                    # transitions can specify a trigger in add_transition that
+                    # will remove them from the stack.  it is checked here.
                     if transition.alt_trigger is not None:
                         self.holds[transition.alt_trigger] = (new_state, transition, trigger)
 
