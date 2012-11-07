@@ -1,7 +1,7 @@
 from pytmx import tmxloader, buildDistributionRects
 from lib2d.area import PlatformArea
-from lib2d.bbox import BBox
 from lib2d.zone import Zone
+from lib2d.sound import Sound
 from lib2d import res
 from pygame import Rect
 
@@ -35,6 +35,15 @@ def fromTMX(parent, mapname):
     area.mappath = res.mapPath(mapname)
     data = tmxloader.load_tmx(area.mappath)
 
+    # get sounds from tiles
+    for i, layer in enumerate(data.tilelayers):
+        props = data.getTilePropertiesByLayer(i)
+        for gid, tileProp in props:
+            for key, value in tileProp.items():
+                if key[4:].lower() == "sound":
+                    area.add(Sound(value))
+
+
     for gid, prop in data.tile_properties.items():
         try:
             prop['guid'] = int(prop['guid'])
@@ -57,15 +66,6 @@ def fromTMX(parent, mapname):
         rects.append(Rect(rect))
 
     area.setLayerGeometry(0, rects)
-
-
-    # build 'raw geometry'
-    area.rawGeometry = []
-    for rect in rects:
-        y, z = rect.topleft
-        bbox = BBox((-100, y, z, 200, rect.width, rect.height))
-        area.rawGeometry.append(bbox)
-
 
     # load the npc's and place them in the default positions 
     npcs = [ p for p in props if p[1].get('group', None) == 'npc' ] 

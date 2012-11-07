@@ -1,12 +1,8 @@
 from lib2d.tilemap import BufferedTilemapRenderer
 from lib2d.objects import GameObject
-from lib2d.bbox import BBox
 from lib2d.ui import Element
-from lib2d import vec
 
 from pygame import Rect, draw, Surface
-import pygame
-import weakref
 
 from pymunk.pygame_util import draw_space, from_pygame, to_pygame
 import pymunk
@@ -19,11 +15,6 @@ parallax = 1
 
 def screenSorter(a):
     return a[-1].x
-
-
-class AvatarLayer(GameObject):
-    def __init__(self, area, extent):
-        self.area = area
 
 
 class LevelCamera(Element):
@@ -60,18 +51,10 @@ class LevelCamera(Element):
             self.parallaxrender = BufferedTilemapRenderer(par_tmx, (w, h))
  
 
-    # HACK
-    def getAvatarObjects(self):
-        if self.area.changedAvatars:
-            self.area.changedAvatars = False
-            self.ao = self.refreshAvatarObjects()
-        return self.ao
-
-
     def set_extent(self, extent):
         """
         the camera caches some values related to the extent, so it becomes
-        nessessary to call this instead of setting the extent directly.
+        necessary to call this instead of setting the extent directly.
         """
 
         # our game world swaps the x and y axis, so we translate it here
@@ -188,9 +171,6 @@ class LevelCamera(Element):
                     draw.circle(surface, (255,100,100), pos, int(radius), 1)
                     continue
 
-            #for i in onScreen:
-            #    draw.rect(surface, (100,255,100), i[1])
-
         return dirty
 
 
@@ -204,6 +184,7 @@ class LevelCamera(Element):
 
         xx, yy = self.area.worldToPixel((x, y, z))
         return xx - self.extent.left, yy - self.extent.top
+
 
     def surfaceToWorld(self, (x, y)):
         """

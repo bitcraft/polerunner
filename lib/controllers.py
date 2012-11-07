@@ -5,10 +5,7 @@ command tree for the main character
 from lib2d.buttons import *
 from lib2d.fsa.flags import *
 from lib2d import context
-import lib2d
-import pygame
-import pymunk
-import math
+import lib2d, pygame, pymunk, math
 
 
 INITIAL_WALK_SPEED = 2.5

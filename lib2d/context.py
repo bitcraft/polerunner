@@ -136,9 +136,9 @@ class ContextDriver(object):
         idea: the old context could be pickled and stored to disk.
         """
 
+        self._stack.append(context)
         context.init()
         context.enter()
-        self._stack.append(context)
 
 
     def roundrobin(*iterables):
@@ -165,7 +165,7 @@ class ContextDriver(object):
     @property
     def current_context(self):
         try:
-            return self._stack[0]
+            return self._stack[-1]
         except IndexError:
             return None
 

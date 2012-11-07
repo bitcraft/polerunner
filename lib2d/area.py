@@ -16,29 +16,6 @@ cardinalDirs = {"north": math.pi*1.5,
                 "west": math.pi}
 
 
-class PathfindingSentinel(object):
-    """
-    this object watches a body move and will adjust the movement as needed
-    used to move a body when a path is set for it to move towards
-    """
-
-    def __init__(self, body, path):
-        self.body = body
-        self.path = path
-        self.dx = 0
-        self.dy = 0
-
-    def update(self, time):
-        if worldToTile(bbox.origin) == self.path[-1]:
-            pos = path.pop()
-            theta = math.atan2(self.destination[1], self.destination[0])
-            self.destination = self.position + self.destination
-            self.dx = self.speed * cos(theta)
-            self.dy = self.speed * sin(theta) 
-
-        self.area.movePosition(self.body, (seldf.dx, self.dy, 0))
-
-
 class AbstractArea(GameObject):
     pass
 
@@ -128,6 +105,8 @@ class PlatformArea(AbstractArea, PlatformMixin):
     contains metadata that lib2d can use to layout and position objects
     correctly.
 
+    TODO: write some kind of saving!
+
     REWRITE: FUNCTIONS HERE SHOULD NOT CHANGE STATE
 
     NOTE: some of the code is specific for maps from the tmxloader
@@ -185,14 +164,6 @@ class PlatformArea(AbstractArea, PlatformMixin):
         self.tmxdata = pytmx.tmxloader.load_pygame(
                        self.mappath, force_colorkey=(128,128,0))
 
-        # get sounds from tiles
-        for i, layer in enumerate(self.tmxdata.tilelayers):
-            props = self.tmxdata.getTilePropertiesByLayer(i)
-            for gid, tileProp in props:
-                for key, value in tileProp.items():
-                    if key[4:].lower() == "sound":
-                        self.soundFiles.append(value)
-
         self.space = pymunk.Space()
         self.space.gravity = self.gravity
 
@@ -204,14 +175,9 @@ class PlatformArea(AbstractArea, PlatformMixin):
                 shape = pymunk.Poly(self.space.static_body, toChipPoly(rect))
                 shape.friction = 2.0
                 shape.group = 1
-                #shape.layers = layer
                 geometry.append(shape)
 
         self.space.add(geometry)
-
-        # dont worry about setting the player group, that will be set by the
-        # levelstate
-        self.groups = 2
 
         # just assume we have the correct types under us
         for child in self._children:
@@ -316,16 +282,6 @@ class PlatformArea(AbstractArea, PlatformMixin):
         return path
 
 
-    def emitText(self, text, pos=None, entity=None):
-        if pos==entity==None:
-            raise ValueError, "emitText requires a position or entity"
-
-        if entity:
-            pos = self.bodies[entity].bbox.center
-        emitText.send(sender=self, text=text, position=pos)
-        self.messages.append(text)
-
-
     def emitSound(self, filename, pos=None, entity=None, ttl=350):
         if pos==entity==None:
             raise ValueError, "emitSound requires a position or entity"
@@ -385,22 +341,9 @@ class PlatformArea(AbstractArea, PlatformMixin):
         self._removeQueue = []
 
 
-    def _sendBodyMove(self, body, caller, force=None):
-        position = body.bbox.origin
-        bodyAbsMove.send(sender=self, body=body, position=position, caller=caller, force=force)
-
-    
     #  CLIENT API  --------------
 
 
     def subscribe(self, subscriber):
         self.subscribers.append(subscriber)
 
-
-    def getSize(self, entity):
-        """ Return 3d size of the object """
-        return self.bodies[entity].bbox.size
-
-
-    def getBody(self, entity):
-        return self.bodies[entity]

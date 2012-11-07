@@ -18,11 +18,10 @@ You should have received a copy of the GNU General Public License
 along with lib2d.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from vec import Vec2d
-
 from pygame.transform import scale, scale2x
 from pygame.display import flip
 import pygame, os.path, pprint
+import pymunk
 
 """
 a few utilities for making retro looking games by scaling the screen
@@ -100,7 +99,7 @@ def set_screen(dim, scale=1, transform=None):
 
     global pixelize, pix_scale, buffer_dim, screen, update_display, screen_surface, screen_dim
 
-    screen_dim = Vec2d(dim)
+    screen_dim = dim
 
     if transform == "scale2x" or transform == "scale":
         set_scale(scale, transform)

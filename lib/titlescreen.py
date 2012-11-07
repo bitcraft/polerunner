@@ -48,6 +48,8 @@ class TitleScreen(context.Context):
 
 
     def enter(self):
+        self.redraw = True
+
         if self.game:
             self.menu = Menu(20, -5, 'vertical', 100,
                 [('New Game', self.new_game),
@@ -66,7 +68,6 @@ class TitleScreen(context.Context):
                 font="visitor1.ttf", font_size=20)
 
         self.menu.rect = pygame.Rect(12,12,20,100)
-        self.redraw = True
 
 
     def handle_event(self, event):

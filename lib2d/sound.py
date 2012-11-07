@@ -3,9 +3,46 @@ import pygame
 import functools
 
 
-"""
-lazy sound loading
-"""
+class Listener(object):
+    """
+    Singleton object that allows for volume changes for sounds based on their
+    position in space
+    """
+
+    _instance = None
+    def __new__(cls, *args, **kwargs):
+        if not cls._instance:
+            cls._instance = super(Listener, cls).__new__(
+                                  cls, *args, **kwargs)
+        return cls._instance
+
+
+    def __init__(self):
+        self._position = None
+        self._volume = 1.0
+
+
+    @property
+    def position(self):
+        return self._position
+
+    @position.setter
+    def position(self, (x, y)):
+        self._position = (x, y)
+
+
+    @property
+    def volume(self):
+        return self._volume
+
+    @volume.setter
+    def volume(self, value):
+        self._volume = value
+
+
+listener = Listener()
+
+
 
 def get_defaults():
     return res.defaults.__dict__.copy()
@@ -49,3 +86,4 @@ class Sound(GameObject):
     def volume(self, value):
         if not self.sound: raise Exception
         self.sound.set_volume(value)
+

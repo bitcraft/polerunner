@@ -3,8 +3,7 @@ the mouse api is generally as follows:
 
 if the client has a onClick, onHover, or onDrag method, the
 'point' argument will be relative to the rect of the object,
-not the screen.  The point passed will be a vec.Vec2d object
-
+not the screen.
 """
 
 """
@@ -15,8 +14,8 @@ this is a bare-bones simple draw toolkit for mouse use only.
 from lib2d.ui.packer import GridPacker
 from lib2d.ui import Element, Frame
 from lib2d.buttons import *
-from lib2d import res, draw, vec
-import pygame, itertools
+from lib2d import res, draw
+import pygame, itertools, pymunk
 
 
 
@@ -211,7 +210,7 @@ class UserInterface(Frame):
                 if pos is None: return
                 el = self.findElement(pos)
                 if el:
-                    pos = vec.Vec2d((pos[0] - el.rect.left, pos[1] - el.rect.top))
+                    pos = pymunk.Vec2d((pos[0]-el.rect.left, pos[1]-el.rect.top))
                     if state == BUTTONDOWN:
                         self.drag_origin = pos
                         self.drag_element = el
@@ -232,12 +231,12 @@ class UserInterface(Frame):
             elif cmd == MOUSEPOS:
                 el = self.findElement(arg)
                 if el and not self.hovered:
-                    pos = vec.Vec2d((arg[0] - el.rect.left, arg[1] - el.rect.top))
+                    pos = pymunk.Vec2d((arg[0]-el.rect.left, arg[1]-el.rect.top))
                     self.mouseTool.onBeginHover(el, pos)
                     self.hovered = el
 
                 if (not el == self.hovered) and (el is not None):
-                    pos = vec.Vec2d((arg[0] - el.rect.left, arg[1] - el.rect.top))
+                    pos = pymunk.Vec2d((arg[0]-el.rect.left, arg[1]-el.rect.top))
                     self.hovered.onEndHover(pos)
                     self.hovered = None
 
