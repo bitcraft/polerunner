@@ -96,7 +96,7 @@ class PlatformArea(AbstractArea, PlatformMixin):
         Lower Partial Tiles
         Lower Full Tiles
 
-    The control layer is where objects and boundries are placed.  It will not
+    The control layer is where objects and boundaries are placed.  It will not
     be rendered.  Your map must not have any spaces that are open.  Each space
     must have a tile in it.  Blank spaces will not be rendered properly and
     will leave annoying trails on the screen.
@@ -128,29 +128,22 @@ class PlatformArea(AbstractArea, PlatformMixin):
         self.tmxdata = None
         self.mappath = None
         self.soundmap = {}
-        self.inUpdate = False
         self.currentSounds = []
-        self.changedAvatars = True  #hack
-        self.time = 0
-        self.music_pos = 0
-        self._addQueue = []
-        self._removeQueue = []
-        self._addQueue = []
 
-        self.flashes = []
+        # allow for entities to be added or removed during an update 
         self.inUpdate = False
+        self._addQueue = []
         self._removeQueue = []
+        self._addQueue = []
 
         # temporary storage of physics stuff
-        self.temp_positions = {}
+        self.saved_positions = {}
 
         # internal physics stuff
         self.geometry = {}
         self.shapes = {}
         self.bodies = {}
-        self.physicsgroup = None
-        self.extent = None          # absolute boundaries of the area
-        self.scaling = 1.0          # MUST BE FLOAT 
+        self.scaling = 1.0
 
 
     def load(self):
@@ -184,7 +177,7 @@ class PlatformArea(AbstractArea, PlatformMixin):
             if child.avatar:
                 if child.physics:
                     body = pymunk.Body(5, pymunk.inf)
-                    body.position = self.temp_positions[child]
+                    body.position = self.saved_positions[child]
                     shape = pymunk.Poly.create_box(body, size=child.size[:2])
                     shape.friction = 1.0
                     self.bodies[child] = body
@@ -192,7 +185,7 @@ class PlatformArea(AbstractArea, PlatformMixin):
                     self.space.add(body, shape)
 
                 else:
-                    rect = Rect(self.temp_positions[child], child.size[:2])
+                    rect = Rect(self.saved_positions[child], child.size[:2])
                     shape = pymunk.Poly(self.space.static_body, toChipPoly(rect))
                     shape.friction = 0.5
                     self.shapes[child] = shape
@@ -207,6 +200,10 @@ class PlatformArea(AbstractArea, PlatformMixin):
 
 
     def unload(self):
+        # save the bodies here
+        for entity, body in self.bodies.items():
+            self.saved_positions[entity] = body.position
+
         self.bodies = {}
         self.shapes = {}
         self.physicsgroup = None
@@ -225,8 +222,7 @@ class PlatformArea(AbstractArea, PlatformMixin):
             else:
                 pos = self.translate(pos)
 
-            self.temp_positions[child] = pos
-            self.changedAvatars = True
+            self.saved_positions[child] = pos
 
 
     def remove(self, entity):
@@ -236,13 +232,6 @@ class PlatformArea(AbstractArea, PlatformMixin):
 
         AbstractArea.remove(self, entity)
         del self.bodies[entity]
-        self.changedAvatars = True
-
-        # hack
-        try:
-            self.drawables.remove(entity)
-        except (ValueError, IndexError):
-            pass
 
 
     def getBody(self, entity):
@@ -297,7 +286,6 @@ class PlatformArea(AbstractArea, PlatformMixin):
 
     def update(self, time):
         self.inUpdate = True
-        self.time += time
 
         [ sound.update(time) for sound in self.sounds ]
 

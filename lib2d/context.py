@@ -35,7 +35,8 @@ class Context(object):
         driver is a ref to the contextdriver
 
         Not a good idea to load large objects here since it is possible
-        that the context is simply instanced and placed in a queue.
+        that the context is simply instanced, placed in a queue and waste
+        memory.
 
         Ideally, any initialization will be handled in activate() since
         that is the point when assets will be required.
@@ -49,6 +50,8 @@ class Context(object):
         """
         Called when context is placed in a stack
         """
+
+        pass
 
 
     def enter(self):
@@ -93,10 +96,6 @@ class Context(object):
 
     def update(self, time):
         pass
-
-
-def flush_cmds(cmds):
-    pass
 
 
 class StatePlaceholder(object):
@@ -221,7 +220,7 @@ class GameDriver(ContextDriver):
 
     def run(self):
         """
-        run the context driver.
+        run the context driver.  this is effectively your 'main loop' and game.
         """
 
         # deref for speed
@@ -248,15 +247,13 @@ class GameDriver(ContextDriver):
         # this will loop until the end of the program
         while self.current_context and this_context:
 
-            print self._stack
-
             if self.lameduck:
                 self.lameduck = None
                 this_context = self.current_context
                 this_context.enter()
 
-            elif this_context is not this_context:
-                this_context.enter()
+            #elif self.current_context is not this_context:
+            #    this_context.enter()
 
             time = clock.tick(self.target_fps)
 
@@ -278,6 +275,7 @@ class GameDriver(ContextDriver):
 
                 if event.type == debug_output:
                     print "current FPS: \t{0:.1f}".format(clock.get_fps())
+                    print self.current_context
 
                 # back out of this context, or send event to the context
                 elif event.type == KEYDOWN:
@@ -291,7 +289,6 @@ class GameDriver(ContextDriver):
 # STATE UPDATING AND DRAWING HANDLING =========================================
 
             if self.current_context is this_context:
-
                 dirty = this_context.draw(self._screen)
                 gfx.update_display(dirty)
                 #gfx.update_display()
@@ -315,3 +312,6 @@ class GameDriver(ContextDriver):
 
                 this_context.update(time)
                 current_context = self.current_context
+
+            else:
+                self.lameduck = this_context

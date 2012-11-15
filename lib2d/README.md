@@ -29,7 +29,8 @@ Concept
     * Game entities defined in buildworld.py
     * Game entities programmed using Lib2d objects
 
-    Because of the close integration with Tiled, Lib2d must be used it it.
+    Because of the close integration with Tiled, Lib2d games must follw this
+    format.
 
 
 Tiled Integration
@@ -61,10 +62,10 @@ Lib2d Objects
 Game Structure Overview
 -----------------------
 
-    Map is designed in Tiled with special layer (controlset.tsx)
-    Game objects are created in world.py and assigned GUID control numbers
-    The 'world' data structure is pickleable and becomes the save game
-    When engine is started, the world data structure can be used to play
+    Map is designed in Tiled with special layer (controlset.tsx).
+    Game objects are created in world.py and assigned GUID control numbers.
+    The 'world' data structure is pickleable and becomes the save game.
+    When engine is started, the world data structure can be used to play.
 
 
 Control
@@ -77,7 +78,7 @@ Control
 
     Traditional pygame/sdl event handling can occur alongside Lib2d's system.
 
-    Lib2d GUI elements are able to interact with the mouse
+    Lib2d GUI elements are able to interact with the mouse.
 
 
 Tilemap
