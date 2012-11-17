@@ -27,28 +27,30 @@ from pygame.locals import *
 
 
 class Context(object):
+    """
+    Contexts are used anywhere a handler uses a stack to manage information.
+    Currently are used in:
+        Context Driver for the game
+        FSA for controller handling
+    """
 
-    def __init__(self, driver):
+    def __init__(self, driver=None):
         """
         Called when object is instanced.
 
-        driver is a ref to the contextdriver
+        Please do not extend this method
 
-        Not a good idea to load large objects here since it is possible
-        that the context is simply instanced, placed in a queue and waste
-        memory.
-
-        Ideally, any initialization will be handled in activate() since
-        that is the point when assets will be required.
+        Ideally, any initialization will be handled in init() since that is the
+        point when assets will be required.
         """        
 
         self.driver = driver
-        self.activated = False
 
 
-    def init(self):
+    def init(self, *args, **kwargs):
         """
-        Called when context is placed in a stack
+        Called after context is placed in a stack
+        This will only be called once over the lifetime of a context
         """
 
         pass
@@ -57,6 +59,7 @@ class Context(object):
     def enter(self):
         """
         Called before focus is given to the context
+        This may be called several times over the lifetime of the context
         """
 
         pass
@@ -65,6 +68,7 @@ class Context(object):
     def exit(self):
         """
         Called before focus is lost
+        This may be called several times over the lifetime of the context
         """
 
         pass
@@ -72,7 +76,8 @@ class Context(object):
 
     def terminate(self):
         """
-        Called when the context is removed from a stack
+        Called before the context is removed from a stack
+        This will only be called once
         """
 
         pass
@@ -98,34 +103,51 @@ class Context(object):
         pass
 
 
-class StatePlaceholder(object):
-    """
-    holds a ref to a context
-
-    when found in the queue, will be instanced
-    """
-
-    def __init__(self, klass):
-        self.klass = klass
-
-    def enter(self):
-        pass
-
-    def exit(self):
-        pass
-
-
 class ContextDriver(object):
 
     def __init__(self):
         self._stack = []
 
 
-    def remove(self, context):
-        self._stack.remove(context)
+    def remove(self, context, terminate=True):
+
+        print "REMOVE", context, self._stack
+
+        # you can optionally ignore the contexts terminate method
+        # this behavior is could easily break your stack, so use sparingly
+        if terminate:
+            context.terminate()
+
+        # this may be the current context, so handle it differently
+        if context is self.current_context:
+            context.exit()
+            try:
+                self._stack.remove(context)
+            except:
+                raise Exception, context
+            current_context = self.current_context
+            if current_context:
+                current_context.enter()
+        else:
+            context.exit()
+            try:
+                self._stack.remove(context)
+            except:
+                raise Exception, context
 
 
-    def append(self, context):
+    def queue(self, new_context, *args, **kwargs):
+        """
+        queue a context just before the current context
+        when the current context finishes, the context passed will be run
+        """
+
+        self._stack.insert(-1, new_context)
+        new_context.driver = self
+        new_context.init(*args, **kwargs)
+
+
+    def append(self, new_context, *args, **kwargs):
         """
         start a new context and hold the current context.
 
@@ -135,9 +157,14 @@ class ContextDriver(object):
         idea: the old context could be pickled and stored to disk.
         """
 
-        self._stack.append(context)
-        context.init()
-        context.enter()
+        current_context = self.current_context
+        if current_context:
+            current_context.exit()
+
+        self._stack.append(new_context)
+        new_context.driver = self
+        new_context.init(*args, **kwargs)
+        new_context.enter()
 
 
     def roundrobin(*iterables):
@@ -177,15 +204,13 @@ class GameDriver(ContextDriver):
     etc.
     """
 
-    def __init__(self, driver, target_fps=30):
+    def __init__(self, parent, target_fps=30):
         ContextDriver.__init__(self)
-        self.driver = driver
+        self.parent = parent
         self.target_fps = target_fps
         self.inputs = []
 
-        self.lameduck = None
-
-        if driver != None:
+        if parent != None:
             self.reload_screen()
 
 
@@ -197,7 +222,7 @@ class GameDriver(ContextDriver):
         is set to scale.
         """
 
-        return self.driver.get_screen().get_size()
+        return self.parent.get_screen().get_size()
 
 
     def get_screen(self):
@@ -207,7 +232,7 @@ class GameDriver(ContextDriver):
         * This may not be the pygame display surface
         """
 
-        return self.driver.get_screen()
+        return self.parent.get_screen()
 
 
     def reload_screen(self):
@@ -215,7 +240,7 @@ class GameDriver(ContextDriver):
         Called when the display changes mode.
         """
 
-        self._screen = self.driver.get_screen()
+        self._screen = self.parent.get_screen()
 
 
     def run(self):
@@ -242,19 +267,11 @@ class GameDriver(ContextDriver):
         # make sure our custom events will be triggered
         pygame.event.set_allowed([debug_output])
 
-        this_context = self.current_context       
+        this_context = self.current_context
 
         # this will loop until the end of the program
         while self.current_context and this_context:
-
-            if self.lameduck:
-                self.lameduck = None
-                this_context = self.current_context
-                this_context.enter()
-
-            #elif self.current_context is not this_context:
-            #    this_context.enter()
-
+            this_context = self.current_context
             time = clock.tick(self.target_fps)
 
 # =============================================================================
@@ -272,15 +289,20 @@ class GameDriver(ContextDriver):
                 for cmd in [ c.getCommand(event) for c in self.inputs ]:
                     if cmd is not None:
                         this_context.handle_command(cmd)
+                        if not self.current_context == this_context:
+                            break
+
+                if not self.current_context == this_context: break
 
                 if event.type == debug_output:
                     print "current FPS: \t{0:.1f}".format(clock.get_fps())
-                    print self.current_context
+                    print "context stack", self._stack
+                    print "current context", self.current_context
 
                 # back out of this context, or send event to the context
                 elif event.type == KEYDOWN:
                     if event.key == K_ESCAPE:
-                        this_context = None
+                        self.remove(self.current_context)
                         break
 
                 event = event_poll()
@@ -313,5 +335,3 @@ class GameDriver(ContextDriver):
                 this_context.update(time)
                 current_context = self.current_context
 
-            else:
-                self.lameduck = this_context

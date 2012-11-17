@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from lib2d import res, gfx
+from lib2d import res, gfx, context
 import pygame
 
 
@@ -10,6 +10,7 @@ class Game(object):
         pygame.init()
         pygame.mixer.init()
         gfx.init()
+        self.sd = context.GameDriver(self, 60)
 
     def get_screen(self):
         return gfx.screen

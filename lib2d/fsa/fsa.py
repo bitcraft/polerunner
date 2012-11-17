@@ -20,83 +20,73 @@ along with lib2d.  If not, see <http://www.gnu.org/licenses/>.
 """
 modified state machine.  controls player input
 
-output an animation if input is valid
-
-usage:
-    add states and transitions
-
-when input is recv'd, call process with the input
-
-
-
-
-TO DO
-
-integrate context.py or pygoap action types
-
+uses the term 'context' in place of 'state' for consistancy with lib2d
 """
 
+from lib2d import context
 from lib2d.buttons import *
 from flags import *
-from collections import deque, namedtuple
+from collections import namedtuple
 
 
-DEBUG = False
+DEBUG = 1
 
 def debug(message):
     if DEBUG: print message
 
-class Stack(list):
-    def eject(self, cls):
-        """
-        remove any instances of cls in the stack
-        """
-        to_remove = [i for i in self if isinstance(i, cls)]
-        [self.remove(i) for i in to_remove]
-
 
 Trigger = namedtuple('Trigger', 'owner, cmd, arg')
-Condition = namedtuple('Condition', 'trigger, state')
+Condition = namedtuple('Condition', 'trigger, context')
 Transition = namedtuple('Transition', 'func, alt_trigger, flags')
-#Event = namedtuple('Event', 'command, arg')
+
+"""
+class Transition(object):
+    def build(self):
+        pass
 
 
-# only have one child, an avatar.
-class fsa(object):
+class Toggled(Transition):
+    def __init__(self, trigger0, context, picker):
+        self.args = (trigger0, context, picker)
+
+    def build(self):
+        pass
+"""
+
+
+class fsa(context.ContextDriver):
     """
-    Somewhat like a finite state machine.
-    each 'state' is actually a stack
-    there is a stack of stacks
-    allows for concurency
+    Somewhat like a finite context machine.
     """
 
     def __init__(self, entity):
+        context.ContextDriver.__init__(self)
+
         self.entity = entity
 
-        self.state_transitions = {}
+        self.context_transitions = {}
         self.combos = {}
         self.button_combos = []
         self.move_history = []
         self.button_history = []
-        self.holds = {}         # keep track of state changes from holds
+        self.holds = {}         # keep track of context changes from holds
         self.hold = 0           # keep track of buttons held down
         self.time = 0
-        self.all_stacks = [[]]
 
 
     def setup(self):
         pass
 
 
-    def add_transition(self, trigger, state, func, alt_trigger=None, flags=0):
+    def add_transition(self, trigger, context, func, alt_trigger=None, flags=0):
         """
         add new "transition".
         """
 
-        c = Condition(trigger, state)
+        c = Condition(trigger, context)
         t = Transition(func, alt_trigger, flags)
 
-        self.state_transitions[c] = t
+        self.context_transitions[c] = t
 
     # shorthand for adding transitions
     at = add_transition
@@ -127,131 +117,83 @@ class fsa(object):
         pass
 
 
-    # remove a state instance from the current stack
-    def eject(self, state, cmd=None, terminate=True):
-        if terminate:
-            state.terminate(cmd)
-
-        changed = False
-        to_remove = None
-        for stack in self.all_stacks:
-            try:
-                stack.remove(state)
-            except ValueError:
-                pass
-            else:
-                changed = True
-                if len(stack) == 0:
-                    to_remove = stack
-                break
-
-        if changed:
-            self.all_stacks.remove(to_remove)
-            self.current_state.enter(cmd)
-
-
-    def get_transition(self, trigger, state=None):
-        if state == None:
-            state = self.current_state.__class__
-
-        #print trigger
-        #print self.state_transitions.keys()
+    def get_transition(self, trigger, context=None):
+        if context == None:
+            context = self.current_context.__class__
 
         try:
-            return self.state_transitions[(trigger, state)]
+            return self.context_transitions[(trigger, context)]
         except KeyError:
             return None
 
 
-    def new_stack(self):
-        self.all_stacks.append([])
-
-
-    def push_state(self, new_state, cmd=None, queue=False):
-        debug("pushing {} {} {}".format(self, new_state, cmd))
-
-        old_state = None
-        if len(self.current_stack) > 0:
-            old_state = self.current_stack[-1]
-
-        #[self.stack.eject(unworthy) for unworthy in new_state.forbidden]
-
-        if queue:
-            self.all_stacks.insert(-1, [new_state])
-        else:
-            if not len(self.current_stack) == 0:
-                self.new_stack()
-            self.current_stack.append(new_state)
-
-        new_state.enter(cmd)
-
-        if old_state:
-            old_state.exit(cmd)
-
-        return new_state
-
-
     def process(self, trigger):
+        """
+        Triggers are passed here.
+        """
+
+
         transition = self.get_transition(trigger)
 
         debug("=========== processing {} {}".format(trigger, transition))
 
-        if transition is not None:
-            new_state = transition.func(self, self.entity)
-
-            if new_state is not None:
-                # allow for state 'self canceling':
-                # state can be replaced with new instance of same class
-                #existing = [stack for stack in self.all_stacks
-                #            if new_state.__class__ in [i.__class__ for i in stack]]
-
-                # BREAK flag cancels the current state and ignores of transitions
-                if transition.flags & BREAK == BREAK:
-                    self.eject(self.current_state, terminate=False)
-
-                # STUBBORN will add the state to the stack even if it already
-                # exists.
-                if transition.flags & STUBBORN == STUBBORN:
-                    self.current_state.enter(trigger)
-
-                else:
-
-                    # QUEUED transitions are placed before the current state
-                    self.push_state(new_state, trigger,
-                        queue=transition.flags & QUEUED == QUEUED)
-
-                    # support 'toggled' (STICKY) transitions
-                    # transitions can specify a trigger in add_transition that
-                    # will remove them from the stack.  it is checked here.
-                    if transition.alt_trigger is not None:
-                        self.holds[transition.alt_trigger] = (new_state, transition, trigger)
-
         self.remove_holds(trigger)
 
-        debug("\nSTACKS: {}".format(self.all_stacks))
-        #print "\nSTACKS: {}".format(self.all_stacks)
+        if transition is None:
+            return
+
+        new_context = transition.func(self, self.entity)
+
+        if new_context is None:
+            return
+
+        # allow for context 'self canceling':
+        # context can be replaced with new instance of same class
+        #existing = [stack for stack in self.all_stacks
+        #            if new_context.__class__ in [i.__class__ for i in stack]]
+
+
+        # BREAK flag cancels the current context and ignores of transitions
+        if transition.flags & BREAK == BREAK:
+            self.remove(self.current_context, terminate=False)
+
+        # STUBBORN will add the context to the stack even if it already
+        # exists.
+        elif transition.flags & STUBBORN == STUBBORN:
+            self.current_context.enter(trigger)
+
+        # QUEUED flag will cause context to be run after current one is
+        # finished
+        elif transition.flags & QUEUED == QUEUED:
+            self.queue(new_context, cmd=trigger)
+
+        # support 'toggled' (STICKY) transitions
+        # transitions can specify a trigger in add_transition that
+        # will remove them from the stack.  it is checked here.
+        if transition.alt_trigger is not None:
+            self.holds[transition.alt_trigger] = (new_context, transition, trigger)
+
+        self.append(new_context, cmd=trigger)
 
 
     def remove_holds(self, trigger):
         try:
-            state = self.holds[trigger][0]
+            context = self.holds[trigger][0]
         except:
             pass
         else:
-            del self.holds[trigger]
-            self.eject(state)
-
-
-    @property
-    def current_stack(self):
-        return self.all_stacks[-1]
-
-    @property
-    def current_state(self):
-        return self.current_stack[-1]
+            try:
+                del self.holds[trigger]
+                self.remove(context)
+            except:
+                print "FSA:", "error {} not in holds".format(context)
+            
 
 
     def update(self, time):
         self.time += time
-        [ i.update(time) for i in self.current_stack ]
+        context = self.current_context
+
+        if context:
+            context.update(time) 
 

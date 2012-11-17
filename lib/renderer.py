@@ -8,7 +8,7 @@ from pymunk.pygame_util import draw_space, from_pygame, to_pygame
 import pymunk
 
 
-DEBUG = 1
+DEBUG = 0
 
 parallax = 1
 
@@ -57,9 +57,6 @@ class LevelCamera(Element):
         necessary to call this instead of setting the extent directly.
         """
 
-        # our game world swaps the x and y axis, so we translate it here
-        #x, y, w, h = extent
-        #self.extent = Rect(y, x, h, w)
         self.extent = Rect(extent)
 
         self.half_width = self.extent.width / 2
@@ -113,7 +110,7 @@ class LevelCamera(Element):
             self.blank = False
             self.maprender.blank = True
 
-        # quadtree collision testing would be good here
+        # TODO: query chipmunk to find visible objects
         for entity, shape in self.area.shapes.items():
             if entity.avatar:
                 w, h = entity.avatar.image.get_size()
@@ -139,9 +136,6 @@ class LevelCamera(Element):
                 x -= self.extent.left
                 y -= self.extent.top
                 onScreen.append((entity.avatar.image, Rect((x, y), (w, h)), 1))
-
-        # should not be sorted every frame
-        #onScreen.sort(key=screenSorter)
 
         if parallax:
             self.parallaxrender.draw(surface, rect, [])

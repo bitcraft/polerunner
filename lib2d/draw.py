@@ -41,45 +41,27 @@ class GraphicBox(object):
                   for i in range(len(names)) ]
 
         self.tiles = dict(zip(names, tiles))
-        self.tiles['c'] = self.tiles['c'].convert_alpha()
+        self.tiles['c'] = self.tiles['c'].convert()
 
     def draw(self, surface, rect, fill=False):
         ox, oy, w, h = Rect(rect)
 
         if fill:
-            if fill == True:
+            if fill is True:
                 pass
             elif isinstance(fill, int):
-                print "int"
                 self.tiles['c'].set_alpha(fill)
 
-            wmod = 0
-            hmod = 0
+            orig_clip = surface.get_clip()
 
-            if float(w) % self.tw > 0:
-                wmod = self.tw
+            surface.set_clip(ox+4, oy+4, w-8, h-8)
 
-            if float(h) / self.th> 0:
-                hmod = self.th
-
-            p = product(range(ox+4, ox+w-wmod, self.tw),
-                        range(oy+4, oy+h-hmod, self.th))
+            p = product(range(ox+4, ox+w-8, self.tw),
+                        range(oy+4, oy+h-8, self.th))
       
- 
             [ surface.blit(self.tiles['c'], (x, y)) for x, y in p ]
 
-            # we were unable to fill it completly due to size restrictions
-            if wmod:
-                for y in range(oy+4, oy+h-hmod, self.th):
-                    surface.blit(self.tiles['c'], (ox+w-self.tw-4, y))
-
-            if hmod:
-                for x in range(ox+4, ox+w-wmod, self.tw):
-                    surface.blit(self.tiles['c'], (x, oy+h-self.th-4))
-
-            if hmod or wmod:
-                surface.blit(self.tiles['c'], (ox+w-self.tw-4, oy+h-self.th-4))
-
+            surface.set_clip(orig_clip)
 
         for x in range(self.tw+ox, w-self.tw+ox, self.tw):
             surface.blit(self.tiles['n'], (x, oy))

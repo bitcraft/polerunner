@@ -30,13 +30,10 @@ import pygame, os
 
 class TextDialog(context.Context):
     """
-    State that takes focus and waits for player to press a key
-    after displaying some some text.
+    State that takes focus and waits for player to press a key after displaying
+    some some text.
     """
 
-    # works well for the defualt font and size 
-    wrap_width = 44 
- 
     wait_sound = res.loadSound("select0.wav")
     wait_sound.set_volume(0.40)
 
@@ -46,14 +43,15 @@ class TextDialog(context.Context):
     def enter(self):
         self.background = (109, 109, 109)
         self.border = draw.GraphicBox(self.borderImage)
-        self.redraw = True
         self.activated = True
+        self.redraw = True
 
 
     # just write the text and wait for a keypress
-    def prompt(self, text, title=None):
+    def init(self, text, title=None):
         self.text = text
         self.title = title
+        self.redraw = True
 
 
     def draw(self, surface):
@@ -102,11 +100,10 @@ class TextDialog(context.Context):
             self.driver.remove(self)
 
 
+# this class is obsolete!
 class ChoiceDialog(context.Context):
-    #wrap_width = 58 # font 12
     
     text_size = 14
-    wrap_width = 46 
  
     background = (128, 128, 128)
 

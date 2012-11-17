@@ -70,24 +70,28 @@ class TitleScreen(context.Context):
         self.menu.rect = pygame.Rect(12,12,20,100)
 
 
-    def handle_event(self, event):
-        self.menu.handle_event(event)
-
+    def handle_command(self, cmd):
+        self.menu.handle_command(cmd)
+        print "CMCMCMCC", self, cmd
 
     def draw(self, surface):
         if self.redraw:
             self.redraw = False
             #if self.game:
-            self.border.draw(surface, surface.get_rect())
+            self.border.draw(surface, surface.get_rect(), fill=200)
 
         self.menu.draw(surface)
 
 
     def new_game(self):
+        if self.game:
+            self.game.unload()
+            self.game = None
+
         res.fadeoutMusic(1000)
         self.game = world.build()
         level = self.game.getChildByGUID(5001)
-        self.driver.append(LevelState(self.driver, level))
+        self.driver.append(LevelState(), level)
 
 
     def save_game(self):
@@ -98,6 +102,10 @@ class TitleScreen(context.Context):
 
 
     def load_game(self):
+        if self.game:
+            self.game.unload()
+            self.game = None
+
         try:
             path = os.path.join("resources", "saves", "save")
             self.game = loadObject(path)
@@ -105,13 +113,13 @@ class TitleScreen(context.Context):
             return self.new_game()
 
         level = self.game.getChildByGUID(5001)
-        self.driver.start(LevelState(level))
+        self.driver.append(LevelState(), level)
 
 
     def continue_game(self):
         res.fadeoutMusic(1000)
         level = self.game.getChildByGUID(5001)
-        self.driver.start(LevelState(level))
+        self.driver.append(LevelState(), level)
 
 
     def show_intro(self):
@@ -127,5 +135,5 @@ class TitleScreen(context.Context):
 
 
     def quit_game(self):
-        self.driver.done() 
+        self.driver.remove(self) 
 

@@ -1,4 +1,5 @@
 from lib2d.game import Game
+from lib2d.playerinput import KeyboardPlayerInput
 from lib2d import gfx, context
 import pygame
 
@@ -11,11 +12,10 @@ class TestGame(Game):
     def start(self):
         from lib.titlescreen import TitleScreen
         gfx.set_screen((1024, 600), 3, "scale")
-        self.sd = context.GameDriver(self, 60)
+        self.sd.inputs.append(KeyboardPlayerInput())
         self.sd.reload_screen()
-        self.sd.append(TitleScreen(self.sd))
+        self.sd.append(TitleScreen())
         self.sd.run()
-
 
 if __name__ == "__main__":
     if profile:

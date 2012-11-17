@@ -7,11 +7,40 @@ from lib2d.fsa.flags import *
 from lib2d import context
 import lib2d, pygame, pymunk, math
 
+"""
+GOALS FOR PLAYER CONTROL
+
+metroid / ninja / n
+
+* fast paced actions
+* wall jumps and grabs
+* ducking rolls
+* grabbing ceilings
+* ladders
+* elevators
+* double jumps
+* lots of animations
+* double tap dives
+* prone
+* mirror's edge!!!
+
+don't try to be too realistic, make it really fun!
+
+wall jumps:
+    find if collision is on side of wall
+    if wall has a high friction
+        if player is pressing away from the wall
+            apply horizontal force against wall
+            ( this will effectively press play and stick to wall )
+        if player jumps, allow for a 45 angle jump away from wall
+
+"""
+
+
 
 INITIAL_WALK_SPEED = 2.5
 RUN_SPEED = 80
 SPRINT_SPEED = 150
-WALK_SPEED_INCREMENT = .5
 STOPPING_FRICTION = 0.994
 ROLLING_FRICTION = 0.99
 
@@ -19,34 +48,26 @@ ROLLING_FRICTION = 0.99
 class State(context.Context):
     forbidden = []
 
-    def __init__(self, fsa, entity, *args, **kwargs):
-        context.Context.__init__(self, fsa)
-        self.fsa = fsa
+    def __init__(self, driver, entity, *args, **kwargs):
+        context.Context.__init__(self, driver)
         self.entity = entity
         self.cmd = None
-        self.init()
-
-    def init(self):
-        pass
 
     def abort(self):
-        self.fsa.eject(self)
+        try:
+            self.driver.remove(self)
+        except:
+            pass
 
-    def terminate(self, cmd):
-        self.fsa.process((self.__class__, STATE_VIRTUAL, STATE_FINISHED))
-
-    def enter(self, cmd=None):
-        pass
-
-    def exit(self, cmd=None):
-        pass
+    def terminate(self, *args, **kwargs):
+        self.driver.process((self.__class__, STATE_VIRTUAL, STATE_FINISHED))
 
     def update(self, time):
         pass
 
 
 class walkState(State):
-    def enter(self, cmd):
+    def init(self, cmd):
         self.body = self.entity.parent.getBody(self.entity)
         if self.cmd is None:
             self.cmd = cmd[1:]
@@ -64,11 +85,6 @@ class walkState(State):
         delta = desired_vel - self.body.velocity
         self.body.apply_impulse(delta * self.body.mass)
 
-        #if self.x > 0:
-        #    self.x += WALK_SPEED_INCREMENT
-        #else:
-        #    self.x -= WALK_SPEED_INCREMENT
-
         vel = abs(self.body.velocity.x)
         if vel < RUN_SPEED:
             self.entity.avatar.play('walk')
@@ -79,7 +95,7 @@ class walkState(State):
 
 
 class crouchState(State):
-    def enter(self, cmd):
+    def enter(self):
         self.entity.avatar.play('crouch', loop_frame=4)
         body = self.entity.parent.getBody(self.entity)
         body.velocity.x = 0
@@ -98,7 +114,7 @@ class crouchState(State):
 
 
 class uncrouchState(State):
-    def enter(self, cmd):
+    def enter(self):
         self.entity.avatar.play('uncrouch', callback=self.abort, loop=0)
         body = self.entity.parent.getBody(self.entity)
         body.velocity.x = 0
@@ -116,21 +132,15 @@ class uncrouchState(State):
         space.add(shape)
 
 
-class jumpState(State):
-    def enter(self, cmd):
-        pass
-
-
 class jumpingState(State):
     max_jumps = 2
 
-    def init(self):
+    def init(self, cmd):
         self.jumps = 0
-
-    def enter(self, cmd):
         if cmd is None:
             return 
 
+    def enter(self):
         area = self.entity.parent
         self.body = self.entity.parent.getBody(self.entity)
 
@@ -152,7 +162,7 @@ class jumpingState(State):
 
 
 class fallRecoverState(State):
-    def enter(self, cmd):
+    def enter(self):
         self.entity.avatar.play('crouch', loop_frame=4)
         self.body = self.entity.parent.getBody(self.entity)
         self.body.velocity.x /= 3.0
@@ -191,18 +201,18 @@ class sprintState(State):
 
 
 class idleState(State):
-    def enter(self, cmd):
-        self.entity.avatar.play('idle')
+    def init(self):
         self.body = self.entity.parent.getBody(self.entity)
 
+    def enter(self):
+        self.entity.avatar.play('idle')
+        
     def update(self, time):
         pass
-        if self.body.velocity.y > 0:
-            self.abort()
 
 
 class brakeState(State):
-    def enter(self, cmd):
+    def enter(self):
         self.entity.avatar.play('brake', loop_frame=5)
         self.body = self.entity.parent.getBody(self.entity)
         self.entity.parent.emitSound('stop.wav', entity=self.entity)
@@ -215,14 +225,14 @@ class brakeState(State):
 
 
 class unbrakeState(State):
-    def enter(self, cmd):
+    def enter(self):
         self.entity.avatar.play('unbrake', callback=self.abort, loop=0)
         body = self.entity.parent.getBody(self.entity)
         body.velocity.x = 0
 
 
 class fallingState(State):
-    def enter(self, cmd):
+    def enter(self):
         self.entity.avatar.play('falling')
         self.body = self.entity.parent.getBody(self.entity)
         self.old_vel = self.body.velocity.y 
@@ -238,10 +248,8 @@ class fallingState(State):
 
 
 class rollingState(State):
-    def init(self):
+    def enter(self):
         self.original = self.entity.avatar.animations['roll'].image.convert_alpha()
-
-    def enter(self, cmd):
         self.entity.avatar.play('roll')
         self.angle = 0.0
         self.body = self.entity.parent.getBody(self.entity)
@@ -269,50 +277,50 @@ class rollingState(State):
 
 
 # =============================================================================
-# state function pickers
+# context function pickers
 
 class transition(object):
     def __call__(self, *arg, **kwarg):
         return self.pick(*arg, **kwarg)
 
-    def pick(self, fsa, entity):
+    def pick(self, driver, entity):
         pass
 
 class dieT(transition):
-    def pick(self, fsa, entity):
-        return deadState(fsa, entity)
+    def pick(self, driver, entity):
+        return deadState(driver, entity)
 
 
 class checkFallingT(transition):
-    def pick(self, fsa, entity):
+    def pick(self, driver, entity):
         if entity.grounded:
-            return fallRecoverState(fsa, entity)
+            return fallRecoverState(driver, entity)
 
         body = entity.parent.getBody(entity)
 
         if body.velocity.y > 0:
-            return fallingState(fsa, entity)
+            return fallingState(driver, entity)
 
         elif body.velocity.y < 0:
-            return fallingState(fsa, entity)
+            return fallingState(driver, entity)
 
         else:
-            return fallRecoverState(fsa, entity)
+            return fallRecoverState(driver, entity)
 
 
 class idleT(transition):
-    def pick(self, fsa, entity):
+    def pick(self, driver, entity):
         body = entity.parent.getBody(entity)
         print body.velocity.y
         if body.velocity.y > 0:
-            fsa.push_state(idleState(fsa, entity), None)
-            return fallingState(fsa, entity)
+            driver.append(idleState(driver, entity), None)
+            return fallingState(driver, entity)
 
-        return idleState(fsa, entity)
+        return idleState(driver, entity)
 
 
 class brakeT(transition):
-    def pick(self, fsa, entity):
+    def pick(self, driver, entity):
         body = entity.parent.getBody(entity)
         vel_x = abs(body.velocity.x)
 
@@ -320,54 +328,54 @@ class brakeT(transition):
             body.velocity.x = 0.0
             return None
         elif vel_x >= SPRINT_SPEED:
-            return brakeState(fsa, entity)
+            return brakeState(driver, entity)
 
 
 class moveT(transition):
-    def pick(self, fsa, entity):
-        return walkState(fsa, entity)
+    def pick(self, driver, entity):
+        return walkState(driver, entity)
 
 
 class crouchT(transition):
-    def pick(self, fsa, entity):
+    def pick(self, driver, entity):
         body = entity.parent.getBody(entity)
         if abs(body.velocity.x) > 1.2:
-            return rollingState(fsa, entity)
+            return rollingState(driver, entity)
         else:
-            return crouchState(fsa, entity)
+            return crouchState(driver, entity)
 
 
 class uncrouchT(transition):
-    def pick(self, fsa, entity):
-        return uncrouchState(fsa, entity)
+    def pick(self, driver, entity):
+        return uncrouchState(driver, entity)
 
 
 class upT(transition):
-    def pick(self, fsa, entity):
-        return jumpingState(fsa, entity)
+    def pick(self, driver, entity):
+        return jumpingState(driver, entity)
 
 class fallRecoverT(transition):
-    def pick(self, fsa, entity):
+    def pick(self, driver, entity):
         body = entity.parent.getBody(entity)
         print body.velocity.x
         if abs(body.velocity.x) >= SPRINT_SPEED:
-            return rollingState(fsa, entity)
+            return rollingState(driver, entity)
         else:
-            return fallRecoverState(fsa, entity)
+            return fallRecoverState(driver, entity)
 
 class jumpT(transition):
-    def pick(self, fsa, entity):
-        return jumpingState(fsa, entity)
+    def pick(self, driver, entity):
+        return jumpingState(driver, entity)
 
 
-def stickyTrigger(source, trigger, state, picker):
-    return (source, trigger, BUTTONDOWN), state, picker, (source, trigger, BUTTONUP)
+def stickyTrigger(source, trigger, context, picker):
+    return (source, trigger, BUTTONDOWN), context, picker, (source, trigger, BUTTONUP)
 
-def stickyHeldTrigger(source, trigger, state, picker):
-    return (source, trigger, BUTTONHELD), state, picker, (trigger, BUTTONUP)
+def stickyHeldTrigger(source, trigger, context, picker):
+    return (source, trigger, BUTTONHELD), context, picker, (trigger, BUTTONUP)
 
-def endState(state, new_state):
-    return (state, STATE_VIRTUAL, STATE_FINISHED), state, new_state
+def endState(context, new_context):
+    return (context, STATE_VIRTUAL, STATE_FINISHED), context, new_context
 
 die = dieT()
 idle = idleT()
@@ -393,10 +401,12 @@ class HeroController(lib2d.fsa.fsa):
 
         self.at(*endState(walkState, brake))
 
-        self.at(*stickyTrigger(source, P1_LEFT, unbrakeState, move))
-        self.at(*stickyTrigger(source, P1_RIGHT, unbrakeState, move))
-        self.at(*stickyTrigger(source, P1_LEFT, brakeState, move), flags=QUEUED)
-        self.at(*stickyTrigger(source, P1_RIGHT, brakeState, move), flags=QUEUED)
+        self.at(*stickyTrigger(source, P1_LEFT, walkState, move),flags=BREAK)
+        self.at(*stickyTrigger(source, P1_RIGHT, walkState, move),flags=BREAK)
+        self.at(*stickyTrigger(source, P1_LEFT, unbrakeState, move),flags=BREAK)
+        self.at(*stickyTrigger(source, P1_RIGHT, unbrakeState, move),flags=BREAK)
+        self.at(*stickyTrigger(source, P1_LEFT, brakeState, move),flags=BREAK)
+        self.at(*stickyTrigger(source, P1_RIGHT, brakeState, move),flags=BREAK)
 
         self.at(*stickyTrigger(source, P1_LEFT, uncrouchState, move))
         self.at(*stickyTrigger(source, P1_RIGHT, uncrouchState, move))
@@ -439,8 +449,8 @@ class HeroController(lib2d.fsa.fsa):
         self.at(*endState(idleState, idle))
 
     def primestack(self):
-        # set our initial state
-        self.push_state(idleState(self, self.entity), None)
+        # set our initial context
+        self.append(idleState(self, self.entity))
 
 
     def reset(self):

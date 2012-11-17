@@ -1,7 +1,6 @@
 from renderer import LevelCamera
 
 from lib2d.signals import *
-from lib2d.playerinput import KeyboardPlayerInput
 from lib2d import res, ui, gfx, context, sound
 
 from lib2d.zone import Zone
@@ -70,12 +69,13 @@ class LevelState(context.Context):
     much of the work done here is in the Standard UI class.
     """
 
-    def __init__(self, driver, area):
-        super(LevelState, self).__init__(driver)
+    def init(self, area):
         self.area = area
 
 
     def enter(self):
+        self.controllers = []
+
         self.ui = LevelUI()
         vpm = ui.Frame(self.ui, ui.GridPacker())
         vp = ui.ViewPort(self.ui, self.area)
@@ -91,10 +91,6 @@ class LevelState(context.Context):
         # hackish pub/sub
         self.area.subscribe(self)
 
-        self.controllers = []
-
-        keyboard = KeyboardPlayerInput()
-
         self.hero = self.area.getChildByGUID(1)
         self.hero_body = self.area.getBody(self.hero)
 
@@ -102,17 +98,14 @@ class LevelState(context.Context):
         self.area.shapes[self.hero].collision_type = 1
 
         c1 = HeroController(self.hero)
-        c1.program(keyboard)
+        c1.program(self.driver.inputs[0])
         c1.primestack()
 
-        self.driver.inputs.append(keyboard)
         self.controllers.append(c1)
 
         self.area.space.add_collision_handler(1,2, begin=self.overlap_zone)
 
         self.paused = False
-
-        self.queued_state = None
 
 
     def overlap_zone(self, space, arbiter):
@@ -127,23 +120,18 @@ class LevelState(context.Context):
 
 
     def enter_zone(self, zone):
-        ctx = TextDialog(self.driver)
-        ctx.prompt(zone.properties['TouchMessage'])
-        self.queued_state = ctx
+        if zone.properties.has_key('TouchMessage'):
+            self.driver.append(TextDialog(), zone.properties['TouchMessage'])
+
 
     def reenter(self):
         [ c.reset() for c in self.controllers ]
-        pass
+
 
     def update(self, time):
         if not self.paused:
             self.area.update(time)
             [ c.update(time) for c in self.controllers ]
-
-        if self.queued_state:
-            self.driver.append(self.queued_state)
-            self.queued_state = None
-            return
 
 
     def draw(self, surface):
@@ -152,22 +140,7 @@ class LevelState(context.Context):
 
 
     def handle_command(self, cmd):
-        #self.ui.handle_commandlist(cmdlist)
-        #self.handleMovementKeys(cmdlist)
         [ c.process(cmd) for c in self.controllers ]
-
-            #if cmd == P1_ACTION1:
-            #    for thing, body in getNearby(self.hero, 8):
-            #        if hasattr(thing, "use"):
-            #            thing.use(self.hero)
-
-            #elif cmd == P1_ACTION3:
-            #    for thing, body in getNearby(self.hero, 6):
-            #        if thing.pushable and not self.hero.held:
-            #            self.hero.driver.join(hero_body, body)
-            #            self.hero.held = body
-            #            msg = self.text['grab'].format(thing.name) 
-            #            self.hero.driver.emitText(msg, thing=self.hero)
 
 
     def emitSound(self, filename, position):

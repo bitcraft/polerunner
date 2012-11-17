@@ -20,6 +20,7 @@ along with lib2d.  If not, see <http://www.gnu.org/licenses/>.
 
 from lib2d.ui import Element
 from lib2d import res, banner
+from lib2d.buttons import *
 
 from collections import namedtuple
 from pygame.locals import *
@@ -137,9 +138,11 @@ class Menu(Element):
         return [ surface.blit(o.image, self.points[i]) for i, o in enumerate(self.options) ]
 
 
-    def handle_event(self, event):
-        if event.type != KEYDOWN: return
-        key = event.key
+    def handle_command(self, cmd):
+        owner, cmd, arg = cmd
+
+        if not arg == BUTTONDOWN:
+            return
 
         o = self.orientation
         s = self.selection
@@ -147,27 +150,27 @@ class Menu(Element):
 
         d = 0
 
-        if key == K_DOWN:
+        if cmd == P1_DOWN:
             if (o == 'vertical') and ((s + 1) % n != 0):
                 d = 1
             elif o == 'horizontal':
                 d = n
-        elif key == K_UP:
+        elif cmd == P1_UP:
             if (o == 'vertical') and ((s) % n != 0):
                 d = -1
             elif o == 'horizontal':
                 d = -n
-        elif key == K_RIGHT:
+        elif cmd == P1_RIGHT:
             if o == 'vertical':
                 d = n
             elif (o == 'horizontal') and ((s + 1) % n != 0):
                 d = 1
-        elif key == K_LEFT:
+        elif cmd == P1_LEFT:
             if o == 'vertical':
                 d = -n
             elif (o == 'horizontal') and ((s) % n != 0):
                 d = -1
-        elif key == K_RETURN:
+        elif cmd == P1_ACTION1:
             return [None], self.options[self.selection].callback()
 
         s += d

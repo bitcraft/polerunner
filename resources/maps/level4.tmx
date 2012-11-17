@@ -31,4 +31,9 @@
    </properties>
   </object>
  </objectgroup>
+ <objectgroup name="Floor" width="200" height="60">
+  <object x="336" y="192">
+   <polyline points="0,0 704,-32 736,-48"/>
+  </object>
+ </objectgroup>
 </map>
