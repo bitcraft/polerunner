@@ -102,10 +102,22 @@ class LevelState(context.Context):
         c1.primestack()
 
         self.controllers.append(c1)
-
         self.area.space.add_collision_handler(1,2, begin=self.overlap_zone)
-
         self.paused = False
+
+
+    def exit(self):
+        self.ui = None
+        self.camera = None
+        # unload sounds
+
+        self.area.unsubscribe(self)
+
+        self.hero = None
+        self.hero_body = None
+
+        [ c.reset() for c in self.controllers ]
+        self.controllers = []
 
 
     def overlap_zone(self, space, arbiter):
@@ -122,10 +134,6 @@ class LevelState(context.Context):
     def enter_zone(self, zone):
         if zone.properties.has_key('TouchMessage'):
             self.driver.append(TextDialog(), zone.properties['TouchMessage'])
-
-
-    def reenter(self):
-        [ c.reset() for c in self.controllers ]
 
 
     def update(self, time):

@@ -335,3 +335,5 @@ class PlatformArea(AbstractArea, PlatformMixin):
     def subscribe(self, subscriber):
         self.subscribers.append(subscriber)
 
+    def unsubscribe(self, subscriber):
+        self.subscribers.remove(subscriber)

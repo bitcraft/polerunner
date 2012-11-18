@@ -39,15 +39,15 @@ wall jumps:
 
 
 INITIAL_WALK_SPEED = 2.5
-RUN_SPEED = 80
+ACCELERATION = 2
+RUN_SPEED = 40 #80
 SPRINT_SPEED = 150
+#WALK_SPEED_INCREMENT = .5
 STOPPING_FRICTION = 0.994
 ROLLING_FRICTION = 0.99
 
 
 class State(context.Context):
-    forbidden = []
-
     def __init__(self, driver, entity, *args, **kwargs):
         context.Context.__init__(self, driver)
         self.entity = entity
@@ -67,24 +67,36 @@ class State(context.Context):
 
 
 class walkState(State):
-    def init(self, cmd):
+    RIGHT = 0
+    LEFT = 1
+   
+    def init(self, cmd=None):
         self.body = self.entity.parent.getBody(self.entity)
-        if self.cmd is None:
-            self.cmd = cmd[1:]
+        self.cmd = cmd[1:]
 
+    def enter(self):
+        area = self.entity.parent
         if self.cmd[0] == P1_LEFT:
-            self.entity.avatar.flip = 1
-            self.x = -INITIAL_WALK_SPEED
+            self.entity.avatar.flip = self.LEFT
+            self.direction = self.LEFT
+            self.maxSpeed = - SPRINT_SPEED
+            # Max friction force on a flat surface = weight of body = mass * gravity
+            self.maxFrictionForce = - self.body.mass * area.gravity[1]
         elif self.cmd[0] == P1_RIGHT:
-            self.entity.avatar.flip = 0
-            self.x = INITIAL_WALK_SPEED
-
+            self.entity.avatar.flip = self.RIGHT
+            self.direction = self.RIGHT
+            self.maxSpeed = SPRINT_SPEED
+            # Max friction force on a flat surface = weight of body = mass * gravity
+            self.maxFrictionForce = self.body.mass * area.gravity[1]
+        force = (self.maxFrictionForce + self.maxSpeed * self.body.mass, 0)
+        self.body.apply_force(force)
 
     def update(self, time):
-        desired_vel = self.body.velocity + (self.x, 0)
-        delta = desired_vel - self.body.velocity
-        self.body.apply_impulse(delta * self.body.mass)
-
+        self.body.reset_forces()
+        deltaVelocity = self.maxSpeed - self.body.velocity.x
+        force = (self.maxFrictionForce + deltaVelocity * self.body.mass, 0)
+        self.body.apply_force(force)
+        
         vel = abs(self.body.velocity.x)
         if vel < RUN_SPEED:
             self.entity.avatar.play('walk')
@@ -93,6 +105,9 @@ class walkState(State):
         elif vel >= SPRINT_SPEED:
             self.entity.avatar.play('sprint')
 
+    def exit(self):
+        self.body.reset_forces()
+
 
 class crouchState(State):
     def enter(self):
@@ -100,14 +115,14 @@ class crouchState(State):
         body = self.entity.parent.getBody(self.entity)
         body.velocity.x = 0
         space = self.entity.parent.space
-        for shape in space.shapes:
-            if shape.body is body:
+        for old_shape in space.shapes:
+            if old_shape.body is body:
                 break
-        space.remove(shape)
+        space.remove(old_shape)
         w, h = self.entity.size
         shape = pymunk.Poly.create_box(body, size=(w, h/2))
-        shape.collision_type = 1
-        shape.friction = 1.0
+        shape.collision_type = old_shape.collision_type
+        shape.friction = old_shape.friction
         self.entity.parent.shapes[self.entity] = shape
         body.position.y += 8
         space.add(shape)
@@ -119,14 +134,14 @@ class uncrouchState(State):
         body = self.entity.parent.getBody(self.entity)
         body.velocity.x = 0
         space = self.entity.parent.space
-        for shape in space.shapes:
-            if shape.body is body:
+        for old_shape in space.shapes:
+            if old_shape.body is body:
                 break
-        space.remove(shape)
+        space.remove(old_shape)
         w, h = self.entity.size
         shape = pymunk.Poly.create_box(body, size=(w, h))
-        shape.collision_type = 1
-        shape.friction = 1.0
+        shape.collision_type = old_shape.collision_type
+        shape.friction = old_shape.friction
         self.entity.parent.shapes[self.entity] = shape
         body.position.y -= 4
         space.add(shape)
@@ -135,7 +150,7 @@ class uncrouchState(State):
 class jumpingState(State):
     max_jumps = 2
 
-    def init(self, cmd):
+    def init(self, cmd=None):
         self.jumps = 0
         if cmd is None:
             return 
@@ -167,14 +182,14 @@ class fallRecoverState(State):
         self.body = self.entity.parent.getBody(self.entity)
         self.body.velocity.x /= 3.0
         space = self.entity.parent.space
-        for shape in space.shapes:
-            if shape.body is self.body:
+        for old_shape in space.shapes:
+            if old_shape.body is self.body:
                 break
-        space.remove(shape)
+        space.remove(old_shape)
         w, h = self.entity.size
         shape = pymunk.Poly.create_box(self.body, size=(w, h/2))
-        shape.collision_type = 1
-        shape.friction = 1.0
+        shape.collision_type = old_shape.collision_type
+        shape.friction = old_shape.friction
         self.entity.parent.shapes[self.entity] = shape
         self.body.position.y += 8
         space.add(shape)
@@ -201,7 +216,7 @@ class sprintState(State):
 
 
 class idleState(State):
-    def init(self):
+    def init(self, cmd=None):
         self.body = self.entity.parent.getBody(self.entity)
 
     def enter(self):
@@ -216,11 +231,9 @@ class brakeState(State):
         self.entity.avatar.play('brake', loop_frame=5)
         self.body = self.entity.parent.getBody(self.entity)
         self.entity.parent.emitSound('stop.wav', entity=self.entity)
-        self.body.velocity.x /= 2
 
     def update(self, time):
-        #self.body.velocity.x *= STOPPING_FRICTION
-        if abs(self.body.velocity.x) < INITIAL_WALK_SPEED/4.0:
+        if abs(self.body.velocity.x) < INITIAL_WALK_SPEED:
             self.abort()
 
 
@@ -254,14 +267,14 @@ class rollingState(State):
         self.angle = 0.0
         self.body = self.entity.parent.getBody(self.entity)
         space = self.entity.parent.space
-        for shape in space.shapes:
-            if shape.body is self.body:
+        for old_shape in space.shapes:
+            if old_shape.body is self.body:
                 break
-        space.remove(shape)
+        space.remove(old_shape)
         w, h = self.entity.size
         shape = pymunk.Circle(self.body, radius=8)
-        shape.collision_type = 1
-        shape.friction = 1.0
+        shape.collision_type = old_shape.collision_type
+        shape.friction = old_shape.friction
         self.entity.parent.shapes[self.entity] = shape
         space.add(shape)
         self.body.position.y += 4
@@ -313,7 +326,7 @@ class idleT(transition):
         body = entity.parent.getBody(entity)
         print body.velocity.y
         if body.velocity.y > 0:
-            driver.append(idleState(driver, entity), None)
+            driver.append(idleState(driver, entity))
             return fallingState(driver, entity)
 
         return idleState(driver, entity)
@@ -454,8 +467,12 @@ class HeroController(lib2d.fsa.fsa):
 
 
     def reset(self):
+        print "RESET"
+        for context in reversed(self._stack):
+            print "REMOVE", context
+            self.remove(context)
+
         self.time = 0
-        self.stack = []
         self.holds = {}
         self.move_history = []
         self.primestack()
