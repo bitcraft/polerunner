@@ -22,13 +22,13 @@ from lib2d.buttons import *
 from lib2d.ui import Menu
 from lib2d.image import Image
 from lib2d.objects import loadObject
-from lib2d import res, draw, context
+from lib2d import res, draw, game
 
 import pygame, os
 
 
 
-class TextDialog(context.Context):
+class TextDialog(game.GameContext):
     """
     State that takes focus and waits for player to press a key after displaying
     some some text.
@@ -40,17 +40,15 @@ class TextDialog(context.Context):
     borderImage = Image("lpc-border0.png", colorkey=True)
 
 
+    def __init__(self, text, title=None):
+        self.text = text
+        self.title = title
+
+
     def enter(self):
         self.background = (109, 109, 109)
         self.border = draw.GraphicBox(self.borderImage)
         self.activated = True
-        self.redraw = True
-
-
-    # just write the text and wait for a keypress
-    def init(self, text, title=None):
-        self.text = text
-        self.title = title
         self.redraw = True
 
 
@@ -101,7 +99,7 @@ class TextDialog(context.Context):
 
 
 # this class is obsolete!
-class ChoiceDialog(context.Context):
+class ChoiceDialog(game.GameContext):
     
     text_size = 14
  

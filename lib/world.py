@@ -5,12 +5,10 @@ from lib2d.image import Image, ImageTile
 from lib2d.sound import Sound
 from lib2d import res
 from lib.buildarea import fromTMX
-from lib.level import Level
 from lib.entity import Entity
 
 from items import *
 from enemies import *
-from guide import *
 
 
 def build():
@@ -72,7 +70,6 @@ def build():
         guid=1
     )
 
-    #npc.avatar.axis_offset = (8,0)
     npc.setName("Brahbrah")
     npc.size = (16,32)
     npc.jump_strength = 400
@@ -120,13 +117,6 @@ def build():
     blue_key = Key(avatar, guid=515)
     blue_key.setName('Blue Key')
     uni.add(blue_key)
-
-
-    # =========================================================================
-    # Guides
-    
-    uni.add(Guide("TEST", guid=1537))
-
 
 
     # =========================================================================

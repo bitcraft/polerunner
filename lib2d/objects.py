@@ -106,20 +106,6 @@ class GameObject(object):
         return new 
 
 
-    def getPosition(self, what=None):
-        # override this for objects that can contain other types
-        if what is None: what = self._parent
-        return self._parent.getPosition(what)
-        #if what is None: what = self
-        #return self._parent.getPosition(what)
-
-
-    def getSize(self, what=None):
-        # override this for objects that can contain other types
-        if what is None: what = self._parent
-        return self._parent.getSize(what)
-        
-
     @property
     def parent(self):
         return self._parent
@@ -241,16 +227,6 @@ class GameObject(object):
         raise Exception, msg.format(name)
 
 
-    def get_flag(self):
-        """
-        flags are binary values that are attached to the object
-
-        will return true or false for the given property
-        """
-
-        pass
-
-
     def serialize(self, pickler, callback=None):
         """
         pickle this object, and continue with the children
@@ -333,14 +309,6 @@ class GameObject(object):
         #with open(name + "-index.txt", "w") as fh:
         #    pickler = pickle.Pickler(fh, -1)
         #    pickler.dump(toc)
-
-
-class PhysicalObject(GameObject):
-    """
-    object that can be seen or manipulated by the player
-    """
-    pass
-    
 
 
 class InteractiveObject(GameObject):

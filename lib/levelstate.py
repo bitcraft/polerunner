@@ -1,7 +1,7 @@
 from renderer import LevelCamera
 
 from lib2d.signals import *
-from lib2d import res, ui, gfx, context, sound
+from lib2d import res, ui, gfx, context, sound, game
 
 from lib2d.zone import Zone
 from lib.controllers import HeroController
@@ -61,7 +61,7 @@ class LevelUI(ui.UserInterface):
 
 
 
-class LevelState(context.Context):
+class LevelState(game.GameContext):
     """
     This state is where the player will move the hero around the map
     interacting with npcs, other players, objects, etc.
@@ -69,7 +69,7 @@ class LevelState(context.Context):
     much of the work done here is in the Standard UI class.
     """
 
-    def init(self, area):
+    def __init__(self, area):
         self.area = area
 
 
@@ -133,7 +133,7 @@ class LevelState(context.Context):
 
     def enter_zone(self, zone):
         if zone.properties.has_key('TouchMessage'):
-            self.driver.append(TextDialog(), zone.properties['TouchMessage'])
+            self.driver.append(TextDialog(zone.properties['TouchMessage']))
 
 
     def update(self, time):

@@ -39,24 +39,10 @@ Trigger = namedtuple('Trigger', 'owner, cmd, arg')
 Condition = namedtuple('Condition', 'trigger, context')
 Transition = namedtuple('Transition', 'func, alt_trigger, flags')
 
-"""
-class Transition(object):
-    def build(self):
-        pass
-
-
-class Toggled(Transition):
-    def __init__(self, trigger0, context, picker):
-        self.args = (trigger0, context, picker)
-
-    def build(self):
-        pass
-"""
-
 
 class fsa(context.ContextDriver):
     """
-    Somewhat like a finite context machine.
+    Somewhat like a finite state machine.
     """
 
     def __init__(self, entity):
@@ -64,29 +50,34 @@ class fsa(context.ContextDriver):
 
         self.entity = entity
 
-        self.context_transitions = {}
+        self.transitions = {}
+        self.transitions_wildcard = {}
         self.combos = {}
         self.button_combos = []
         self.move_history = []
         self.button_history = []
         self.holds = {}         # keep track of context changes from holds
-        self.hold = 0           # keep track of buttons held down
         self.time = 0
+        self._queue = []
+        self._inProcess = False
 
 
     def setup(self):
         pass
 
 
-    def add_transition(self, trigger, context, func, alt_trigger=None, flags=0):
+    def add_transition(self, trigger, ctx, func, alt_trigger=None, flags=0):
         """
         add new "transition".
         """
 
-        c = Condition(trigger, context)
-        t = Transition(func, alt_trigger, flags)
+        cond = Condition(trigger, ctx)
+        trans = Transition(func, alt_trigger, flags)
 
-        self.context_transitions[c] = t
+        if ctx == None:
+            self.transitions_wildcard[cond] = trans
+        else:
+            self.transitions[cond] = trans
 
     # shorthand for adding transitions
     at = add_transition
@@ -117,55 +108,75 @@ class fsa(context.ContextDriver):
         pass
 
 
-    def get_transition(self, trigger, context=None):
-        if context == None:
-            context = self.current_context.__class__
+    def get_transition(self, trigger, ctx=None):
+        if ctx == None:
+            ctx = self.current_context.__class__
 
         try:
-            return self.context_transitions[(trigger, context)]
+            return self.transitions_wildcard[(trigger, None)]
         except KeyError:
-            return None
+            try:
+                return self.transitions[(trigger, ctx)]
+            except KeyError:
+                return None
 
 
-    def process(self, trigger):
+    def process(self, trigger, ctx=None):
         """
         Triggers are passed here.
         """
 
+        if self._inProcess:
+            self._queue.append(trigger)
+            return
+        else:
+            self._inProcess = True
 
-        transition = self.get_transition(trigger)
-
-        debug("=========== processing {} {}".format(trigger, transition))
+        debug("=========== current: {}".format(self.current_context))
+        debug("=========== processing {}".format(trigger))
+        debug("   {}".format(self._stack))
+        transition = self.get_transition(trigger, ctx)
 
         self.remove_holds(trigger)
 
+        debug("=========== found transition: {}".format(transition))
+
         if transition is None:
+            self._inProcess = False
+            self._emptyQueue()
             return
 
         new_context = transition.func(self, self.entity)
 
         if new_context is None:
+            self._inProcess = False
+            self._emptyQueue()
             return
 
-        # allow for context 'self canceling':
-        # context can be replaced with new instance of same class
-        #existing = [stack for stack in self.all_stacks
-        #            if new_context.__class__ in [i.__class__ for i in stack]]
+        trigger = Trigger(*trigger)
 
-
-        # BREAK flag cancels the current context and ignores of transitions
+        # BREAK flag cancels the current context
+        # can be used for move 'cancels'
         if transition.flags & BREAK == BREAK:
-            self.remove(self.current_context, terminate=False)
+            old_context = self.current_context
+            old_context.abort()
+            self.append(new_context, trigger)
 
-        # STUBBORN will add the context to the stack even if it already
-        # exists.
+        elif transition.flags & SKIPEXIT == SKIPEXIT:
+            pass
+
+        # STUBBORN will add the context to the stack even if it already exists.
+        # currently, this flag does nothing
         elif transition.flags & STUBBORN == STUBBORN:
-            self.current_context.enter(trigger)
+            self.append(new_context, trigger)
 
-        # QUEUED flag will cause context to be run after current one is
-        # finished
+        # QUEUED flag will cause context to be queued after current context
         elif transition.flags & QUEUED == QUEUED:
-            self.queue(new_context, cmd=trigger)
+            self.queue(new_context, trigger)
+
+        # no flags were found, so just add the new context normally
+        else:
+            self.append(new_context, trigger)
 
         # support 'toggled' (STICKY) transitions
         # transitions can specify a trigger in add_transition that
@@ -173,27 +184,31 @@ class fsa(context.ContextDriver):
         if transition.alt_trigger is not None:
             self.holds[transition.alt_trigger] = (new_context, transition, trigger)
 
-        self.append(new_context, cmd=trigger)
+        self._inProcess = False
+        self._emptyQueue()
 
+
+
+    def _emptyQueue(self):
+        while self._queue:
+            self.process(self._queue.pop())
+        
 
     def remove_holds(self, trigger):
         try:
-            context = self.holds[trigger][0]
+            ctx = self.holds[trigger][0]
         except:
             pass
         else:
+            del self.holds[trigger]
             try:
-                del self.holds[trigger]
-                self.remove(context)
+                self.remove(ctx)
             except:
-                print "FSA:", "error {} not in holds".format(context)
-            
+                debug("FSA: error {} not in holds".format(ctx))
 
 
     def update(self, time):
         self.time += time
-        context = self.current_context
-
-        if context:
-            context.update(time) 
-
+        ctx = self.current_context
+        if ctx:
+            ctx.update(time) 

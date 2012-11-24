@@ -4,12 +4,12 @@ from lib import world
 from lib2d.ui import Menu
 from lib2d.image import Image
 from lib2d.objects import loadObject
-from lib2d import res, draw, context
+from lib2d import res, draw, game
 
 import pygame, os
 
 
-class InstructionScreen(context.Context):
+class InstructionScreen(game.GameContext):
     def enter(self):
         self.foreground = (0,0,0)
         self.background = (109, 109, 109)
@@ -35,7 +35,7 @@ class InstructionScreen(context.Context):
             self.driver.done()
 
 
-class TitleScreen(context.Context):
+class TitleScreen(game.GameContext):
     borderImage = Image("lpc-border0.png", colorkey=True)
 
     def init(self):
@@ -44,11 +44,15 @@ class TitleScreen(context.Context):
         self.counter = 0
         self.game = None
 
-        self.new_game()
-
 
     def enter(self):
         self.redraw = True
+
+        # temporary hack so that game bypasses the title screen menu
+        if self.game is None:
+            self.new_game()
+            return
+
 
         if self.game:
             self.menu = Menu(20, -5, 'vertical', 100,
@@ -72,7 +76,7 @@ class TitleScreen(context.Context):
 
     def handle_command(self, cmd):
         self.menu.handle_command(cmd)
-        print "CMCMCMCC", self, cmd
+
 
     def draw(self, surface):
         if self.redraw:
@@ -91,7 +95,7 @@ class TitleScreen(context.Context):
         res.fadeoutMusic(1000)
         self.game = world.build()
         level = self.game.getChildByGUID(5001)
-        self.driver.append(LevelState(), level)
+        self.driver.append(LevelState(level))
 
 
     def save_game(self):
@@ -113,13 +117,13 @@ class TitleScreen(context.Context):
             return self.new_game()
 
         level = self.game.getChildByGUID(5001)
-        self.driver.append(LevelState(), level)
+        self.driver.append(LevelState(level))
 
 
     def continue_game(self):
         res.fadeoutMusic(1000)
         level = self.game.getChildByGUID(5001)
-        self.driver.append(LevelState(), level)
+        self.driver.append(LevelState(level))
 
 
     def show_intro(self):

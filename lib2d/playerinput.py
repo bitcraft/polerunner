@@ -52,6 +52,8 @@ class PlayerInput:
     def getHeld(self):
         pass
 
+    def __repr__(self):
+        return self.__class__.__name__
 
 class KeyboardPlayerInput(PlayerInput):
     default_p1 = {

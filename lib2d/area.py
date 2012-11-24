@@ -106,10 +106,6 @@ class PlatformArea(AbstractArea, PlatformMixin):
     correctly.
 
     TODO: write some kind of saving!
-
-    REWRITE: FUNCTIONS HERE SHOULD NOT CHANGE STATE
-
-    NOTE: some of the code is specific for maps from the tmxloader
     """
 
     gravity = (0, 50)
@@ -134,9 +130,8 @@ class PlatformArea(AbstractArea, PlatformMixin):
         self.inUpdate = False
         self._addQueue = []
         self._removeQueue = []
-        self._addQueue = []
 
-        # temporary storage of physics stuff
+        # storage of physics stuff
         self.saved_positions = {}
 
         # internal physics stuff
@@ -176,6 +171,9 @@ class PlatformArea(AbstractArea, PlatformMixin):
         for child in self._children:
             if child.avatar:
                 if child.physics:
+                    child.landing_previous = False
+                    child.landing = {'p':pymunk.Vec2d.zero(), 'n':0}
+
                     body = pymunk.Body(5, pymunk.inf)
                     body.position = self.saved_positions[child]
                     shape = pymunk.Poly.create_box(body, size=child.size[:2])
@@ -206,15 +204,15 @@ class PlatformArea(AbstractArea, PlatformMixin):
 
         self.bodies = {}
         self.shapes = {}
-        self.physicsgroup = None
         self.space = None
 
 
     def add(self, child, pos=None):
-        AbstractArea.add(self, child)
+        if self.inUpdate:
+            self._addQueue.append(child)
+            return
 
-        # don't do anything with the physics engine here
-        # handle it in load(), where the area is prepped for use
+        AbstractArea.add(self, child)
 
         if child.avatar:
             if pos is None:
@@ -275,8 +273,9 @@ class PlatformArea(AbstractArea, PlatformMixin):
         if pos==entity==None:
             raise ValueError, "emitSound requires a position or entity"
 
-        self.currentSounds = [ s for s in self.currentSounds if not s.done ]
-        if filename not in [ s.filename for s in self.currentSounds ]:
+        #self.currentSounds = [ s for s in self.currentSounds if not s.done ]
+        #if filename not in [ s.filename for s in self.currentSounds ]:
+        if 1:
             self.currentSounds.append(EmitSound(filename, ttl))
             if entity:
                 pos = self.bodies[entity].position
@@ -306,16 +305,35 @@ class PlatformArea(AbstractArea, PlatformMixin):
                     grounding['body'] = arbiter.shapes[1].body
                     grounding['impulse'] = arbiter.total_impulse
                     grounding['position'] = arbiter.contacts[0].position
+
+                    entity.grounding = grounding
+
             body.each_arbiter(f)
             entity.avatar.update(time)
 
+            # copy/paste from pymunk platformer, not sure if needed
             if grounding['body'] != None:
-                friction = -(body.velocity.y/0.05)/self.space.gravity.y
+                friction = -(2.5/0.05)/self.space.gravity.y
 
-            if grounding['body'] != None and abs(grounding['normal'].x/grounding['normal'].y) < friction:
-                entity.grounded = True
+                if abs(grounding['normal'].x/grounding['normal'].y) < friction:
+                    entity.grounded = True
+                else:
+                    entity.grounded = False
             else:
                 entity.grounded = False
+
+            # check if falling body has landed
+            if (abs(grounding['impulse'].y) / body.mass > 0) \
+                and not entity.landed_previous:
+
+                entity.landing = {'p':grounding['position'],'n':5}
+                entity.landed_previous = True
+                entity.grounded = True
+            else:
+                entity.landed_previous = False
+
+            if entity.landing['n'] > 0:
+                entity.landing['n'] -= 1
 
             #entity.update(time)
 
@@ -324,8 +342,8 @@ class PlatformArea(AbstractArea, PlatformMixin):
         # awkward looping allowing objects to be added/removed during update
         self.inUpdate = False
         [ self.add(entity) for entity in self._addQueue ] 
-        self._addQueue = []
         [ self.remove(entity) for entity in self._removeQueue ] 
+        self._addQueue = []
         self._removeQueue = []
 
 

@@ -163,7 +163,6 @@ class StaticAnimation(Animation):
         """
 
         self.image = self.image.load()
-        print "loading, static", self, self.image 
 
     def returnNew(self):
         return self

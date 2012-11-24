@@ -20,9 +20,6 @@ along with lib2d.  If not, see <http://www.gnu.org/licenses/>.
 
 import gfx
 import pygame
-from lib2d.objects import GameObject
-from collections import deque
-from itertools import cycle, islice
 from pygame.locals import *
 
 
@@ -32,25 +29,40 @@ class Context(object):
     Currently are used in:
         Context Driver for the game
         FSA for controller handling
+
+    The main purpose of the 4 different methods defined here is to manage
+    memory usage.  Please follow the format to make sure your game uses memory
+    effeciently.
+
+    init:
+        should be the the minimum amout of data needed, such as filenames and
+        names of other resources to be loaded when context is endered
+
+    enter:
+        called when context is the running context
+        load any sounds, images, data files here that are needed
+
+    exit:
+        unload any data not directly needed, such as images and sounds and all
+        other data loaded in enter()
+
+    terminate:
+        unload any other data that you loaded in init()
+
     """
 
-    def __init__(self, driver=None):
-        """
-        Called when object is instanced.
+    def __enter__(self):
+        self.enter()
 
-        Please do not extend this method
-
-        Ideally, any initialization will be handled in init() since that is the
-        point when assets will be required.
-        """        
-
-        self.driver = driver
+    def __exit__(self):
+        self.exit()
 
 
     def init(self, *args, **kwargs):
         """
-        Called after context is placed in a stack
+        Called before context is placed in a stack
         This will only be called once over the lifetime of a context
+        *** DO NOT MODIFY THE STACK DURING THIS CALL ***
         """
 
         pass
@@ -58,8 +70,9 @@ class Context(object):
 
     def enter(self):
         """
-        Called before focus is given to the context
+        Called after focus is given to the context
         This may be called several times over the lifetime of the context
+        *** DO NOT MODIFY THE STACK DURING THIS CALL ***
         """
 
         pass
@@ -67,8 +80,9 @@ class Context(object):
 
     def exit(self):
         """
-        Called before focus is lost
+        Called after focus is lost
         This may be called several times over the lifetime of the context
+        *** DO NOT MODIFY THE STACK DURING THIS CALL ***
         """
 
         pass
@@ -76,30 +90,11 @@ class Context(object):
 
     def terminate(self):
         """
-        Called before the context is removed from a stack
+        Called after the context is removed from a stack
         This will only be called once
+        *** DO NOT MODIFY THE STACK DURING THIS CALL ***
         """
 
-        pass
-
-
-    def draw(self, surface):
-        """
-        Called when context can draw to the screen
-        """
-
-        pass
-
-
-    def handle_command(self, command):
-        """
-        Called when there is an input command to process
-        """
- 
-        pass
-
-
-    def update(self, time):
         pass
 
 
@@ -109,31 +104,23 @@ class ContextDriver(object):
         self._stack = []
 
 
-    def remove(self, context, terminate=True):
+    def remove(self, context, exit=True, terminate=True):
+        """
+        remove the context from the stack
+        """
 
-        print "REMOVE", context, self._stack
+        old_context = self.current_context
+        self._stack.remove(context)
+        if exit:
+            context.__exit__()
 
-        # you can optionally ignore the contexts terminate method
-        # this behavior is could easily break your stack, so use sparingly
+        if context is old_context:
+            new_context = self.current_context
+            if new_context:
+                new_context.__enter__()
+
         if terminate:
             context.terminate()
-
-        # this may be the current context, so handle it differently
-        if context is self.current_context:
-            context.exit()
-            try:
-                self._stack.remove(context)
-            except:
-                raise Exception, context
-            current_context = self.current_context
-            if current_context:
-                current_context.enter()
-        else:
-            context.exit()
-            try:
-                self._stack.remove(context)
-            except:
-                raise Exception, context
 
 
     def queue(self, new_context, *args, **kwargs):
@@ -142,9 +129,9 @@ class ContextDriver(object):
         when the current context finishes, the context passed will be run
         """
 
-        self._stack.insert(-1, new_context)
         new_context.driver = self
         new_context.init(*args, **kwargs)
+        self._stack.insert(-1, new_context)
 
 
     def append(self, new_context, *args, **kwargs):
@@ -157,35 +144,16 @@ class ContextDriver(object):
         idea: the old context could be pickled and stored to disk.
         """
 
-        current_context = self.current_context
-        if current_context:
-            current_context.exit()
+        old_context = self.current_context
 
-        self._stack.append(new_context)
         new_context.driver = self
         new_context.init(*args, **kwargs)
-        new_context.enter()
+        self._stack.append(new_context)
 
+        if old_context:
+            old_context.__exit__()
 
-    def roundrobin(*iterables):
-        """
-        create a new schedule for concurrent contexts
-        roundrobin('ABC', 'D', 'EF') --> A D E B F C
-
-        NOT USED
-
-        Recipe credited to George Sakkis
-        """
-
-        pending = len(iterables)
-        nexts = cycle(iter(it).next for it in iterables)
-        while pending:
-            try:
-                for next in nexts:
-                    yield next()
-            except StopIteration:
-                pending -= 1
-                nexts = cycle(islice(nexts, pending))
+        new_context.__enter__()
 
 
     @property
@@ -196,142 +164,4 @@ class ContextDriver(object):
             return None
 
 
-class GameDriver(ContextDriver):
-    """
-    accepts contexts that control game flow
-    A context is a logical way to break up "modes" of use for a game.
-    For example, a title screen, options screen, normal play, pause,
-    etc.
-    """
-
-    def __init__(self, parent, target_fps=30):
-        ContextDriver.__init__(self)
-        self.parent = parent
-        self.target_fps = target_fps
-        self.inputs = []
-
-        if parent != None:
-            self.reload_screen()
-
-
-    def get_size(self):
-        """
-        Return the size of the surface that is being drawn on.
-
-        * This may differ from the size of the window or screen if the display
-        is set to scale.
-        """
-
-        return self.parent.get_screen().get_size()
-
-
-    def get_screen(self):
-        """
-        Return the surface that is being drawn to.
-
-        * This may not be the pygame display surface
-        """
-
-        return self.parent.get_screen()
-
-
-    def reload_screen(self):
-        """
-        Called when the display changes mode.
-        """
-
-        self._screen = self.parent.get_screen()
-
-
-    def run(self):
-        """
-        run the context driver.  this is effectively your 'main loop' and game.
-        """
-
-        # deref for speed
-        event_poll = pygame.event.poll
-        event_pump = pygame.event.pump
-        clock = pygame.time.Clock()
-
-        # streamline event processing by filtering out stuff we won't use
-        allowed = [QUIT, KEYDOWN, KEYUP, \
-                   MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION]
-
-        pygame.event.set_allowed(None)
-        pygame.event.set_allowed(allowed)
-
-        # set an event to update the game context
-        debug_output = pygame.USEREVENT
-        pygame.time.set_timer(debug_output, 2000)
-
-        # make sure our custom events will be triggered
-        pygame.event.set_allowed([debug_output])
-
-        this_context = self.current_context
-
-        # this will loop until the end of the program
-        while self.current_context and this_context:
-            this_context = self.current_context
-            time = clock.tick(self.target_fps)
-
-# =============================================================================
-# EVENT HANDLING ==============================================================
-
-            event = event_poll()
-            while event:
-
-                # we should quit
-                if event.type == QUIT:
-                    this_context = None
-                    break
-
-                # check each input for something interesting
-                for cmd in [ c.getCommand(event) for c in self.inputs ]:
-                    if cmd is not None:
-                        this_context.handle_command(cmd)
-                        if not self.current_context == this_context:
-                            break
-
-                if not self.current_context == this_context: break
-
-                if event.type == debug_output:
-                    print "current FPS: \t{0:.1f}".format(clock.get_fps())
-                    print "context stack", self._stack
-                    print "current context", self.current_context
-
-                # back out of this context, or send event to the context
-                elif event.type == KEYDOWN:
-                    if event.key == K_ESCAPE:
-                        self.remove(self.current_context)
-                        break
-
-                event = event_poll()
-
-# =============================================================================
-# STATE UPDATING AND DRAWING HANDLING =========================================
-
-            if self.current_context is this_context:
-                dirty = this_context.draw(self._screen)
-                gfx.update_display(dirty)
-                #gfx.update_display()
-
-                # looks awkward?  because it is.  forcibly give small updates
-                # to the context so we don't draw too often.
-
-                time = time / 5.0
-
-                this_context.update(time)
-                if not self.current_context == this_context: continue
-
-                this_context.update(time)
-                if not self.current_context == this_context: continue
-
-                this_context.update(time)
-                if not self.current_context == this_context: continue
-
-                this_context.update(time)
-                if not self.current_context == this_context: continue
-
-                this_context.update(time)
-                current_context = self.current_context
 
