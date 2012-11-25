@@ -66,7 +66,7 @@ colorsets.append(("ITEM", (255,255,255), (0,120,10)))
 colorsets.append(("ELEVATOR", (0,0,0), (200,200,255)))
 
 # black on light-pink
-colorsets.append(("", (0,0,0), (255,200,200)))
+colorsets.append(("ENEMY", (0,0,0), (255,200,200)))
 
 # black on light-green
 colorsets.append(("", (0,0,0), (200,255,200)))
@@ -96,7 +96,7 @@ doc.appendChild(tileset)
 
 rect = image.get_rect()
 imageE = doc.createElement("image")
-imageE.setAttribute("source", filename + ".png")
+imageE.setAttribute("source", "../tilesets/{}.png".format(filename))
 imageE.setAttribute("width", str(rect.width))
 imageE.setAttribute("height", str(rect.height))
 tileset.appendChild(imageE)

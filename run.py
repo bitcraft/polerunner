@@ -2,8 +2,9 @@ from lib2d.game import Game
 from lib2d.playerinput import KeyboardPlayerInput
 from lib2d import gfx, context
 import pygame
+import logging
 
-
+logging.basicConfig(level=100)
 
 profile = 1
 
@@ -28,7 +29,7 @@ if __name__ == "__main__":
         try:
             cProfile.run('game.start()', "results.prof")
         except KeyboardInterrupt:
-            pass
+            raise
         else:
             p = pstats.Stats("results.prof")
             p.strip_dirs()

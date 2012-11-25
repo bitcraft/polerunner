@@ -94,15 +94,12 @@ class LevelState(game.GameContext):
         self.hero = self.area.getChildByGUID(1)
         self.hero_body = self.area.getBody(self.hero)
 
-        # set so player doesn't collide with zones
-        self.area.shapes[self.hero].collision_type = 1
-
         c1 = HeroController(self.hero)
         c1.program(self.driver.inputs[0])
         c1.primestack()
 
         self.controllers.append(c1)
-        self.area.space.add_collision_handler(1,2, begin=self.overlap_zone)
+        self.area.space.add_collision_handler(0,1, begin=self.overlap_zone)
         self.paused = False
 
 
@@ -121,6 +118,9 @@ class LevelState(game.GameContext):
 
 
     def overlap_zone(self, space, arbiter):
+        if self.area.shapes[self.hero] not in arbiter.shapes:
+            return False
+
         for zone in [i for i in self.area._children if isinstance(i, Zone)]:
             if self.area.shapes[zone] is arbiter.shapes[1]:
                 if not zone.entered:

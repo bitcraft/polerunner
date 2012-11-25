@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="200" height="60" tilewidth="16" tileheight="16">
- <tileset firstgid="1" source="controlset.tsx"/>
+ <tileset firstgid="1" source="../tilesets/controlset.tsx"/>
  <tileset firstgid="1905" name="level0" tilewidth="16" tileheight="16">
   <image source="../tilesets/level0.png" width="256" height="128"/>
  </tileset>
@@ -21,7 +21,7 @@
  </layer>
  <layer name="Control" width="200" height="60" visible="0">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3cQUrEUBBAweQI3v+yrkIk8GJEv0pPFfQis0pDP8hq9m3b9u20X57hlV170Aecqg9jzDmH6zPcmX4/0/djren3M30/1pp+P9P3Y63p9zN9P9aafj/T92Ot6fdzt8/bb74I/EPTeoefpA9o9f1ozFfm8NfvsXq/j+p3OFQfU+iD79AHvC59QNMHtM/6MObJTHW33+S94Ql9QNMHNH1A0wc0fUDTBzR9QNMHNH1A0wc0fUDTBzR9QNMHNH1A0wc0fUDTBzR9QNMHNH1A0wc0fUDTBzR9QHvV/42EJ3QATR/Q9AFNH9D0AU0f0PQBTR/Q9AFNH9D0AU0f0PQBTR/Q3gGqkGD4gLsAAA==
+   H4sIAAAAAAAAA+3cUUrDUBBA0QTcgEtz/5vxq0QCN1bqQ5mcA/ORQiEDc6Ff3bdt27fDfnqGOzv3oA84VB/GmGMezs9wZfr9TN+Ptabfz/T9WGv6/Uzfj7Wm38/0/Vhr+v1M34+1pt/P1T7vF9/7eFvwMvDPTOsdfpM+oNXvR2N+Mg9//R6r9/uqPoeH6mMKffAKfcB96QOaPqB914cxz8xUV/tN3hueoQ9o+oCmD2j6gKYPaPqApg9o+oCmD2j6gKYPaPqApg9o+oCmD2j6gKYPaPqApg9o+oCmD2j6gKYPaPqApg9od/3fSHiGDqDpA5o+oOkDmj6g6QOaPqDpA5o+oOkDmj6g6QOaPqDpA9onpojs7IC7AAA=
   </data>
  </layer>
  <objectgroup name="Zones" width="200" height="60">
@@ -31,7 +31,7 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup name="Floor" width="200" height="60">
+ <objectgroup name="Floor" width="200" height="60" visible="0">
   <object x="336" y="192">
    <polyline points="0,0 704,-32 736,-48"/>
   </object>

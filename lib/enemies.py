@@ -1,7 +1,94 @@
 from entity import Entity
+from pygoap.agent import GoapAgent
+from pygoap.actions import *
+from pygoap.goals import *
+from lib2d.buttons import *
 
 import random
 
+
+
+# =============================================================================
+# ACTION CLASSES FOR ENEMY AI
+
+class PathfindAction(ActionContext):
+    def update(self, time):
+        super(move_action, self).update(time)
+        if self.caller.position[1] == self.endpoint:
+            self.finish()
+        else:
+            env = self.caller.environment
+            path = env.pathfind(self.caller.position[1], self.endpoint)
+            path.pop() # this will always the the starting position
+            env.move(self.caller, (env, path.pop()))
+
+
+class ShootAction(CalledOnceContext):
+    def enter(self):
+        self.entity = self.caller.environment.get_entity(self.caller)
+        self.entity.avatar.play('shoot') 
+        print "pow"
+
+
+class MoveAction(ActionContext):
+    def enter(self):
+        self.entity = self.caller.environment.get_entity(self.caller)
+        self.body = self.entity.parent.getBody(self.entity)
+        self.direction = random.choice((P1_LEFT, P1_RIGHT))
+        self.update_forces()
+        force = (self.maxFrictionForce + self.maxSpeed * self.body.mass, 0)
+        self.body.apply_force(force)
+        self.entity.avatar.play('idle')
+
+    def update_forces(self):
+        if self.direction == P1_LEFT:
+            self.entity.avatar.flip = 0
+            self.maxSpeed = -self.entity.moving_speed
+            self.maxFrictionForce = -self.body.mass * self.entity.parent.gravity[1]
+        elif self.direction == P1_RIGHT:
+            self.entity.avatar.flip = 1
+            self.maxSpeed = self.entity.moving_speed
+            self.maxFrictionForce = self.body.mass * self.entity.parent.gravity[1]
+
+    def update(self, time):
+        if not random.randint(0, 500):
+            self.finish()
+
+        self.body.reset_forces()
+        deltaVelocity = self.maxSpeed - self.body.velocity.x
+        force = (self.maxFrictionForce + deltaVelocity * self.body.mass, 0)
+        self.body.apply_force(force)
+        
+
+class MoveAnywhere(ActionBuilder):
+    def get_actions(self, caller, memory):
+        action = MoveAction(caller)
+        action.effects.append(SimpleGoal(moving=True))
+        yield action
+
+class Shoot(ActionBuilder):
+    def get_actions(self, caller, memory):
+        action = ShootAction(caller)
+        action.effects.append(SimpleGoal(exterminate_human=True))
+        yield action
+ 
+
+#
+# =============================================================================
+
+
+class LaserRobot(Entity):
+    mass = 7
+    size = (16,32,16)
+    moving_speed = 65
+
+    def build_agent(self):
+        agent = GoapAgent()
+        agent.add_action(MoveAnywhere())
+        #agent.add_action(Shoot())
+        agent.add_goal(SimpleGoal(exterminate_human=True))
+        agent.add_goal(SimpleGoal(moving=True))
+        return agent
 
 
 class HoverBot(Entity):

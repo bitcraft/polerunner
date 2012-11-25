@@ -62,7 +62,6 @@ class Context(object):
         """
         Called before context is placed in a stack
         This will only be called once over the lifetime of a context
-        *** DO NOT MODIFY THE STACK DURING THIS CALL ***
         """
 
         pass
@@ -72,7 +71,6 @@ class Context(object):
         """
         Called after focus is given to the context
         This may be called several times over the lifetime of the context
-        *** DO NOT MODIFY THE STACK DURING THIS CALL ***
         """
 
         pass
@@ -82,7 +80,6 @@ class Context(object):
         """
         Called after focus is lost
         This may be called several times over the lifetime of the context
-        *** DO NOT MODIFY THE STACK DURING THIS CALL ***
         """
 
         pass
@@ -92,13 +89,24 @@ class Context(object):
         """
         Called after the context is removed from a stack
         This will only be called once
-        *** DO NOT MODIFY THE STACK DURING THIS CALL ***
         """
 
         pass
 
 
 class ContextDriver(object):
+    """
+    ContextDriver will manage a list of different contexts.
+
+    Contexts are stored in a simple FILO queue.
+
+    The current_context attribute will be the context at the top of the stack.
+
+    When a context is added to the ContextDriver, it will have the 'driver'
+    attribute set to the Driver.  Contexts are welcome to remove themselves or
+    other contexts.
+    """
+
 
     def __init__(self):
         self._stack = []
@@ -137,9 +145,6 @@ class ContextDriver(object):
     def append(self, new_context, *args, **kwargs):
         """
         start a new context and hold the current context.
-
-        when the new context finishes, the previous one will continue
-        where it was left off.
 
         idea: the old context could be pickled and stored to disk.
         """

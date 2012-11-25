@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <tileset name="control" tileheight="16" tilewidth="16">
- <image height="1904" source="controlset.png" width="256"/>
+ <image height="1904" source="../tilesets/controlset.png" width="256"/>
  <tile id="16">
   <properties>
    <property name="group" value="npc"/>
@@ -7171,1792 +7171,1792 @@
  </tile>
  <tile id="1104">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="0"/>
    <property name="guid" value="1025"/>
   </properties>
  </tile>
  <tile id="1105">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="1"/>
    <property name="guid" value="1026"/>
   </properties>
  </tile>
  <tile id="1106">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="2"/>
    <property name="guid" value="1027"/>
   </properties>
  </tile>
  <tile id="1107">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="3"/>
    <property name="guid" value="1028"/>
   </properties>
  </tile>
  <tile id="1108">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="4"/>
    <property name="guid" value="1029"/>
   </properties>
  </tile>
  <tile id="1109">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="5"/>
    <property name="guid" value="1030"/>
   </properties>
  </tile>
  <tile id="1110">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="6"/>
    <property name="guid" value="1031"/>
   </properties>
  </tile>
  <tile id="1111">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="7"/>
    <property name="guid" value="1032"/>
   </properties>
  </tile>
  <tile id="1112">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="8"/>
    <property name="guid" value="1033"/>
   </properties>
  </tile>
  <tile id="1113">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="9"/>
    <property name="guid" value="1034"/>
   </properties>
  </tile>
  <tile id="1114">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="10"/>
    <property name="guid" value="1035"/>
   </properties>
  </tile>
  <tile id="1115">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="11"/>
    <property name="guid" value="1036"/>
   </properties>
  </tile>
  <tile id="1116">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="12"/>
    <property name="guid" value="1037"/>
   </properties>
  </tile>
  <tile id="1117">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="13"/>
    <property name="guid" value="1038"/>
   </properties>
  </tile>
  <tile id="1118">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="14"/>
    <property name="guid" value="1039"/>
   </properties>
  </tile>
  <tile id="1119">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="15"/>
    <property name="guid" value="1040"/>
   </properties>
  </tile>
  <tile id="1120">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="16"/>
    <property name="guid" value="1041"/>
   </properties>
  </tile>
  <tile id="1121">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="17"/>
    <property name="guid" value="1042"/>
   </properties>
  </tile>
  <tile id="1122">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="18"/>
    <property name="guid" value="1043"/>
   </properties>
  </tile>
  <tile id="1123">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="19"/>
    <property name="guid" value="1044"/>
   </properties>
  </tile>
  <tile id="1124">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="20"/>
    <property name="guid" value="1045"/>
   </properties>
  </tile>
  <tile id="1125">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="21"/>
    <property name="guid" value="1046"/>
   </properties>
  </tile>
  <tile id="1126">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="22"/>
    <property name="guid" value="1047"/>
   </properties>
  </tile>
  <tile id="1127">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="23"/>
    <property name="guid" value="1048"/>
   </properties>
  </tile>
  <tile id="1128">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="24"/>
    <property name="guid" value="1049"/>
   </properties>
  </tile>
  <tile id="1129">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="25"/>
    <property name="guid" value="1050"/>
   </properties>
  </tile>
  <tile id="1130">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="26"/>
    <property name="guid" value="1051"/>
   </properties>
  </tile>
  <tile id="1131">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="27"/>
    <property name="guid" value="1052"/>
   </properties>
  </tile>
  <tile id="1132">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="28"/>
    <property name="guid" value="1053"/>
   </properties>
  </tile>
  <tile id="1133">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="29"/>
    <property name="guid" value="1054"/>
   </properties>
  </tile>
  <tile id="1134">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="30"/>
    <property name="guid" value="1055"/>
   </properties>
  </tile>
  <tile id="1135">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="31"/>
    <property name="guid" value="1056"/>
   </properties>
  </tile>
  <tile id="1136">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="32"/>
    <property name="guid" value="1057"/>
   </properties>
  </tile>
  <tile id="1137">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="33"/>
    <property name="guid" value="1058"/>
   </properties>
  </tile>
  <tile id="1138">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="34"/>
    <property name="guid" value="1059"/>
   </properties>
  </tile>
  <tile id="1139">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="35"/>
    <property name="guid" value="1060"/>
   </properties>
  </tile>
  <tile id="1140">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="36"/>
    <property name="guid" value="1061"/>
   </properties>
  </tile>
  <tile id="1141">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="37"/>
    <property name="guid" value="1062"/>
   </properties>
  </tile>
  <tile id="1142">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="38"/>
    <property name="guid" value="1063"/>
   </properties>
  </tile>
  <tile id="1143">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="39"/>
    <property name="guid" value="1064"/>
   </properties>
  </tile>
  <tile id="1144">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="40"/>
    <property name="guid" value="1065"/>
   </properties>
  </tile>
  <tile id="1145">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="41"/>
    <property name="guid" value="1066"/>
   </properties>
  </tile>
  <tile id="1146">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="42"/>
    <property name="guid" value="1067"/>
   </properties>
  </tile>
  <tile id="1147">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="43"/>
    <property name="guid" value="1068"/>
   </properties>
  </tile>
  <tile id="1148">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="44"/>
    <property name="guid" value="1069"/>
   </properties>
  </tile>
  <tile id="1149">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="45"/>
    <property name="guid" value="1070"/>
   </properties>
  </tile>
  <tile id="1150">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="46"/>
    <property name="guid" value="1071"/>
   </properties>
  </tile>
  <tile id="1151">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="47"/>
    <property name="guid" value="1072"/>
   </properties>
  </tile>
  <tile id="1152">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="48"/>
    <property name="guid" value="1073"/>
   </properties>
  </tile>
  <tile id="1153">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="49"/>
    <property name="guid" value="1074"/>
   </properties>
  </tile>
  <tile id="1154">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="50"/>
    <property name="guid" value="1075"/>
   </properties>
  </tile>
  <tile id="1155">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="51"/>
    <property name="guid" value="1076"/>
   </properties>
  </tile>
  <tile id="1156">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="52"/>
    <property name="guid" value="1077"/>
   </properties>
  </tile>
  <tile id="1157">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="53"/>
    <property name="guid" value="1078"/>
   </properties>
  </tile>
  <tile id="1158">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="54"/>
    <property name="guid" value="1079"/>
   </properties>
  </tile>
  <tile id="1159">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="55"/>
    <property name="guid" value="1080"/>
   </properties>
  </tile>
  <tile id="1160">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="56"/>
    <property name="guid" value="1081"/>
   </properties>
  </tile>
  <tile id="1161">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="57"/>
    <property name="guid" value="1082"/>
   </properties>
  </tile>
  <tile id="1162">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="58"/>
    <property name="guid" value="1083"/>
   </properties>
  </tile>
  <tile id="1163">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="59"/>
    <property name="guid" value="1084"/>
   </properties>
  </tile>
  <tile id="1164">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="60"/>
    <property name="guid" value="1085"/>
   </properties>
  </tile>
  <tile id="1165">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="61"/>
    <property name="guid" value="1086"/>
   </properties>
  </tile>
  <tile id="1166">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="62"/>
    <property name="guid" value="1087"/>
   </properties>
  </tile>
  <tile id="1167">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="63"/>
    <property name="guid" value="1088"/>
   </properties>
  </tile>
  <tile id="1168">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="64"/>
    <property name="guid" value="1089"/>
   </properties>
  </tile>
  <tile id="1169">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="65"/>
    <property name="guid" value="1090"/>
   </properties>
  </tile>
  <tile id="1170">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="66"/>
    <property name="guid" value="1091"/>
   </properties>
  </tile>
  <tile id="1171">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="67"/>
    <property name="guid" value="1092"/>
   </properties>
  </tile>
  <tile id="1172">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="68"/>
    <property name="guid" value="1093"/>
   </properties>
  </tile>
  <tile id="1173">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="69"/>
    <property name="guid" value="1094"/>
   </properties>
  </tile>
  <tile id="1174">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="70"/>
    <property name="guid" value="1095"/>
   </properties>
  </tile>
  <tile id="1175">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="71"/>
    <property name="guid" value="1096"/>
   </properties>
  </tile>
  <tile id="1176">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="72"/>
    <property name="guid" value="1097"/>
   </properties>
  </tile>
  <tile id="1177">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="73"/>
    <property name="guid" value="1098"/>
   </properties>
  </tile>
  <tile id="1178">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="74"/>
    <property name="guid" value="1099"/>
   </properties>
  </tile>
  <tile id="1179">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="75"/>
    <property name="guid" value="1100"/>
   </properties>
  </tile>
  <tile id="1180">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="76"/>
    <property name="guid" value="1101"/>
   </properties>
  </tile>
  <tile id="1181">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="77"/>
    <property name="guid" value="1102"/>
   </properties>
  </tile>
  <tile id="1182">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="78"/>
    <property name="guid" value="1103"/>
   </properties>
  </tile>
  <tile id="1183">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="79"/>
    <property name="guid" value="1104"/>
   </properties>
  </tile>
  <tile id="1184">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="80"/>
    <property name="guid" value="1105"/>
   </properties>
  </tile>
  <tile id="1185">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="81"/>
    <property name="guid" value="1106"/>
   </properties>
  </tile>
  <tile id="1186">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="82"/>
    <property name="guid" value="1107"/>
   </properties>
  </tile>
  <tile id="1187">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="83"/>
    <property name="guid" value="1108"/>
   </properties>
  </tile>
  <tile id="1188">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="84"/>
    <property name="guid" value="1109"/>
   </properties>
  </tile>
  <tile id="1189">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="85"/>
    <property name="guid" value="1110"/>
   </properties>
  </tile>
  <tile id="1190">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="86"/>
    <property name="guid" value="1111"/>
   </properties>
  </tile>
  <tile id="1191">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="87"/>
    <property name="guid" value="1112"/>
   </properties>
  </tile>
  <tile id="1192">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="88"/>
    <property name="guid" value="1113"/>
   </properties>
  </tile>
  <tile id="1193">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="89"/>
    <property name="guid" value="1114"/>
   </properties>
  </tile>
  <tile id="1194">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="90"/>
    <property name="guid" value="1115"/>
   </properties>
  </tile>
  <tile id="1195">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="91"/>
    <property name="guid" value="1116"/>
   </properties>
  </tile>
  <tile id="1196">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="92"/>
    <property name="guid" value="1117"/>
   </properties>
  </tile>
  <tile id="1197">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="93"/>
    <property name="guid" value="1118"/>
   </properties>
  </tile>
  <tile id="1198">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="94"/>
    <property name="guid" value="1119"/>
   </properties>
  </tile>
  <tile id="1199">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="95"/>
    <property name="guid" value="1120"/>
   </properties>
  </tile>
  <tile id="1200">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="96"/>
    <property name="guid" value="1121"/>
   </properties>
  </tile>
  <tile id="1201">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="97"/>
    <property name="guid" value="1122"/>
   </properties>
  </tile>
  <tile id="1202">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="98"/>
    <property name="guid" value="1123"/>
   </properties>
  </tile>
  <tile id="1203">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="99"/>
    <property name="guid" value="1124"/>
   </properties>
  </tile>
  <tile id="1204">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="100"/>
    <property name="guid" value="1125"/>
   </properties>
  </tile>
  <tile id="1205">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="101"/>
    <property name="guid" value="1126"/>
   </properties>
  </tile>
  <tile id="1206">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="102"/>
    <property name="guid" value="1127"/>
   </properties>
  </tile>
  <tile id="1207">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="103"/>
    <property name="guid" value="1128"/>
   </properties>
  </tile>
  <tile id="1208">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="104"/>
    <property name="guid" value="1129"/>
   </properties>
  </tile>
  <tile id="1209">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="105"/>
    <property name="guid" value="1130"/>
   </properties>
  </tile>
  <tile id="1210">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="106"/>
    <property name="guid" value="1131"/>
   </properties>
  </tile>
  <tile id="1211">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="107"/>
    <property name="guid" value="1132"/>
   </properties>
  </tile>
  <tile id="1212">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="108"/>
    <property name="guid" value="1133"/>
   </properties>
  </tile>
  <tile id="1213">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="109"/>
    <property name="guid" value="1134"/>
   </properties>
  </tile>
  <tile id="1214">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="110"/>
    <property name="guid" value="1135"/>
   </properties>
  </tile>
  <tile id="1215">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="111"/>
    <property name="guid" value="1136"/>
   </properties>
  </tile>
  <tile id="1216">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="112"/>
    <property name="guid" value="1137"/>
   </properties>
  </tile>
  <tile id="1217">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="113"/>
    <property name="guid" value="1138"/>
   </properties>
  </tile>
  <tile id="1218">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="114"/>
    <property name="guid" value="1139"/>
   </properties>
  </tile>
  <tile id="1219">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="115"/>
    <property name="guid" value="1140"/>
   </properties>
  </tile>
  <tile id="1220">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="116"/>
    <property name="guid" value="1141"/>
   </properties>
  </tile>
  <tile id="1221">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="117"/>
    <property name="guid" value="1142"/>
   </properties>
  </tile>
  <tile id="1222">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="118"/>
    <property name="guid" value="1143"/>
   </properties>
  </tile>
  <tile id="1223">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="119"/>
    <property name="guid" value="1144"/>
   </properties>
  </tile>
  <tile id="1224">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="120"/>
    <property name="guid" value="1145"/>
   </properties>
  </tile>
  <tile id="1225">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="121"/>
    <property name="guid" value="1146"/>
   </properties>
  </tile>
  <tile id="1226">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="122"/>
    <property name="guid" value="1147"/>
   </properties>
  </tile>
  <tile id="1227">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="123"/>
    <property name="guid" value="1148"/>
   </properties>
  </tile>
  <tile id="1228">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="124"/>
    <property name="guid" value="1149"/>
   </properties>
  </tile>
  <tile id="1229">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="125"/>
    <property name="guid" value="1150"/>
   </properties>
  </tile>
  <tile id="1230">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="126"/>
    <property name="guid" value="1151"/>
   </properties>
  </tile>
  <tile id="1231">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="127"/>
    <property name="guid" value="1152"/>
   </properties>
  </tile>
  <tile id="1232">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="128"/>
    <property name="guid" value="1153"/>
   </properties>
  </tile>
  <tile id="1233">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="129"/>
    <property name="guid" value="1154"/>
   </properties>
  </tile>
  <tile id="1234">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="130"/>
    <property name="guid" value="1155"/>
   </properties>
  </tile>
  <tile id="1235">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="131"/>
    <property name="guid" value="1156"/>
   </properties>
  </tile>
  <tile id="1236">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="132"/>
    <property name="guid" value="1157"/>
   </properties>
  </tile>
  <tile id="1237">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="133"/>
    <property name="guid" value="1158"/>
   </properties>
  </tile>
  <tile id="1238">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="134"/>
    <property name="guid" value="1159"/>
   </properties>
  </tile>
  <tile id="1239">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="135"/>
    <property name="guid" value="1160"/>
   </properties>
  </tile>
  <tile id="1240">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="136"/>
    <property name="guid" value="1161"/>
   </properties>
  </tile>
  <tile id="1241">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="137"/>
    <property name="guid" value="1162"/>
   </properties>
  </tile>
  <tile id="1242">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="138"/>
    <property name="guid" value="1163"/>
   </properties>
  </tile>
  <tile id="1243">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="139"/>
    <property name="guid" value="1164"/>
   </properties>
  </tile>
  <tile id="1244">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="140"/>
    <property name="guid" value="1165"/>
   </properties>
  </tile>
  <tile id="1245">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="141"/>
    <property name="guid" value="1166"/>
   </properties>
  </tile>
  <tile id="1246">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="142"/>
    <property name="guid" value="1167"/>
   </properties>
  </tile>
  <tile id="1247">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="143"/>
    <property name="guid" value="1168"/>
   </properties>
  </tile>
  <tile id="1248">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="144"/>
    <property name="guid" value="1169"/>
   </properties>
  </tile>
  <tile id="1249">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="145"/>
    <property name="guid" value="1170"/>
   </properties>
  </tile>
  <tile id="1250">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="146"/>
    <property name="guid" value="1171"/>
   </properties>
  </tile>
  <tile id="1251">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="147"/>
    <property name="guid" value="1172"/>
   </properties>
  </tile>
  <tile id="1252">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="148"/>
    <property name="guid" value="1173"/>
   </properties>
  </tile>
  <tile id="1253">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="149"/>
    <property name="guid" value="1174"/>
   </properties>
  </tile>
  <tile id="1254">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="150"/>
    <property name="guid" value="1175"/>
   </properties>
  </tile>
  <tile id="1255">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="151"/>
    <property name="guid" value="1176"/>
   </properties>
  </tile>
  <tile id="1256">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="152"/>
    <property name="guid" value="1177"/>
   </properties>
  </tile>
  <tile id="1257">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="153"/>
    <property name="guid" value="1178"/>
   </properties>
  </tile>
  <tile id="1258">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="154"/>
    <property name="guid" value="1179"/>
   </properties>
  </tile>
  <tile id="1259">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="155"/>
    <property name="guid" value="1180"/>
   </properties>
  </tile>
  <tile id="1260">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="156"/>
    <property name="guid" value="1181"/>
   </properties>
  </tile>
  <tile id="1261">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="157"/>
    <property name="guid" value="1182"/>
   </properties>
  </tile>
  <tile id="1262">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="158"/>
    <property name="guid" value="1183"/>
   </properties>
  </tile>
  <tile id="1263">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="159"/>
    <property name="guid" value="1184"/>
   </properties>
  </tile>
  <tile id="1264">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="160"/>
    <property name="guid" value="1185"/>
   </properties>
  </tile>
  <tile id="1265">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="161"/>
    <property name="guid" value="1186"/>
   </properties>
  </tile>
  <tile id="1266">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="162"/>
    <property name="guid" value="1187"/>
   </properties>
  </tile>
  <tile id="1267">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="163"/>
    <property name="guid" value="1188"/>
   </properties>
  </tile>
  <tile id="1268">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="164"/>
    <property name="guid" value="1189"/>
   </properties>
  </tile>
  <tile id="1269">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="165"/>
    <property name="guid" value="1190"/>
   </properties>
  </tile>
  <tile id="1270">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="166"/>
    <property name="guid" value="1191"/>
   </properties>
  </tile>
  <tile id="1271">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="167"/>
    <property name="guid" value="1192"/>
   </properties>
  </tile>
  <tile id="1272">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="168"/>
    <property name="guid" value="1193"/>
   </properties>
  </tile>
  <tile id="1273">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="169"/>
    <property name="guid" value="1194"/>
   </properties>
  </tile>
  <tile id="1274">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="170"/>
    <property name="guid" value="1195"/>
   </properties>
  </tile>
  <tile id="1275">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="171"/>
    <property name="guid" value="1196"/>
   </properties>
  </tile>
  <tile id="1276">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="172"/>
    <property name="guid" value="1197"/>
   </properties>
  </tile>
  <tile id="1277">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="173"/>
    <property name="guid" value="1198"/>
   </properties>
  </tile>
  <tile id="1278">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="174"/>
    <property name="guid" value="1199"/>
   </properties>
  </tile>
  <tile id="1279">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="175"/>
    <property name="guid" value="1200"/>
   </properties>
  </tile>
  <tile id="1280">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="176"/>
    <property name="guid" value="1201"/>
   </properties>
  </tile>
  <tile id="1281">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="177"/>
    <property name="guid" value="1202"/>
   </properties>
  </tile>
  <tile id="1282">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="178"/>
    <property name="guid" value="1203"/>
   </properties>
  </tile>
  <tile id="1283">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="179"/>
    <property name="guid" value="1204"/>
   </properties>
  </tile>
  <tile id="1284">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="180"/>
    <property name="guid" value="1205"/>
   </properties>
  </tile>
  <tile id="1285">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="181"/>
    <property name="guid" value="1206"/>
   </properties>
  </tile>
  <tile id="1286">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="182"/>
    <property name="guid" value="1207"/>
   </properties>
  </tile>
  <tile id="1287">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="183"/>
    <property name="guid" value="1208"/>
   </properties>
  </tile>
  <tile id="1288">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="184"/>
    <property name="guid" value="1209"/>
   </properties>
  </tile>
  <tile id="1289">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="185"/>
    <property name="guid" value="1210"/>
   </properties>
  </tile>
  <tile id="1290">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="186"/>
    <property name="guid" value="1211"/>
   </properties>
  </tile>
  <tile id="1291">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="187"/>
    <property name="guid" value="1212"/>
   </properties>
  </tile>
  <tile id="1292">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="188"/>
    <property name="guid" value="1213"/>
   </properties>
  </tile>
  <tile id="1293">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="189"/>
    <property name="guid" value="1214"/>
   </properties>
  </tile>
  <tile id="1294">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="190"/>
    <property name="guid" value="1215"/>
   </properties>
  </tile>
  <tile id="1295">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="191"/>
    <property name="guid" value="1216"/>
   </properties>
  </tile>
  <tile id="1296">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="192"/>
    <property name="guid" value="1217"/>
   </properties>
  </tile>
  <tile id="1297">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="193"/>
    <property name="guid" value="1218"/>
   </properties>
  </tile>
  <tile id="1298">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="194"/>
    <property name="guid" value="1219"/>
   </properties>
  </tile>
  <tile id="1299">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="195"/>
    <property name="guid" value="1220"/>
   </properties>
  </tile>
  <tile id="1300">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="196"/>
    <property name="guid" value="1221"/>
   </properties>
  </tile>
  <tile id="1301">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="197"/>
    <property name="guid" value="1222"/>
   </properties>
  </tile>
  <tile id="1302">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="198"/>
    <property name="guid" value="1223"/>
   </properties>
  </tile>
  <tile id="1303">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="199"/>
    <property name="guid" value="1224"/>
   </properties>
  </tile>
  <tile id="1304">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="200"/>
    <property name="guid" value="1225"/>
   </properties>
  </tile>
  <tile id="1305">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="201"/>
    <property name="guid" value="1226"/>
   </properties>
  </tile>
  <tile id="1306">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="202"/>
    <property name="guid" value="1227"/>
   </properties>
  </tile>
  <tile id="1307">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="203"/>
    <property name="guid" value="1228"/>
   </properties>
  </tile>
  <tile id="1308">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="204"/>
    <property name="guid" value="1229"/>
   </properties>
  </tile>
  <tile id="1309">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="205"/>
    <property name="guid" value="1230"/>
   </properties>
  </tile>
  <tile id="1310">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="206"/>
    <property name="guid" value="1231"/>
   </properties>
  </tile>
  <tile id="1311">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="207"/>
    <property name="guid" value="1232"/>
   </properties>
  </tile>
  <tile id="1312">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="208"/>
    <property name="guid" value="1233"/>
   </properties>
  </tile>
  <tile id="1313">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="209"/>
    <property name="guid" value="1234"/>
   </properties>
  </tile>
  <tile id="1314">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="210"/>
    <property name="guid" value="1235"/>
   </properties>
  </tile>
  <tile id="1315">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="211"/>
    <property name="guid" value="1236"/>
   </properties>
  </tile>
  <tile id="1316">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="212"/>
    <property name="guid" value="1237"/>
   </properties>
  </tile>
  <tile id="1317">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="213"/>
    <property name="guid" value="1238"/>
   </properties>
  </tile>
  <tile id="1318">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="214"/>
    <property name="guid" value="1239"/>
   </properties>
  </tile>
  <tile id="1319">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="215"/>
    <property name="guid" value="1240"/>
   </properties>
  </tile>
  <tile id="1320">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="216"/>
    <property name="guid" value="1241"/>
   </properties>
  </tile>
  <tile id="1321">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="217"/>
    <property name="guid" value="1242"/>
   </properties>
  </tile>
  <tile id="1322">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="218"/>
    <property name="guid" value="1243"/>
   </properties>
  </tile>
  <tile id="1323">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="219"/>
    <property name="guid" value="1244"/>
   </properties>
  </tile>
  <tile id="1324">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="220"/>
    <property name="guid" value="1245"/>
   </properties>
  </tile>
  <tile id="1325">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="221"/>
    <property name="guid" value="1246"/>
   </properties>
  </tile>
  <tile id="1326">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="222"/>
    <property name="guid" value="1247"/>
   </properties>
  </tile>
  <tile id="1327">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="223"/>
    <property name="guid" value="1248"/>
   </properties>
  </tile>
  <tile id="1328">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="224"/>
    <property name="guid" value="1249"/>
   </properties>
  </tile>
  <tile id="1329">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="225"/>
    <property name="guid" value="1250"/>
   </properties>
  </tile>
  <tile id="1330">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="226"/>
    <property name="guid" value="1251"/>
   </properties>
  </tile>
  <tile id="1331">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="227"/>
    <property name="guid" value="1252"/>
   </properties>
  </tile>
  <tile id="1332">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="228"/>
    <property name="guid" value="1253"/>
   </properties>
  </tile>
  <tile id="1333">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="229"/>
    <property name="guid" value="1254"/>
   </properties>
  </tile>
  <tile id="1334">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="230"/>
    <property name="guid" value="1255"/>
   </properties>
  </tile>
  <tile id="1335">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="231"/>
    <property name="guid" value="1256"/>
   </properties>
  </tile>
  <tile id="1336">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="232"/>
    <property name="guid" value="1257"/>
   </properties>
  </tile>
  <tile id="1337">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="233"/>
    <property name="guid" value="1258"/>
   </properties>
  </tile>
  <tile id="1338">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="234"/>
    <property name="guid" value="1259"/>
   </properties>
  </tile>
  <tile id="1339">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="235"/>
    <property name="guid" value="1260"/>
   </properties>
  </tile>
  <tile id="1340">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="236"/>
    <property name="guid" value="1261"/>
   </properties>
  </tile>
  <tile id="1341">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="237"/>
    <property name="guid" value="1262"/>
   </properties>
  </tile>
  <tile id="1342">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="238"/>
    <property name="guid" value="1263"/>
   </properties>
  </tile>
  <tile id="1343">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="239"/>
    <property name="guid" value="1264"/>
   </properties>
  </tile>
  <tile id="1344">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="240"/>
    <property name="guid" value="1265"/>
   </properties>
  </tile>
  <tile id="1345">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="241"/>
    <property name="guid" value="1266"/>
   </properties>
  </tile>
  <tile id="1346">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="242"/>
    <property name="guid" value="1267"/>
   </properties>
  </tile>
  <tile id="1347">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="243"/>
    <property name="guid" value="1268"/>
   </properties>
  </tile>
  <tile id="1348">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="244"/>
    <property name="guid" value="1269"/>
   </properties>
  </tile>
  <tile id="1349">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="245"/>
    <property name="guid" value="1270"/>
   </properties>
  </tile>
  <tile id="1350">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="246"/>
    <property name="guid" value="1271"/>
   </properties>
  </tile>
  <tile id="1351">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="247"/>
    <property name="guid" value="1272"/>
   </properties>
  </tile>
  <tile id="1352">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="248"/>
    <property name="guid" value="1273"/>
   </properties>
  </tile>
  <tile id="1353">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="249"/>
    <property name="guid" value="1274"/>
   </properties>
  </tile>
  <tile id="1354">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="250"/>
    <property name="guid" value="1275"/>
   </properties>
  </tile>
  <tile id="1355">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="251"/>
    <property name="guid" value="1276"/>
   </properties>
  </tile>
  <tile id="1356">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="252"/>
    <property name="guid" value="1277"/>
   </properties>
  </tile>
  <tile id="1357">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="253"/>
    <property name="guid" value="1278"/>
   </properties>
  </tile>
  <tile id="1358">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="254"/>
    <property name="guid" value="1279"/>
   </properties>
  </tile>
  <tile id="1359">
   <properties>
-   <property name="group" value=""/>
+   <property name="group" value="enemy"/>
    <property name="value" value="255"/>
    <property name="guid" value="1280"/>
   </properties>

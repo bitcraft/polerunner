@@ -29,7 +29,7 @@ from flags import *
 from collections import namedtuple
 
 
-DEBUG = 1
+DEBUG = 0
 
 def debug(message):
     if DEBUG: print message

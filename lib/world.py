@@ -118,11 +118,26 @@ def build():
     blue_key.setName('Blue Key')
     uni.add(blue_key)
 
+    # =========================================================================
+    # walking laser robot
+
+    avatar = Avatar([
+        StaticAnimation('idle',
+            Image('robot-stand.png')),
+        Animation('shoot',
+            Image('robot-shoot.png'),
+            range(4), 1, 85)],
+        axis_offset = (8,0)
+    )
+
+    npc = LaserRobot(avatar)
+    npc.setGUID(1025)
+    uni.add(npc)
+
 
     # =========================================================================
-
     # floating security bot
-    # =========================================================================
+
 
     avatar = Avatar([
         StaticAnimation('fall',
@@ -134,12 +149,11 @@ def build():
     npc = HoverBot((avatar, Sound('Hover0.wav')))
 
     npc.setName("bot0")
-    npc.setGUID(516)
+    npc.setGUID(517)
     npc.size = (16,32,16)
     npc.move_speed = .5   #.025
     npc.jump_strength = .5
     uni.add(npc)
-
 
 
     # =========================================================================

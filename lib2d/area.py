@@ -6,6 +6,8 @@ from pathfinding import astar
 from lib2d.signals import *
 from lib2d.zone import Zone
 from lib2d.sound import Sound
+from pygoap.environment import Environment, ObjectBase
+from pygoap.precepts import *
 import math
 
 import pymunk
@@ -18,6 +20,68 @@ cardinalDirs = {"north": math.pi*1.5,
 
 class AbstractArea(GameObject):
     pass
+
+
+class AreaEnvironment(Environment):
+    def __init__(self, area):
+        Environment.__init__(self)
+        self.area = area
+        self.mapping = {}
+        self.last_scan = 99999
+
+    def add(self, agent, entity):
+        self.mapping[agent] = entity
+        Environment.add(self, agent)
+
+    def get_entity(self, agent):
+        return self.mapping[agent]
+
+    def model_vision(self, precept, origin, terminus):
+        return precept
+
+    def model_sound(self, precept, origin, terminus):
+        return precept
+
+    def update(self, time):
+        self.last_scan += 1
+        if self.last_scan > 200:
+            [ self.look(agent) for agent in self.agents ]
+            self.last_scan = 0
+
+        Environment.update(self, time)
+
+    def look(self, caller, direction=None, distance=None):
+        """
+        Simulate vision by sending precepts to the caller.
+        """
+
+        model = self.model_precept
+
+        for entity in self.entities:
+            precept = PositionPrecept(entity, self.get_position(entity))
+            caller.process(model(precept, caller))
+
+    def get_position(self, agent):
+        return tuple(self.area.getBody(self.mapping[agent]).position)
+
+    def objects_at(self, position):
+        """
+        Return all objects exactly at a given position.
+        """
+
+        return [ obj for obj in self.entities if obj.position == position ]
+
+    def objects_near(self, position, radius):
+        """
+        Return all objects within radius of position.
+        """
+
+        radius2 = radius * radius
+        return [ obj for obj in self.entities  
+                if distance2(position, obj.position) <= radius2 ]
+
+    def model_precept(self, precept, other):
+        return precept
 
 
 class EmitSound(object):
@@ -89,6 +153,8 @@ class PlatformArea(AbstractArea, PlatformMixin):
 
     Physics simulation is handled by pymunk/chipmunk 2d physics.
 
+    AI is supplimented by a pyGOAP environment.
+
     Expects to load a specially formatted TMX map created with Tiled.
     Layers:
         Control Tiles
@@ -140,6 +206,9 @@ class PlatformArea(AbstractArea, PlatformMixin):
         self.bodies = {}
         self.scaling = 1.0
 
+        # simple model of the game world for AI to use
+        self.area_model = None
+
 
     def load(self):
         def toChipPoly(rect):
@@ -152,8 +221,12 @@ class PlatformArea(AbstractArea, PlatformMixin):
         self.tmxdata = pytmx.tmxloader.load_pygame(
                        self.mappath, force_colorkey=(128,128,0))
 
+        # physics simulation
         self.space = pymunk.Space()
         self.space.gravity = self.gravity
+
+        # simple model of the game world for AI to use
+        self.area_model = AreaEnvironment(self)
 
         # transform the saved geometry into chipmunk geometry and add it
         # bug: will not work with multiple layers
@@ -162,7 +235,6 @@ class PlatformArea(AbstractArea, PlatformMixin):
             for rect in rects:
                 shape = pymunk.Poly(self.space.static_body, toChipPoly(rect))
                 shape.friction = 2.0
-                shape.group = 1
                 geometry.append(shape)
 
         self.space.add(geometry)
@@ -174,7 +246,7 @@ class PlatformArea(AbstractArea, PlatformMixin):
                     child.landing_previous = False
                     child.landing = {'p':pymunk.Vec2d.zero(), 'n':0}
 
-                    body = pymunk.Body(5, pymunk.inf)
+                    body = pymunk.Body(child.mass, pymunk.inf)
                     body.position = self.saved_positions[child]
                     shape = pymunk.Poly.create_box(body, size=child.size[:2])
                     shape.friction = 1.0
@@ -189,10 +261,18 @@ class PlatformArea(AbstractArea, PlatformMixin):
                     self.shapes[child] = shape
                     self.space.add(shape)
 
+                # add this to the AI simulation
+                agent = child.build_agent()
+                if agent:
+                    agent.parent = child
+                    self.area_model.add(agent, child)
+                else:
+                    self.area_model.add(ObjectBase(child.name), child)
+
             elif isinstance(child, Zone):
                 points = toChipPoly(child.extent)
                 shape = pymunk.Poly(self.space.static_body, points)
-                shape.collision_type = 2
+                shape.collision_type = 1
                 self.shapes[child] = shape
                 self.space.add(shape)
 
@@ -204,6 +284,7 @@ class PlatformArea(AbstractArea, PlatformMixin):
 
         self.bodies = {}
         self.shapes = {}
+        self.area_model = None
         self.space = None
 
 
@@ -335,9 +416,8 @@ class PlatformArea(AbstractArea, PlatformMixin):
             if entity.landing['n'] > 0:
                 entity.landing['n'] -= 1
 
-            #entity.update(time)
-
         self.space.step(1.0/60)
+        self.area_model.update(time)
 
         # awkward looping allowing objects to be added/removed during update
         self.inUpdate = False

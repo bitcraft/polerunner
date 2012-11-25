@@ -107,6 +107,30 @@ def fromTMX(parent, mapname):
             area.add(body, (x, y, z))
             copy = True 
 
+    # load the enemies and place them where they should go
+    # enemies can have duplicate entries
+    enemies = [ p for p in props if p[1].get('group', None) == 'enemy' ]
+    done = [] 
+
+    for (gid, prop) in enemies:
+        if gid in done: continue
+        done.append(gid)
+
+        locations = data.getTileLocation(gid)
+        body = area._parent.getChildByGUID(int(prop['guid']))
+        copy = False
+
+        for pos in locations:
+            # bodies cannot exists in multiple locations, so a copy is
+            # made for each
+            if copy:
+                body = body.copy()
+
+            x, y, z = toWorld(data, pos)
+
+            area.add(body, (x, y, z))
+            copy = True 
+
 
     # level guides
     guides = [ p for p in props if p[1].get('group', None) == 'guide' ] 
