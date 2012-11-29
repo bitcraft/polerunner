@@ -211,3 +211,6 @@ class HoverBot(Entity):
         agent.add_action(Thrust())
         agent.add_goal(SimpleGoal(flying=True))
         return agent
+
+    def build_shapes(self, body):
+        return [pymunk.Circle(body, self.size[0]/2)]

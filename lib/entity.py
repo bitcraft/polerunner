@@ -1,4 +1,5 @@
 from lib2d.objects import GameObject
+import pymunk
 
 
 
@@ -40,3 +41,16 @@ class Entity(InteractiveObject):
 
     def build_agent(self):
         return None
+
+    def build_body(self):
+        """
+        should return the body as arg 0 and any shapes as remaining arguments
+        """
+
+        return pymunk.Body(self.mass, pymunk.inf)
+
+    def build_shapes(self, body):
+        shape = pymunk.Poly.create_box(body, size=self.size[:2])
+        shape.friction = 1.0
+
+        return [shape]

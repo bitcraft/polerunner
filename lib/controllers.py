@@ -39,7 +39,7 @@ wall jumps:
 
 WALLJUMP_FORCE = 30
 WALLGRAB_FORCE = 25
-AIR_SPEED = 25
+AIR_SPEED = 400
 ACCELERATION = 2
 
 MAXIMUM_SPEED = 400
@@ -83,7 +83,8 @@ class State(context.Context):
 class walkState(State):
     RIGHT = 0
     LEFT = 1
-   
+    feet = False  
+ 
     def init(self, trigger=None):
         self.body = self.driver.entity.parent.getBody(self.driver.entity)
 
@@ -104,6 +105,7 @@ class walkState(State):
     def enter(self):
         force = (self.maxFrictionForce + self.maxSpeed * self.body.mass, 0)
         self.body.apply_force(force)
+
 
     def update(self, time):
         self.body.reset_forces()

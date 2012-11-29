@@ -247,13 +247,16 @@ class PlatformArea(AbstractArea, PlatformMixin):
                     child.landing_previous = False
                     child.landing = {'p':pymunk.Vec2d.zero(), 'n':0}
 
-                    body = pymunk.Body(child.mass, pymunk.inf)
+                    body = child.build_body()
                     body.position = self.saved_positions[child]
-                    shape = pymunk.Poly.create_box(body, size=child.size[:2])
-                    shape.friction = 1.0
+                    self.space.add(body)
+
+                    shapes = child.build_shapes(body)
+                    self.space.add(shapes)
+
                     self.bodies[child] = body
-                    self.shapes[child] = shape
-                    self.space.add(body, shape)
+                    for shape in shapes:
+                        self.shapes[child] = shape
 
                 else:
                     rect = Rect(self.saved_positions[child], child.size[:2])
