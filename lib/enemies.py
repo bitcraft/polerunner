@@ -212,5 +212,14 @@ class HoverBot(Entity):
         agent.add_goal(SimpleGoal(flying=True))
         return agent
 
+
+    def build_body(self):
+        r = self.size[0]/ 2
+        m = pymunk.moment_for_circle(self.mass, r, r)
+        self.body = pymunk.Body(self.mass, m)
+        return self.body
+
     def build_shapes(self, body):
-        return [pymunk.Circle(body, self.size[0]/2)]
+        self.shape = pymunk.Circle(body, self.size[0]/2)
+        self.shape.friction = 1.0
+        return [self.shape]

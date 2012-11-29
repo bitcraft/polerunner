@@ -21,7 +21,7 @@
  </layer>
  <layer name="Control" width="200" height="60" visible="0">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3cQWqDUBRAUYVuoFvr/hfTkRik15h8Ssv3HHgDA4of3h1k4rosy7rs1sM13NmxB33ArvowxuyzOV7DmZn3Rx+Mmnl/9MGomfdHH4yaeX/0waiZ90cfjJp5f37q49Hnm8/9+njzRvhHnvUBd6YPaGf/P4x5ZTZ//R6/fb5H9Ttsqo9Z6IMR+oD70gc0fUB71ocxV2ZWZ+eb+dxwhT6g6QOaPqDpA5o+oOkDmj6g6QOaPqDpA5o+oOkDmj6g6QOaPqDpA5o+oOkDmj6g6QOaPqDpA5o+oOkDmj6g3fW7kXCFDqDpA5o+oOkDmj6g6QOaPqDpA5o+oOkDmj6g6QOaPqDpA9o3V5HagIC7AAA=
+   H4sIAAAAAAAAA+3cQWqEQBBAUYVcIEdL7n+YrMRB8h0nTUho34NaqDBMQ/2FG9dlWdZltx6u4c6OPegDdtWHMWafzfEazsy8P/pg1Mz7ow9Gzbw/+mDUzPujD0bNvD/6YNTM+/NdH4/ef/i7n2/nzz+ePIf/4FkfcGf6gHb2/mHMK7P56//x2+d7VPdhU33MQh+M0Afclz6g6QPasz6MuTKzOjvfzOeGK/QBTR/Q9AFNH9D0AU0f0PQBTR/Q9AFNH9D0AU0f0PQBTR/Q9AFNH9D0AU0f0PQBTR/Q9AFNH9D0AU0f0PQB7a7fjYQrdABNH9D0AU0f0PQBTR/Q9AFNH9D0AU0f0PQBTR/Q9AFNH9C+AO4tA7GAuwAA
   </data>
  </layer>
  <objectgroup name="Zones" width="200" height="60">

@@ -223,6 +223,7 @@ class PlatformArea(AbstractArea, PlatformMixin):
 
         # physics simulation
         self.space = pymunk.Space()
+        self.space.damping = 0.9
         self.space.gravity = self.gravity
 
         # simple model of the game world for AI to use
@@ -381,7 +382,9 @@ class PlatformArea(AbstractArea, PlatformMixin):
                 'position' : pymunk.Vec2d.zero(),
                 'body' : None
             }
-                    
+                   
+            
+ 
             def f(arbiter):
                 n = -arbiter.contacts[0].normal
                 if n.y > grounding['normal'].y:

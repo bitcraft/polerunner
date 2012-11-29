@@ -28,6 +28,7 @@ class Entity(InteractiveObject):
 
     physics = True
     mass = 5
+    size = (16, 16, 16)
 
     def __init__(self, *args, **kwargs):
         InteractiveObject.__init__(self, *args, **kwargs)
@@ -47,10 +48,17 @@ class Entity(InteractiveObject):
         should return the body as arg 0 and any shapes as remaining arguments
         """
 
-        return pymunk.Body(self.mass, pymunk.inf)
+        r = self.size[0]/ 2
+        m = pymunk.moment_for_circle(self.mass, r, r)
+
+        self.body = pymunk.Body(self.mass, pymunk.inf)
+        #self.body = pymunk.Body(self.mass, m)
+        return self.body
 
     def build_shapes(self, body):
-        shape = pymunk.Poly.create_box(body, size=self.size[:2])
-        shape.friction = 1.0
+        self.body_shape = pymunk.Poly.create_box(body, size=self.size[:2])
+        self.body_shape.friction = 1.0
+        self.feet = pymunk.Circle(body, self.size[0] / 2, (0, 8))
+        self.feet.friction = 1.0
 
-        return [shape]
+        return [self.body_shape]

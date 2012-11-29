@@ -3,9 +3,11 @@ from lib2d.objects import GameObject
 from lib2d.ui import Element
 
 from pygame import Rect, draw, Surface
+from pygame.transform import rotozoom
 
 from pymunk.pygame_util import draw_space, from_pygame, to_pygame
 import pymunk
+import math
 
 
 DEBUG = 1
@@ -135,7 +137,17 @@ class LevelCamera(Element):
 
                 x -= self.extent.left
                 y -= self.extent.top
-                onScreen.append((entity.avatar.image, Rect((x, y), (w, h)), 1))
+
+                if hasattr(shape, "radius"):
+                    angle = int(math.degrees(shape.body.angle)) % 360
+                    image = rotozoom(entity.avatar.image.convert_alpha(), angle, 1.0)
+                    ww, hh = image.get_size()
+                    rrect = Rect(x, y, *image.get_size())
+                    rrect.move_ip((w-ww)/2, (h-hh)/2)
+                else:
+                    rrect = Rect(x, y, w, h)
+                    image = entity.avatar.image
+                onScreen.append((image, rrect, 1))
 
         if parallax:
             self.parallaxrender.draw(surface, rect, [])
@@ -158,10 +170,12 @@ class LevelCamera(Element):
                 try:
                     radius = shape.radius
                     pos = shape.body.position
-                    pos = translate((int(pos.x), int(pos.y)))
+                    pos = translate(pos)
+                    pos += shape.offset
                 except AttributeError:
                     pass
                 else:
+                    pos = map(int, pos)
                     draw.circle(surface, (255,100,100), pos, int(radius), 1)
                     continue
 

@@ -238,7 +238,6 @@ class airMoveState(State):
    
     def init(self, trigger=None):
         self.body = self.driver.entity.parent.getBody(self.driver.entity)
-        self.last_c = self.driver.entity.grounding
         self.trigger = trigger
 
     def enter(self):
@@ -259,12 +258,6 @@ class airMoveState(State):
         force = (deltaVelocity * self.body.mass, 0)
         self.body.apply_force(force)
         
-        if abs(self.driver.entity.grounding['impulse'].y) / self.body.mass > 1:
-            self.stop()
-
-        if self.last_c is not self.driver.entity.grounding:
-            self.collide()
-
         if self.driver.entity.landed_previous or self.driver.entity.grounded:
             self.stop()
 
@@ -627,7 +620,7 @@ class HeroController(lib2d.fsa.fsa):
         #self.at((source, P1_ACTION2, BUTTONDOWN), fallingState, jump, flags=BREAK)
 
         # falling after a jump
-        self.at(*endState(jumpingState, fall))
+        #self.at(*endState(jumpingState, fall))
 
 
     def primestack(self):
