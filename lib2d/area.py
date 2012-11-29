@@ -174,7 +174,7 @@ class PlatformArea(AbstractArea, PlatformMixin):
     TODO: write some kind of saving!
     """
 
-    gravity = (0, 50)
+    gravity = (0, 150)
 
 
     def defaultSize(self):
@@ -243,6 +243,7 @@ class PlatformArea(AbstractArea, PlatformMixin):
         for child in self._children:
             if child.avatar:
                 if child.physics:
+                    child.grounded = False
                     child.landing_previous = False
                     child.landing = {'p':pymunk.Vec2d.zero(), 'n':0}
 
@@ -416,7 +417,7 @@ class PlatformArea(AbstractArea, PlatformMixin):
             if entity.landing['n'] > 0:
                 entity.landing['n'] -= 1
 
-        self.space.step(1.0/60)
+        self.space.step(time*3)
         self.area_model.update(time)
 
         # awkward looping allowing objects to be added/removed during update

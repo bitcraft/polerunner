@@ -8,7 +8,7 @@ from pymunk.pygame_util import draw_space, from_pygame, to_pygame
 import pymunk
 
 
-DEBUG = 0
+DEBUG = 1
 
 parallax = 1
 

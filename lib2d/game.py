@@ -51,6 +51,10 @@ class GameDriver(context.ContextDriver):
         self.target_fps = target_fps
         self.inputs = []
 
+        tpf = 1.0 / self.target_fps
+        self.update_steps = 3.0
+        self.time_delta = tpf / float(self.update_steps)
+
         if parent != None:
             self.reload_screen()
 
@@ -103,7 +107,7 @@ class GameDriver(context.ContextDriver):
 
         # set an event to update the game context
         debug_output = pygame.USEREVENT
-        #pygame.time.set_timer(debug_output, 2000)
+        pygame.time.set_timer(debug_output, 2000)
 
         # make sure our custom events will be triggered
         pygame.event.set_allowed([debug_output])
@@ -159,20 +163,12 @@ class GameDriver(context.ContextDriver):
                 # looks awkward?  because it is.  forcibly give small updates
                 # to the context so we don't draw too often.
 
-                time = time / 5.0
-
-                this_context.update(time)
+                this_context.update(self.time_delta)
                 if not self.current_context == this_context: continue
 
-                this_context.update(time)
+                this_context.update(self.time_delta)
                 if not self.current_context == this_context: continue
 
-                this_context.update(time)
-                if not self.current_context == this_context: continue
-
-                this_context.update(time)
-                if not self.current_context == this_context: continue
-
-                this_context.update(time)
+                this_context.update(self.time_delta)
                 current_context = self.current_context
 

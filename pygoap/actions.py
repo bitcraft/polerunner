@@ -71,9 +71,9 @@ class ActionContext(object):
         """
         Please do not override this method.  Use exit instead.
         """
-        if self.state is ACTIONSTATE_RUNNING:
+        if self.state == ACTIONSTATE_RUNNING:
             self.state = ACTIONSTATE_FINISHED
-        if self.state is not ACTIONSTATE_ABORTED:
+        if not self.state == ACTIONSTATE_ABORTED:
             self.exit()
         return False
 
@@ -162,8 +162,8 @@ class CalledOnceContext(ActionContext):
 
     def __enter__(self):
         if self.test() == 1.0:
-            super(CalledOnceContext, self).enter()
-            super(CalledOnceContext, self).exit()
+            super(CalledOnceContext, self).__enter__()
+            super(CalledOnceContext, self).__exit__()
         else:
             self.fail()
 

@@ -64,7 +64,7 @@ class Animation(GameObject):
 
         self.real_frames = len(set(self.frames))
 
-        if isinstance(self.timing, int):
+        if isinstance(self.timing, (int, float)):
             self.timing = tuple([self.timing] * len(self.frames))
         else:
             self.timing = tuple(self.timing)

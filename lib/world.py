@@ -25,34 +25,34 @@ def build():
     avatar = Avatar([
         Animation('idle',
             Image('hero-idle.png'),
-            range(9), 1, 100),
+            range(9), 1, .1),
         Animation('brake',
             Image('hero-brake.png'),
-            range(6), 1, 30),
+            range(6), 1, .03),
         Animation('unbrake',
             Image('hero-brake.png'),
-            range(5,-1,-1), 1, 30),
+            range(5,-1,-1), 1, .03),
         Animation('walk',
             Image('hero-walk.png'),
-            range(10), 1, 70),
+            range(10), 1, .07),
         Animation('crouch',
             Image('hero-crouch.png'),
-            range(5), 1, 30),
+            range(5), 1, .03),
         Animation('uncrouch',
             Image('hero-uncrouch.png'),
-            range(5), 1, 30),
+            range(5), 1, .03),
         Animation('run',
             Image('hero-run.png'),
-            range(16), 1, 30),
+            range(16), 1, .03),
         Animation('sprint',
             Image('hero-sprint.png'),
-            range(17), 1, 20),
+            range(17), 1, .02),
         Animation('wait',
             Image('hero-wait.png'),
-            range(6), 1, 100),
+            range(6), 1, .1),
         Animation('die',
             Image('hero-die.png'),
-            range(3), 1, 85),
+            range(3), 1, .85),
         StaticAnimation('jumping',
             ImageTile('hero-jump.png', (2,0), (32,32))),
         StaticAnimation('falling',
@@ -72,7 +72,7 @@ def build():
 
     npc.setName("Brahbrah")
     npc.size = (16,32)
-    npc.jump_strength = 400
+    npc.jump_strength = 800
     uni.add(npc)
 
 
@@ -140,7 +140,7 @@ def build():
 
 
     avatar = Avatar([
-        StaticAnimation('fall',
+        StaticAnimation('idle',
             Image('bot0-idle-0001.png')),
         StaticAnimation('hover',
             Image('bot0-hover-0001.png')),
@@ -149,10 +149,10 @@ def build():
     npc = HoverBot((avatar, Sound('Hover0.wav')))
 
     npc.setName("bot0")
-    npc.setGUID(517)
+    npc.setGUID(1026)
     npc.size = (16,32,16)
     npc.move_speed = .5   #.025
-    npc.jump_strength = .5
+    npc.jump_strength = 50
     uni.add(npc)
 
 

@@ -21,11 +21,11 @@
  </layer>
  <layer name="Control" width="200" height="60" visible="0">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3cUUrDUBBA0QTcgEtz/5vxq0QCN1bqQ5mcA/ORQiEDc6Ff3bdt27fDfnqGOzv3oA84VB/GmGMezs9wZfr9TN+Ptabfz/T9WGv6/Uzfj7Wm38/0/Vhr+v1M34+1pt/P1T7vF9/7eFvwMvDPTOsdfpM+oNXvR2N+Mg9//R6r9/uqPoeH6mMKffAKfcB96QOaPqB914cxz8xUV/tN3hueoQ9o+oCmD2j6gKYPaPqApg9o+oCmD2j6gKYPaPqApg9o+oCmD2j6gKYPaPqApg9o+oCmD2j6gKYPaPqApg9od/3fSHiGDqDpA5o+oOkDmj6g6QOaPqDpA5o+oOkDmj6g6QOaPqDpA9onpojs7IC7AAA=
+   H4sIAAAAAAAAA+3cQWqDUBRAUYVuoFvr/hfTkRik15h8Ssv3HHgDA4of3h1k4rosy7rs1sM13NmxB33ArvowxuyzOV7DmZn3Rx+Mmnl/9MGomfdHH4yaeX/0waiZ90cfjJp5f37q49Hnm8/9+njzRvhHnvUBd6YPaGf/P4x5ZTZ//R6/fb5H9Ttsqo9Z6IMR+oD70gc0fUB71ocxV2ZWZ+eb+dxwhT6g6QOaPqDpA5o+oOkDmj6g6QOaPqDpA5o+oOkDmj6g6QOaPqDpA5o+oOkDmj6g6QOaPqDpA5o+oOkDmj6g3fW7kXCFDqDpA5o+oOkDmj6g6QOaPqDpA5o+oOkDmj6g6QOaPqDpA9o3V5HagIC7AAA=
   </data>
  </layer>
  <objectgroup name="Zones" width="200" height="60">
-  <object name="Welcome Zone" type="Zone" x="448" y="0" width="160" height="192">
+  <object name="Welcome Zone" type="Zone" x="448" y="0" width="144" height="48">
    <properties>
     <property name="TouchMessage" value="Testing!"/>
    </properties>
