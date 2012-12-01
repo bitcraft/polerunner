@@ -1,0 +1,77 @@
+K 25
+svn:wc:ra_dav:version-url
+V 30
+/svn/!svn/ver/474/trunk/pymunk
+END
+libchipmunk64.so
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/!svn/ver/470/trunk/pymunk/libchipmunk64.so
+END
+util.py
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/439/trunk/pymunk/util.py
+END
+_chipmunk.py
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/471/trunk/pymunk/_chipmunk.py
+END
+libchipmunk.so
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/!svn/ver/470/trunk/pymunk/libchipmunk.so
+END
+pygame_util.py
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/!svn/ver/459/trunk/pymunk/pygame_util.py
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/472/trunk/pymunk/__init__.py
+END
+libchipmunk.dylib
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/474/trunk/pymunk/libchipmunk.dylib
+END
+_chipmunk_ffi.py
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/!svn/ver/469/trunk/pymunk/_chipmunk_ffi.py
+END
+chipmunk.dll
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/469/trunk/pymunk/chipmunk.dll
+END
+vec2d.py
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/svn/!svn/ver/439/trunk/pymunk/vec2d.py
+END
+constraint.py
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/!svn/ver/441/trunk/pymunk/constraint.py
+END
+libload.py
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/!svn/ver/364/trunk/pymunk/libload.py
+END
