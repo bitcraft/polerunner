@@ -1,7 +1,7 @@
 from environment import ObjectBase
 from planning import plan
 from actions import ActionContext
-from blackboard import MemoryManager
+from memory import MemoryManager
 from actionstates import *
 from precepts import *
 import logging

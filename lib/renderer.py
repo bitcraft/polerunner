@@ -10,7 +10,7 @@ import pymunk
 import math
 
 
-DEBUG = 0
+DEBUG = 1
 
 parallax = 1
 
@@ -111,33 +111,22 @@ class LevelCamera(Element):
             self.maprender.blank = True
 
         # TODO: query chipmunk to find visible objects
-        for child in [ child for child in self.area.children if child.avatar]:
+        for child in [ child for child in self.area if child.avatar]:
+            bb = child.bb
+            x = bb.left - self.extent.left - child.avatar.axis.x
+            y = bb.top - self.extent.top
+
             shape = child.shapes[0]
-            try:
-                points = shape.get_points()
-            except AttributeError:
-                temp_rect = child.avatar.image.get_rect()
-                temp_rect.center = shape.body.position
-                x, y = temp_rect.topleft
-            else:
-                x = min([p.x for p in points]) - child.avatar.axis.x
-                y = min([p.y for p in points]) - child.avatar.axis.y
-
-            x -= self.extent.left
-            y -= self.extent.top
-            #print x, y
-            #print shape.body.position, child.body.position
-            #x, y = child.body.position - self.extent.topleft - child.avatar.axis
-            w, h = child.avatar.image.get_size()
-
             if hasattr(shape, "radius"):
+                w, h = child.avatar.image.get_size()
                 angle = -int(math.degrees(shape.body.angle)) % 360
                 image = rotozoom(child.avatar.image.convert_alpha(), angle, 1.0)
                 ww, hh = image.get_size()
-                rrect = Rect(x, y, *image.get_size())
+                rrect = Rect(x, y-h, ww, hh)
                 rrect.move_ip((w-ww)/2, (h-hh)/2)
             else:
-                rrect = Rect(x, y+ child.avatar.image.get_size()[1], w, h)
+                w, h = child.avatar.image.get_size()
+                rrect = Rect(x, y - h, w, h)
                 image = child.avatar.image
             onScreen.append((image, rrect, 1))
 

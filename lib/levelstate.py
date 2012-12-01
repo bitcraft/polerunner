@@ -1,36 +1,12 @@
 from renderer import LevelCamera
 
-from lib2d.signals import *
-from lib2d import res, ui, gfx, context, sound, game
-
-from lib2d.zone import Zone
 from lib.controllers import HeroController
 from lib.dialog import *
+from lib2d.zone import Zone
+from lib2d import res, ui, gfx, context, sound, game
 
 import pygame, math, time
 
-
-"""
-FUTURE:
-    Create immutable types when possible to reduce headaches when threading
-"""
-
-debug = 1
-movt_fix = 1/math.sqrt(2)
-
-
-def getNearby(thing, d):
-    p = thing.driver
-    body = p.getBody(thing)
-    bbox = body.bbox.inflate(64,d,d)
-    x1, y1, z1 = body.bbox.center
-    nearby = []
-    for other in p.testCollideObjects(bbox, skip=[body]): 
-        x2, y2, z2 = other.bbox.center
-        dist = math.sqrt(pow(x1-x2, 2) + pow(y1-y2, 2) + pow(z1-z2, 2))
-        nearby.append((d, (other.driver, other)))
-
-    return [ i[1] for i in sorted(nearby) ]
 
 
 class SoundManager(object):
@@ -54,19 +30,13 @@ class SoundManager(object):
 
 SoundMan = SoundManager()
 
-
-
 class LevelUI(ui.UserInterface):
     pass
-
-
 
 class LevelState(game.GameContext):
     """
     This state is where the player will move the hero around the map
     interacting with npcs, other players, objects, etc.
-
-    much of the work done here is in the Standard UI class.
     """
 
     def __init__(self, area):
@@ -94,10 +64,9 @@ class LevelState(game.GameContext):
         self.area.subscribe(self)
 
         self.hero = self.area.getChildByGUID(1)
-        self.hero_body = self.hero.body
 
         c1 = HeroController(self.hero)
-        c1.program(self.driver.inputs[0])
+        c1.program(self.parent.inputs[0])
         c1.primestack()
 
         self.controllers.append(c1)
@@ -113,18 +82,23 @@ class LevelState(game.GameContext):
         self.area.unsubscribe(self)
 
         self.hero = None
-        self.hero_body = None
 
         [ c.reset() for c in self.controllers ]
         self.controllers = []
 
 
     def overlap_zone(self, space, arbiter):
-        if self.area.shapes[self.hero] not in arbiter.shapes:
+        ok = False
+        for shape in self.hero.shapes:
+            if shape in arbiter.shapes:
+                ok = True
+                break
+
+        if not ok:
             return False
 
-        for zone in [i for i in self.area._children if isinstance(i, Zone)]:
-            if self.area.shapes[zone] is arbiter.shapes[1]:
+        for zone in [i for i in self.area if isinstance(i, Zone)]:
+            if zone.shapes[0] is arbiter.shapes[1]:
                 if not zone.entered:
                     self.enter_zone(zone)
                     zone.entered = True
@@ -135,7 +109,7 @@ class LevelState(game.GameContext):
 
     def enter_zone(self, zone):
         if zone.properties.has_key('TouchMessage'):
-            self.driver.append(TextDialog(zone.properties['TouchMessage']))
+            self.parent.append(TextDialog(zone.properties['TouchMessage']))
 
 
     def update(self, time):
@@ -145,7 +119,7 @@ class LevelState(game.GameContext):
 
 
     def draw(self, surface):
-        self.camera.center(self.hero_body.position)
+        self.camera.center(self.hero.body.position)
         self.ui.draw(surface)
 
 
@@ -155,7 +129,7 @@ class LevelState(game.GameContext):
 
     def emitSound(self, filename, position):
         x1, y1 = position
-        x2, y2 = self.hero_body.position
+        x2, y2 = self.hero.body.position
         d = math.sqrt(pow(x1-x2, 2) + pow(y1-y2, 2))
         try:
             vol = 1/d * 20 

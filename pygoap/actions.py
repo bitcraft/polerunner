@@ -13,7 +13,7 @@ execute the action in some way, one after another.
 Actions need to be split into ActionInstances and ActionBuilders.
 
 An ActionInstance's job is to work in a planner and to carry out actions.
-A ActionBuilder's job is to query the caller and return a list of suitable
+A ActionBuilder's job is to query the parent and return a list of suitable
 actions for the memory.
 """
 
@@ -33,10 +33,10 @@ class ActionBuilder(object):
     tested.  Please make sure that the actions are valid.
     """
 
-    def __call__(self, caller, memory):
-        return self.get_actions(caller, memory)
+    def __call__(self, parent, memory):
+        return self.get_actions(parent, memory)
 
-    def get_actions(self, caller, memory):
+    def get_actions(self, parent, memory):
         """
         Return a list of actions
         """
@@ -51,8 +51,8 @@ class ActionContext(object):
     Context where actions take place.
     """
 
-    def __init__(self, caller, **kwargs):
-        self.caller  = caller
+    def __init__(self, parent, **kwargs):
+        self.parent  = parent
         self.state   = ACTIONSTATE_NOT_STARTED
         self.prereqs = []
         self.effects = []
@@ -148,7 +148,7 @@ class ActionContext(object):
         Call after the planning phase is complete.
         """
         if memory is None:
-            memory = self.caller.memory
+            memory = self.parent.memory
         [ i.touch(memory) for i in self.effects ]
 
     def __repr__(self):

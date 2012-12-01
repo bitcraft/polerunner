@@ -1,4 +1,4 @@
-import res
+import res, context
 import pygame, types, os
 
 unsupported = [pygame.Surface, types.MethodType]
@@ -20,19 +20,11 @@ def loadObject(name):
 class GameObject(object):
     """
     Essentially, game objects are part of a simple tree data structure.
-    Each gameobject must have a unique GUID.
-    the top level object should have _parent set to None.
+    The top node will not have the parent set.
 
-    Sounds and avatars are added to an object by calling the object's add
-    method.
-
-    If a subclass of gameobject is defined with guid being None, then a GUID
-    will be assinged when the tree is pickled and written to disk.
-
-    VERY IMPORTANT!
-    if you are going to specially handle any object that will become a child of
-    the object, YOU MUST HANDLE IT IN add().  failure to do so will cause
-    difficult to track bugs.
+    Implements:
+        - context protocol
+        - iterator protocol
     """
     acceptableChildren = None
 
@@ -41,13 +33,13 @@ class GameObject(object):
         if self.acceptableChildren == None:
             self.acceptableChildren = (GameObject,)
 
-        self._children  = []
-        self._parent    = None
         self.guid = guid
+        self.parent = None
+        self._children = []
         self._loaded = False
 
         if parent is not None:
-            self.setParent(parent)
+            self.parent = parent
 
         if not isinstance(children, (list, tuple)):
             children = [children]
@@ -57,8 +49,48 @@ class GameObject(object):
         # cache
         self._avatar = None
 
+    def __repr__(self):
+        return "<{}: \"{}\">".format(self.__class__.__name__, id(self))
+
+    def __contains__(self, child):
+        return child in self._children
+
+    def __iter__(self):
+        return iter(self._children)
+
+    def __enter__(self):
+        self.enter()
+
+    def __exit__(self):
+        self.exit()
+
+    def enter(self):
+        """
+        Called after focus is given to the context
+        This may be called several times over the lifetime of the context
+        """
+        pass
+
+    def exit(self):
+        """
+        Called after focus is lost
+        This may be called several times over the lifetime of the context
+        """
+        pass
+
+    def of_class(self, klass):
+        """
+        Return iterator object of all children that are subclass of <class>
+        """
+        for i in self:
+            if isinstance(i, klass):
+                yield i
+
     @property
     def avatar(self):
+        """
+        Convenience function that returns the avatar of this node
+        """
         if self._avatar is None:
             import avatar
             for child in self._children:
@@ -73,16 +105,11 @@ class GameObject(object):
 
     @property
     def sounds(self):
+        """
+        Convenience function that returns the sounds of this node
+        """
         import sound
-        return (c for c in self._children if isinstance(c, sound.Sound))
-
-    def __repr__(self):
-        return "<{}: \"{}\">".format(self.__class__.__name__, id(self))
-    
-
-    @property
-    def children(self):
-        return iter(self._children)
+        return self.of_class(sound.Sound)
 
     def returnNew(self):
         """
@@ -94,7 +121,6 @@ class GameObject(object):
         except TypeError:
             msg = "Class {} is not cabable of being copied."
             raise TypeError, msg.format(self.__class__)
-
 
     def copy(self):
         new = self.returnNew()
@@ -110,22 +136,6 @@ class GameObject(object):
 
         return new 
 
-
-    @property
-    def parent(self):
-        return self._parent
-
-
-    def load(self):
-        """
-        override when object needs to load data from disk afer being loaded
-        from the save
-
-        so far, images, sounds
-        """
-        pass
-
-
     def loadAll(self):
         """
         load this and the children
@@ -135,61 +145,90 @@ class GameObject(object):
         [ child.load() for child in self.getChildren() ]
         self.load()
 
-
-    def unload(self):
+    def load(self):
         """
-        anything that could be removed from memory should be removed here.
-        images, sounds go here
+        If any data needs to be read from disk, do it here
         """
         pass
 
+    def unload(self):
+        """
+        Anything that could be removed from memory should be removed here
+        """
+        pass
 
-    def setGUID(self, guid):
+    @property
+    def parent(self):
+        """
+        Return the parent of this node
+        """
+        return self._parent
+
+    @parent.setter
+    def parent(self, node):
+        self._parent = node
+
+    @property
+    def guid(self):
+        return self._guid
+
+    @guid.setter
+    def guid(self, guid):
+        if guid is None:
+            self._guid = None
+            return
+
         try:
-            self.guid = int(guid)
+            self._guid = int(guid)
         except:
             raise ValueError, "GUID's must be an integer"
 
+    @property
+    def name(self):
+        return self._name
 
-    def setName(self, name):
-        self.name = name
+    @name.setter
+    def name(self, name):
+        self._name = name
 
-
-    def remove(self, other):
+    def remove(self, child):
+        """
+        Remove a child node
+        """
         try:
-            self._children.remove(other)
-            other._parent = None
+            self._children.remove(child)
+            child._parent = None
         except ValueError:
             msg = "Attempting to remove child ({}), but not in parent ({})"
-            raise ValueError, msg.format(other, self)
+            raise ValueError, msg.format(child, self)
 
-
-    def add(self, other):
+    def add(self, child):
+        """
+        Add a child node
+        """
         ok=False
         for klass in self.acceptableChildren:
-            if isinstance(other, klass):
+            if isinstance(child, klass):
                 ok=True
                 break
         else:
-            print self, other.__class__, self.acceptableChildren
+            print self, child.__class__, self.acceptableChildren
             raise valueError
 
-        self._children.append(other)
+        self._children.append(child)
         try:
-            if other._parent:
-                other._parent.remove(other)
+            if child._parent:
+                child._parent.remove(child)
         except:
-            print 'Error taking {} from parent.  Ignored'.format(other)
+            print 'Error taking {} from parent.  Ignored'.format(child)
             pass
 
-        other.setParent(self)
-
+        child.parent = self
 
     def hasChild(self, child):
         for c in self.getChildren():
             if c == child: return True
         return False
-
 
     def getChildren(self):
         # should be a breadth-first search
@@ -203,13 +242,12 @@ class GameObject(object):
                 openList.append(child)
                 yield child
 
-
-    def getRoot(self):
+    @property
+    def root(self):
         node = self
         while node._parent is not None:
             node = node._parent
         return node
-
 
     def getChildByGUID(self, guid):
         """
@@ -225,14 +263,12 @@ class GameObject(object):
         msg = "GUID ({}) not found."
         raise Exception, msg.format(guid)
 
-
     def getChildByName(self, name):
         for child in self.getChildren():
             if child.name == name: return child
 
         msg = "Object by name ({}) not found."
         raise Exception, msg.format(name)
-
 
     def serialize(self, pickler, callback=None):
         """
@@ -246,7 +282,6 @@ class GameObject(object):
 
         for child in self._children:
             child.serialize(pickler, callback)
-
 
     def destroy(self, parent=None):
         """
@@ -262,14 +297,6 @@ class GameObject(object):
         self._children = []
         self.unload()
         self.name = name
-
-
-    def setParent(self, parent):
-        # when setting the parent, make sure to remove self
-        # the parent's children manually
-
-        self._parent = parent
-
 
     def save(self, name):
         """

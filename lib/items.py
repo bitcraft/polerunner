@@ -32,6 +32,17 @@ class FreeWheel(InteractiveObject):
     def body(self):
         return self.bodies[0]
 
+    @property
+    def bb(self):
+        if len(self.shapes) == 1:
+            return self.shapes[0].bb
+
+        elif len(self.shapes) > 1:
+            bb = self.shapes[0].bb
+            for shape in self.shapes[1:]:
+                bb.merge(shape.bb)
+            return bb
+
     def load(self):
         m = pymunk.moment_for_circle(self.mass, 0, self.radius)
 
@@ -44,12 +55,13 @@ class FreeWheel(InteractiveObject):
         body_shape.friction = 1.0
         body_shape.collision_type = 2
 
-        joint = pymunk.PinJoint(base, body, (0,0), (0,0))
+        #joint = pymunk.PivotJoint(base, body, (0,0), (0,0))
         #motor = pymunk.SimpleMotor(body, feet, 0.0)
 
         self.bodies = [body]
         self.shapes = [body_shape]
-        self.joints = [joint]
+        #self.joints = [joint]
+        self.joints = []
 
         size = (self.radius*2, self.radius*2)
 

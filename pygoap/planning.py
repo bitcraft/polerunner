@@ -1,4 +1,4 @@
-from blackboard import MemoryManager
+from memory import MemoryManager
 from actionstates import *
 from actions import *
 
@@ -11,7 +11,7 @@ debug = logging.debug
 
 
 
-def get_children(caller, parent, builders):
+def get_children(parent0, parent, builders):
     def get_used_class(node):
         while node.parent is not None:
             yield node.builder
@@ -23,7 +23,7 @@ def get_children(caller, parent, builders):
         if builder in used_class:
             continue
 
-        for action in builder(caller, parent.memory):
+        for action in builder(parent0, parent.memory):
             node = PlanningNode(parent, builder, action)
             yield node
 
@@ -79,7 +79,7 @@ class PlanningNode(object):
                 self.cost)
 
 
-def plan(caller, builders, start_action, start_memory, goal):
+def plan(parent, builders, start_action, start_memory, goal):
     """
     Return a list of builders that could be called to satisfy the goal.
     Cannot duplicate builders in the plan
@@ -111,7 +111,7 @@ def plan(caller, builders, start_action, start_memory, goal):
             debug("[plan] successful %s", keyNode.action)
             break
 
-        for child in get_children(caller, keyNode, builders):
+        for child in get_children(parent, keyNode, builders):
             if child in openlist:
                 possG = keyNode.g + child.cost
                 if (possG < child.g):

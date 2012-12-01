@@ -3,7 +3,6 @@ from pathfinding.astar import Node
 from objects import GameObject
 from pygame import Rect
 from pathfinding import astar
-from lib2d.signals import *
 from lib2d.zone import Zone
 from lib2d.sound import Sound
 from pygoap.environment import Environment, ObjectBase
@@ -49,16 +48,16 @@ class AreaEnvironment(Environment):
 
         Environment.update(self, time)
 
-    def look(self, caller, direction=None, distance=None):
+    def look(self, parent, direction=None, distance=None):
         """
-        Simulate vision by sending precepts to the caller.
+        Simulate vision by sending precepts to the parent.
         """
 
         model = self.model_precept
 
         for entity in self.entities:
             precept = PositionPrecept(entity, self.get_position(entity))
-            caller.process(model(precept, caller))
+            parent.process(model(precept, parent))
 
     def get_position(self, agent):
         return tuple(agent.entity.body.position)
@@ -228,7 +227,7 @@ class PlatformArea(AbstractArea, PlatformMixin):
         self.space.add(geometry)
 
         # just assume we have the correct types under us
-        for child in self._children:
+        for child in self:
             if child.avatar:
                 if child.physics:
                     child.grounded = False
@@ -256,14 +255,11 @@ class PlatformArea(AbstractArea, PlatformMixin):
                 self.space.add(*child.shapes)
                 self.space.add(*child.joints)
 
+        self.space.step(1)
 
 
     def unload(self):
         # save the bodies here
-        for child in self.children:
-            if hasattr(child, "body"):
-                child.position = body.position
-
         self.area_model = None
         self.space = None
 
@@ -320,7 +316,7 @@ class PlatformArea(AbstractArea, PlatformMixin):
 
         [ sound.update(time) for sound in self.sounds ]
 
-        entities = ( c for c in self.children if hasattr(c, 'body') )
+        entities = ( c for c in self if hasattr(c, 'body') )
         for entity in entities:
             if not entity.avatar:
                 continue

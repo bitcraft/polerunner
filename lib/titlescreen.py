@@ -32,7 +32,7 @@ class InstructionScreen(game.GameContext):
 
     def handle_event(self, event):
         if event.type == pygame.locals.KEYDOWN:
-            self.driver.done()
+            self.parent.done()
 
 
 class TitleScreen(game.GameContext):
@@ -96,7 +96,7 @@ class TitleScreen(game.GameContext):
         res.fadeoutMusic(1000)
         self.game = world.build()
         level = self.game.getChildByGUID(5001)
-        self.driver.append(LevelState(level))
+        self.parent.append(LevelState(level))
 
 
     def save_game(self):
@@ -119,17 +119,17 @@ class TitleScreen(game.GameContext):
             return self.new_game()
 
         level = self.game.getChildByGUID(5001)
-        self.driver.append(LevelState(level))
+        self.parent.append(LevelState(level))
 
 
     def continue_game(self):
         res.fadeoutMusic(1000)
         level = self.game.getChildByGUID(5001)
-        self.driver.append(LevelState(level))
+        self.parent.append(LevelState(level))
 
 
     def show_intro(self):
-        self.driver.start_restart(InstructionScreen())
+        self.parent.start_restart(InstructionScreen())
 
 
     def savequit_game(self):
@@ -141,5 +141,5 @@ class TitleScreen(game.GameContext):
 
 
     def quit_game(self):
-        self.driver.remove(self) 
+        self.parent.remove(self) 
 

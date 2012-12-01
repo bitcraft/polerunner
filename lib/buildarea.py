@@ -12,10 +12,12 @@ def debug(text):
 
 
 def fromTMX(parent, mapname):
-    """Create a new area from a tmx map
+    """
+    This function accepts a GameObject node and reorganizes it according to a
+    TMX map.
 
-    This body (called parent) must already be connected to the data tree,
-    otherwise body loading will not work and area building will fail.
+    This means that the node passed must have all the objects that are
+    referenced by the TMX map
     """
 
     # for platformer maps
@@ -31,7 +33,7 @@ def fromTMX(parent, mapname):
 
     area = PlatformArea()
     parent.add(area)
-    area.setParent(parent)
+    area.parent = parent
     area.mappath = res.mapPath(mapname)
     data = tmxloader.load_tmx(area.mappath)
 

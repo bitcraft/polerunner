@@ -95,7 +95,7 @@ class TextDialog(game.GameContext):
 
     def handle_command(self, cmd):
         if cmd[1] == P1_ACTION1 and cmd[2] == BUTTONDOWN:
-            self.driver.remove(self)
+            self.parent.remove(self)
 
 
 # this class is obsolete!

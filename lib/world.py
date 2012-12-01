@@ -19,6 +19,7 @@ def build():
     uni = AbstractArea(guid=0)
     uni.name = 'universe'
 
+
     # =========================================================================
     # our charming hero
 
@@ -70,7 +71,7 @@ def build():
         guid=1
     )
 
-    npc.setName("Brahbrah")
+    npc.name = "Brahbrah"
     npc.size = (16,32)
     npc.jump_strength = 800
     uni.add(npc)
@@ -93,7 +94,7 @@ def build():
     ])
 
     red_key = Key(avatar, guid=513)
-    red_key.setName('Red Key')
+    red_key.name = 'Red Key'
     uni.add(red_key)
 
 
@@ -104,7 +105,7 @@ def build():
     ])
 
     green_key = Key(avatar, guid=514)
-    green_key.setName('Green Key')
+    green_key.name = 'Green Key'
     uni.add(green_key)
 
 
@@ -115,8 +116,9 @@ def build():
     ])
 
     blue_key = Key(avatar, guid=515)
-    blue_key.setName('Blue Key')
+    blue_key.name = 'Blue Key'
     uni.add(blue_key)
+
 
     # =========================================================================
     # walking laser robot
@@ -131,13 +133,12 @@ def build():
     )
 
     npc = LaserRobot(avatar)
-    npc.setGUID(1025)
+    npc.guid = 1025
     uni.add(npc)
 
 
     # =========================================================================
     # floating security bot
-
 
     avatar = Avatar([
         StaticAnimation('idle',
@@ -148,8 +149,8 @@ def build():
 
     npc = HoverBot((avatar, Sound('Hover0.wav')))
 
-    npc.setName("bot0")
-    npc.setGUID(1026)
+    npc.name = "bot0"
+    npc.guid = 1026
     npc.size = (16,32,16)
     npc.move_speed = .5   #.025
     npc.jump_strength = 50
@@ -159,8 +160,8 @@ def build():
     # =========================================================================
     # levels
     level = fromTMX(uni, "level4.tmx")
-    level.setName("Level 1")
-    level.setGUID(5001)
+    level.name = 'Level 1'
+    level.guid = 5001
 
     #level = Area()
     #level.setGUID(5001)

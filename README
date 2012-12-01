@@ -6,3 +6,32 @@ Goals of project:
 	Nice graphics
 	Metroidvania concept
 	Smooth input handling and fast paced gameplay
+	Chipmunk Physics
+
+
+GOALS FOR PLAYER CONTROL
+
+metroid / ninja / n
+
+* fast paced actions
+* wall jumps and grabs
+* ducking rolls
+* grabbing ceilings
+* ladders
+* elevators
+* double jumps
+* lots of animations
+* double tap dives
+* prone
+* mirror's edge!!!
+
+don't try to be too realistic, make it really fun!
+
+wall jumps:
+    find if collision is on side of wall
+    if wall has a high friction
+        if player is pressing away from the wall
+            apply horizontal force against wall
+            ( this will effectively press player and stick to wall )
+        if player jumps, allow for a 45 angle jump away from wall
+

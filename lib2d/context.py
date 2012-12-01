@@ -51,46 +51,46 @@ class Context(object):
 
     """
 
+    def __init__(self, *args, **kwargs):
+        """
+        Arguments passed will be stored in instance.args
+        Keywords will become instance attributes
+        """
+        self.args = args
+        self.__dict__.update(kwargs)
+
     def __enter__(self):
         self.enter()
 
     def __exit__(self):
         self.exit()
 
-
     def init(self, *args, **kwargs):
         """
         Called before context is placed in a stack
         This will only be called once over the lifetime of a context
         """
-
         pass
-
 
     def enter(self):
         """
         Called after focus is given to the context
         This may be called several times over the lifetime of the context
         """
-
         pass
-
 
     def exit(self):
         """
         Called after focus is lost
         This may be called several times over the lifetime of the context
         """
-
         pass
-
 
     def terminate(self):
         """
         Called after the context is removed from a stack
         This will only be called once
         """
-
         pass
 
 
@@ -102,7 +102,7 @@ class ContextDriver(object):
 
     The current_context attribute will be the context at the top of the stack.
 
-    When a context is added to the ContextDriver, it will have the 'driver'
+    When a context is added to the ContextDriver, it will have the 'parent'
     attribute set to the Driver.  Contexts are welcome to remove themselves or
     other contexts.
     """
@@ -131,18 +131,18 @@ class ContextDriver(object):
             context.terminate()
 
 
-    def queue(self, new_context, *args, **kwargs):
+    def queue(self, new_context):
         """
         queue a context just before the current context
         when the current context finishes, the context passed will be run
         """
 
-        new_context.driver = self
-        new_context.init(*args, **kwargs)
+        new_context.parent = self
+        new_context.init()
         self._stack.insert(-1, new_context)
 
 
-    def append(self, new_context, *args, **kwargs):
+    def append(self, new_context):
         """
         start a new context and hold the current context.
 
@@ -151,8 +151,8 @@ class ContextDriver(object):
 
         old_context = self.current_context
 
-        new_context.driver = self
-        new_context.init(*args, **kwargs)
+        new_context.parent = self
+        new_context.init()
         self._stack.append(new_context)
 
         if old_context:
