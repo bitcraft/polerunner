@@ -4,7 +4,7 @@ from lib2d.zone import Zone
 from lib2d.sound import Sound
 from lib2d import res
 from pygame import Rect
-
+from lib.items import *
 
 
 def debug(text):
@@ -153,6 +153,11 @@ def fromTMX(parent, mapname):
         if og.name.lower() == 'zones':
             for zone in og:
                 area.add(Zone(zone))
+
+        elif og.name.lower() == 'objects':
+            for obj in og:
+                if obj.name.lower() == 'wheel':
+                    area.add(FreeWheel(obj))
 
 
     # handle the exits

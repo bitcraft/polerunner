@@ -89,7 +89,7 @@ def imagePath(filename):
     return os.path.join(_resPath, "images", filename)
     
 
-def loadImage(name, alpha=False, colorkey=False, fake=False):
+def loadImage(name, alpha=False, colorkey=False, fake=False, **kwargs):
     fullpath = imagePath(name)
 
     try:
@@ -102,12 +102,12 @@ def loadImage(name, alpha=False, colorkey=False, fake=False):
     if alpha or fake:
         image = image.convert_alpha()
 
-    if fake:
+    elif fake:
         s = pygame.Surface(image.get_size())
         s.fill(global_colorkey)
         s.blit(image, (0,0))
         s.set_colorkey(global_colorkey, pygame.RLEACCEL)
-        return s 
+        image = s
 
     elif colorkey:
         image = image.convert()
@@ -115,6 +115,9 @@ def loadImage(name, alpha=False, colorkey=False, fake=False):
     else:
         image = image.convert()
 
+    if kwargs.has_key('resize'):
+        image = pygame.transform.smoothscale(image, kwargs['resize'])
+     
 
     return image
 

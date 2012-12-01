@@ -44,6 +44,7 @@ class GameObject(object):
         self._children  = []
         self._parent    = None
         self.guid = guid
+        self._loaded = False
 
         if parent is not None:
             self.setParent(parent)
@@ -78,6 +79,10 @@ class GameObject(object):
     def __repr__(self):
         return "<{}: \"{}\">".format(self.__class__.__name__, id(self))
     
+
+    @property
+    def children(self):
+        return iter(self._children)
 
     def returnNew(self):
         """
@@ -125,8 +130,10 @@ class GameObject(object):
         """
         load this and the children
         """
-        self.load()
+        c = [ c for c in self.getChildren() ]
+        print "loading", self, c
         [ child.load() for child in self.getChildren() ]
+        self.load()
 
 
     def unload(self):

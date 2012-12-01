@@ -89,6 +89,7 @@ class TitleScreen(game.GameContext):
 
     def new_game(self):
         if self.game:
+            [ i.unload() for i in self.game.getChildren() ]
             self.game.unload()
             self.game = None
 
@@ -107,6 +108,7 @@ class TitleScreen(game.GameContext):
 
     def load_game(self):
         if self.game:
+            [ i.unload() for i in self.game.getChildren() ]
             self.game.unload()
             self.game = None
 

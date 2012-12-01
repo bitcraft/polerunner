@@ -38,8 +38,8 @@ class HoverAction(ActionContext):
     tolerance = 2.0
 
     def enter(self):
-        self.entity = self.caller.environment.get_entity(self.caller)
-        self.body = self.entity.parent.getBody(self.entity)
+        self.entity = self.caller.entity
+        self.body = self.entity.body
         self.intended_position = pymunk.Vec2d(self.body.position)
         self.space = self.entity.parent.space
 
@@ -122,15 +122,15 @@ class HoverAction(ActionContext):
 
 class ShootAction(CalledOnceContext):
     def enter(self):
-        self.entity = self.caller.environment.get_entity(self.caller)
+        self.entity = self.caller.entity
         self.entity.avatar.play('shoot') 
         print "pow"
 
 
 class MoveAction(ActionContext):
     def enter(self):
-        self.entity = self.caller.environment.get_entity(self.caller)
-        self.body = self.entity.parent.getBody(self.entity)
+        self.entity = self.caller.entity
+        self.body = self.entity.body
         self.direction = random.choice((P1_LEFT, P1_RIGHT))
         self.update_forces()
         force = (self.maxFrictionForce + self.maxSpeed * self.body.mass, 0)
@@ -171,9 +171,8 @@ class Shoot(ActionBuilder):
 
 class Thrust(ActionBuilder):
     def get_actions(self, caller, memory):
-        entity = caller.environment.get_entity(caller)
-        body = entity.parent.getBody(entity)
-        if body.velocity.y > 0 or entity.grounded:
+        entity = caller.entity
+        if entity.body.velocity.y > 0 or entity.grounded:
             action = HoverAction(caller)
             action.effects.append(SimpleGoal(flying=True))
             yield action
@@ -212,14 +211,15 @@ class HoverBot(Entity):
         agent.add_goal(SimpleGoal(flying=True))
         return agent
 
-
-    def build_body(self):
+    def load(self):
         r = self.size[0]/ 2
         m = pymunk.moment_for_circle(self.mass, r, r)
-        self.body = pymunk.Body(self.mass, m)
-        return self.body
 
-    def build_shapes(self, body):
-        self.shape = pymunk.Circle(body, self.size[0]/2)
-        self.shape.friction = 1.0
-        return [self.shape]
+        body = pymunk.Body(self.mass, m)
+        body.position = self.position
+
+        shape = pymunk.Circle(body, r)
+        shape.friction = 1.0
+
+        self.bodies = [body]
+        self.shapes = [shape]

@@ -17,6 +17,9 @@ cardinalDirs = {"north": math.pi*1.5,
                 "south": math.pi/2,
                 "west": math.pi}
 
+def toChipPoly(rect):
+    return (rect.topleft, rect.topright, rect.bottomright, rect.bottomleft)
+
 
 class AbstractArea(GameObject):
     pass
@@ -26,15 +29,11 @@ class AreaEnvironment(Environment):
     def __init__(self, area):
         Environment.__init__(self)
         self.area = area
-        self.mapping = {}
         self.last_scan = 99999
 
     def add(self, agent, entity):
-        self.mapping[agent] = entity
+        agent.entity = entity
         Environment.add(self, agent)
-
-    def get_entity(self, agent):
-        return self.mapping[agent]
 
     def model_vision(self, precept, origin, terminus):
         return precept
@@ -62,7 +61,7 @@ class AreaEnvironment(Environment):
             caller.process(model(precept, caller))
 
     def get_position(self, agent):
-        return tuple(self.area.getBody(self.mapping[agent]).position)
+        return tuple(agent.entity.body.position)
 
     def objects_at(self, position):
         """
@@ -120,7 +119,7 @@ class PlatformMixin(object):
 
 
     def worldToPixel(self, (x, y)):
-        return (x*self.scaling, y*self.scaling)
+        return (x, y)
 
 
     def worldToTile(self, (x, y, z)):
@@ -197,25 +196,13 @@ class PlatformArea(AbstractArea, PlatformMixin):
         self._addQueue = []
         self._removeQueue = []
 
-        # storage of physics stuff
-        self.saved_positions = {}
-
-        # internal physics stuff
         self.geometry = {}
-        self.shapes = {}
-        self.bodies = {}
-        self.scaling = 1.0
 
         # simple model of the game world for AI to use
         self.area_model = None
 
 
     def load(self):
-        def toChipPoly(rect):
-            return (rect.topleft, rect.topright,
-                    rect.bottomright, rect.bottomleft)
-
-
         import pytmx
 
         self.tmxdata = pytmx.tmxloader.load_pygame(
@@ -247,24 +234,9 @@ class PlatformArea(AbstractArea, PlatformMixin):
                     child.grounded = False
                     child.landing_previous = False
                     child.landing = {'p':pymunk.Vec2d.zero(), 'n':0}
-
-                    body = child.build_body()
-                    body.position = self.saved_positions[child]
-                    self.space.add(body)
-
-                    shapes = child.build_shapes(body)
-                    self.space.add(shapes)
-
-                    self.bodies[child] = body
-                    for shape in shapes:
-                        self.shapes[child] = shape
-
-                else:
-                    rect = Rect(self.saved_positions[child], child.size[:2])
-                    shape = pymunk.Poly(self.space.static_body, toChipPoly(rect))
-                    shape.friction = 0.5
-                    self.shapes[child] = shape
-                    self.space.add(shape)
+                    self.space.add(*child.bodies)
+                    self.space.add(*child.shapes)
+                    self.space.add(*child.joints)
 
                 # add this to the AI simulation
                 agent = child.build_agent()
@@ -275,20 +247,23 @@ class PlatformArea(AbstractArea, PlatformMixin):
                     self.area_model.add(ObjectBase(child.name), child)
 
             elif isinstance(child, Zone):
-                points = toChipPoly(child.extent)
-                shape = pymunk.Poly(self.space.static_body, points)
-                shape.collision_type = 1
-                self.shapes[child] = shape
-                self.space.add(shape)
+                for s in child.shapes:
+                    s.collision_type = 1
+                self.space.add(child.shapes)
+
+            else:
+                self.space.add(*child.bodies)
+                self.space.add(*child.shapes)
+                self.space.add(*child.joints)
+
 
 
     def unload(self):
         # save the bodies here
-        for entity, body in self.bodies.items():
-            self.saved_positions[entity] = body.position
+        for child in self.children:
+            if hasattr(child, "body"):
+                child.position = body.position
 
-        self.bodies = {}
-        self.shapes = {}
         self.area_model = None
         self.space = None
 
@@ -306,7 +281,7 @@ class PlatformArea(AbstractArea, PlatformMixin):
             else:
                 pos = self.translate(pos)
 
-            self.saved_positions[child] = pos
+            child.position = pos
 
 
     def remove(self, entity):
@@ -318,41 +293,12 @@ class PlatformArea(AbstractArea, PlatformMixin):
         del self.bodies[entity]
 
 
-    def getBody(self, entity):
-        return self.bodies[entity]
-
-
     def setLayerGeometry(self, layer, rects):
         """
         set the layer's geometry.  expects a list of rects.
         """
 
         self.geometry[layer] = rects
-
-
-    def pathfind(self, start, destination):
-        """Pathfinding for the world.  Destinations are 'snapped' to tiles.
-        """
-
-        def NodeFactory(pos):
-            x, y = pos[:2]
-            l = 0
-            return Node((x, y))
-
-            try:
-                if self.tmxdata.getTileGID(x, y, l) == 0:
-                    node = Node((x, y))
-                else:
-                    return None
-            except:
-                return None
-            else:
-                return node
-
-        start = self.worldToTile(start)
-        destination = self.worldToTile(destination)
-        path = astar.search(start, destination, NodeFactory)
-        return path
 
 
     def emitSound(self, filename, pos=None, entity=None, ttl=350):
@@ -364,7 +310,7 @@ class PlatformArea(AbstractArea, PlatformMixin):
         if 1:
             self.currentSounds.append(EmitSound(filename, ttl))
             if entity:
-                pos = self.bodies[entity].position
+                pos = entity.position
             for sub in self.subscribers:
                 sub.emitSound(filename, pos)
 
@@ -374,7 +320,13 @@ class PlatformArea(AbstractArea, PlatformMixin):
 
         [ sound.update(time) for sound in self.sounds ]
 
-        for entity, body in self.bodies.items():
+        entities = ( c for c in self.children if hasattr(c, 'body') )
+        for entity in entities:
+            if not entity.avatar:
+                continue
+
+            body = entity.body
+
             grounding = {
                 'normal' : pymunk.Vec2d.zero(),
                 'penetration' : pymunk.Vec2d.zero(),
@@ -383,8 +335,6 @@ class PlatformArea(AbstractArea, PlatformMixin):
                 'body' : None
             }
                    
-            
- 
             def f(arbiter):
                 n = -arbiter.contacts[0].normal
                 if n.y > grounding['normal'].y:
@@ -423,7 +373,7 @@ class PlatformArea(AbstractArea, PlatformMixin):
             if entity.landing['n'] > 0:
                 entity.landing['n'] -= 1
 
-        self.space.step(time*3)
+        self.space.step(time*2)
         self.area_model.update(time)
 
         # awkward looping allowing objects to be added/removed during update

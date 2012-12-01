@@ -6,7 +6,7 @@
  </tileset>
  <layer name="Full Background" width="200" height="60">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3dMWrDQBRFUXdeb8qk9iK03LiIQzDckMDA2N+nOJWaAb3LFCp0nE+n4+r96uPq7csBfNMHtPs+LkD2Af8xdT/6YIWp+9EHK0zdjz5YYep+9MEKU/ejD1aYuh99sMLU/eiDFabuRx+sMHU/933s/l7Jc5q6n9/uj8t5T7M8n1e5P34+0wd/pQ9o+oCmD2j6gKYPeD36gKYPaPqApg9o+oCmD2j6gKYPaPqApg9o+oCmD2j6gKYPaPqApg9o+oCmD2j6gKYPaPqApg9o+oCmD2j6gHbro/4Psvt8sNOtj93ngEekD2j6gKYPaPqApg9o+oCmD2j6gKYPaPqApg9o+oB2sP0d8Lg+AVBOoO+AuwAA
+   H4sIAAAAAAAAA+3dMWrDQBRFUXdZb8qkziK03LiIgzFck8DAiO9TnErNIL2LChU63i6X4+rj6vPq/ccB/NIHtMc+voDsA/5j6n70wQpT96MPVpi6H32wwtT96IMVpu5HH6wwdT/6YIWp+9EHK0zdjz5YYep+HvvY/b3yLOp+7T7XWU3dz7P3x7OdwL1XeX/cX9MHf6UPaPqApg9o+oCmD3g9+oCmD2j6gKYPaPqApg9o+oCmD2j6gKYPaPqApg9o+oCmD2j6gKYPaPqApg9o+oCmD2j6gKYPaPqApg9o+oB266P+D7L7fLDTrY/d54Az0gc0fUDTBzR9QNMHNH1A0wc0fUDTBzR9QNMHNH1AO9j+DDivb+AYO++AuwAA
   </data>
  </layer>
  <layer name="Partial Background" width="200" height="60">
@@ -16,12 +16,12 @@
  </layer>
  <layer name="Foreground" width="200" height="60">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3YuU0GMRAG0M1cNFfMHXMXwFUAl4SoAFEBohC+gMgBC2vE/vK+J32BNcForIlmGAAAAAAA6NVaGYb1ZCPZTLZKe20Ve8IUu9mxvWQ/OUgOS3ttFXvCTzxXO3WS92lylpwnF6W9NmaOnkzzUv1xvT+9ea3mu8z7KrlObpLb0l4bM0dPpnmr/rjenx5sZ6adr7neq/nu8r5PHpLH5Km018bM0ZNpPsr3+9ODo8x03OFc/A/7AwDwd5Z2v4LfWML9CqZawv0KWrhfAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMByfQIwSWgsgLsAAA==
+   H4sIAAAAAAAAA+3YS0rDUBQG4M7uon2NfVTH9bkAtS5AbaG4AnEF4kL8hTowYDFNIiH5PvgJyckNOZczupMJAAAAAABsdlD+/u5O3t1N9pL98nPttjUYiuPM9UkyTU6Ts9K8Bm1Y9WCmLvIPl8lVcp3clOY1uvFS2eM+zE+XXnvQ323+4S65T+bJQ2leoxtvlT3uw/y07TA9Ha37eq/095j7p/WzRa7LUr/2ZVlj377XPpffv1u3Rjc+yub5GYJZejofYF/8D/MDANCesZ1fQR1jOL+CbY3h/AqacH4FAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOP1CQKQ9mCAuwAA
   </data>
  </layer>
- <layer name="Control" width="200" height="60" visible="0">
+ <layer name="Control" width="200" height="60">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3cQWqEQBBAUYVcIEdL7n+YrMRB8h0nTUho34NaqDBMQ/2FG9dlWdZltx6u4c6OPegDdtWHMWafzfEazsy8P/pg1Mz7ow9Gzbw/+mDUzPujD0bNvD/6YNTM+/NdH4/ef/i7n2/nzz+ePIf/4FkfcGf6gHb2/mHMK7P56//x2+d7VPdhU33MQh+M0Afclz6g6QPasz6MuTKzOjvfzOeGK/QBTR/Q9AFNH9D0AU0f0PQBTR/Q9AFNH9D0AU0f0PQBTR/Q9AFNH9D0AU0f0PQBTR/Q9AFNH9D0AU0f0PQB7a7fjYQrdABNH9D0AU0f0PQBTR/Q9AFNH9D0AU0f0PQBTR/Q9AFNH9C+AO4tA7GAuwAA
+   H4sIAAAAAAAAA+3cMWqFQBRAUYVsIEtL9r+Y8IsgmFy/MEkM4znwCplG5d3CxnVZlnXZrLtruLN9D/qATfVhjNnm0/4ajsy8P/pg1Mz7ow9Gzbw/+mDUzPujD0bNvD/6YNTM+/NdHz/h/eX4/O3J+ZVer74B/o3f6gNmoA9oR98fd58z78x8fV9X38df7sPRnsBD9TELfTBCH3Bf+oCmD2jP+jDmzMzq6Plmfm44Qx/Q9AFNH9D0AU0f0PQBTR/Q9AFNH9D0AU0f0PQBTR/Q9AFNH9D0AU0f0PQBTR/Q9AFNH9D0AU0f0PQBTR/Q7vrfSDhDB9D0AU0f0PQBTR/Q9AFNH9D0AU0f0PQBTR/Q9AFNH9D0Ae0D1Wd/PIC7AAA=
   </data>
  </layer>
  <objectgroup name="Zones" width="200" height="60">
@@ -31,9 +31,12 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup name="Floor" width="200" height="60" visible="0">
+ <objectgroup name="Floor" width="200" height="60">
   <object x="336" y="192">
    <polyline points="0,0 704,-32 736,-48"/>
   </object>
+ </objectgroup>
+ <objectgroup name="Objects" width="200" height="60">
+  <object name="Wheel" x="1120" y="192" width="96" height="96"/>
  </objectgroup>
 </map>

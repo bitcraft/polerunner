@@ -303,18 +303,8 @@ class ViewPort(Frame):
         self.area = area
         self.map_element = None
 
-        if area not in self.loadedAreas:
-            self.loadedAreas.append(area)
-            area.loadAll()
-
-            # load sounds from area
-            #for filename in element.area.soundFiles:
-            #    SoundMan.loadSound(filename)
-
-
     def shift(self, (x, y)):
         self.packer.shift((x, y))
-
 
     def resize(self):
         Frame.resize(self)

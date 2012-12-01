@@ -10,7 +10,7 @@ import pymunk
 import math
 
 
-DEBUG = 1
+DEBUG = 0
 
 parallax = 1
 
@@ -73,8 +73,6 @@ class LevelCamera(Element):
         center the camera on a world location.
         """
 
-        x, y = self.area.worldToPixel((x, y))
-
         if self.map_height >= self.height:
             if y <= self.half_height:
                 y = self.half_height
@@ -113,41 +111,35 @@ class LevelCamera(Element):
             self.maprender.blank = True
 
         # TODO: query chipmunk to find visible objects
-        for entity, shape in self.area.shapes.items():
-            if entity.avatar:
-                w, h = entity.avatar.image.get_size()
-                try:
-                    points = shape.get_points()
-                except AttributeError:
-                    temp_rect = entity.avatar.image.get_rect()
-                    temp_rect.center = shape.body.position
-                    x, y = self.area.worldToPixel(temp_rect.topleft)
-                else:
-                    l = 99999
-                    t = 99999
-                    r = 0
-                    b = 0
-                    for x, y in points:
-                        if x < l: l = x
-                        if x > r: r = x
-                        if y < t: t = y
-                        if y > b: b = y
-                    ax, ay = entity.avatar.axis
-                    x, y = self.area.worldToPixel((l-ax,b-ay))
+        for child in [ child for child in self.area.children if child.avatar]:
+            shape = child.shapes[0]
+            try:
+                points = shape.get_points()
+            except AttributeError:
+                temp_rect = child.avatar.image.get_rect()
+                temp_rect.center = shape.body.position
+                x, y = temp_rect.topleft
+            else:
+                x = min([p.x for p in points]) - child.avatar.axis.x
+                y = min([p.y for p in points]) - child.avatar.axis.y
 
-                x -= self.extent.left
-                y -= self.extent.top
+            x -= self.extent.left
+            y -= self.extent.top
+            #print x, y
+            #print shape.body.position, child.body.position
+            #x, y = child.body.position - self.extent.topleft - child.avatar.axis
+            w, h = child.avatar.image.get_size()
 
-                if hasattr(shape, "radius"):
-                    angle = int(math.degrees(shape.body.angle)) % 360
-                    image = rotozoom(entity.avatar.image.convert_alpha(), angle, 1.0)
-                    ww, hh = image.get_size()
-                    rrect = Rect(x, y, *image.get_size())
-                    rrect.move_ip((w-ww)/2, (h-hh)/2)
-                else:
-                    rrect = Rect(x, y, w, h)
-                    image = entity.avatar.image
-                onScreen.append((image, rrect, 1))
+            if hasattr(shape, "radius"):
+                angle = -int(math.degrees(shape.body.angle)) % 360
+                image = rotozoom(child.avatar.image.convert_alpha(), angle, 1.0)
+                ww, hh = image.get_size()
+                rrect = Rect(x, y, *image.get_size())
+                rrect.move_ip((w-ww)/2, (h-hh)/2)
+            else:
+                rrect = Rect(x, y+ child.avatar.image.get_size()[1], w, h)
+                image = child.avatar.image
+            onScreen.append((image, rrect, 1))
 
         if parallax:
             self.parallaxrender.draw(surface, rect, [])
@@ -182,15 +174,8 @@ class LevelCamera(Element):
         return dirty
 
 
-    def worldToSurface(self, (x, y, z)):
-        """
-        Translate world coordinates to coordinates on the surface
-        underlying area is based on 'right handed' 3d coordinate system
-        xy is horizontal plane, with x pointing toward observer
-        z is the vertical plane
-        """
-
-        xx, yy = self.area.worldToPixel((x, y, z))
+    def worldToSurface(self, (x, y)):
+        xx, yy = self.area.worldToPixel((x, y))
         return xx - self.extent.left, yy - self.extent.top
 
 

@@ -74,6 +74,8 @@ class LevelState(game.GameContext):
 
 
     def enter(self):
+        self.area.loadAll()
+    
         self.controllers = []
 
         self.ui = LevelUI()
@@ -92,7 +94,7 @@ class LevelState(game.GameContext):
         self.area.subscribe(self)
 
         self.hero = self.area.getChildByGUID(1)
-        self.hero_body = self.area.getBody(self.hero)
+        self.hero_body = self.hero.body
 
         c1 = HeroController(self.hero)
         c1.program(self.driver.inputs[0])

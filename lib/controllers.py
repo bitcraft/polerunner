@@ -81,22 +81,22 @@ class State(context.Context):
 
 
 class walkState(State):
-    RIGHT = 0
-    LEFT = 1
+    RIGHT = -10
+    LEFT = 10
     feet = False  
  
     def init(self, trigger=None):
-        self.body = self.driver.entity.parent.getBody(self.driver.entity)
+        self.body = self.driver.entity.body
 
         area = self.driver.entity.parent
         if trigger.cmd == P1_LEFT:
-            self.driver.entity.avatar.flip = self.LEFT
+            self.driver.entity.avatar.flip = 1
             self.direction = self.LEFT
             self.maxSpeed = -MAXIMUM_SPEED
             # Max friction force on a flat surface = weight of body = mass * gravity
             self.maxFrictionForce = - self.body.mass * area.gravity[1]
         elif trigger.cmd == P1_RIGHT:
-            self.driver.entity.avatar.flip = self.RIGHT
+            self.driver.entity.avatar.flip = 0
             self.direction = self.RIGHT
             self.maxSpeed = MAXIMUM_SPEED
             # Max friction force on a flat surface = weight of body = mass * gravity
@@ -111,7 +111,8 @@ class walkState(State):
         self.body.reset_forces()
         deltaVelocity = self.maxSpeed - self.body.velocity.x
         force = (self.maxFrictionForce + deltaVelocity * self.body.mass, 0)
-        self.body.apply_force(force)
+        #self.body.apply_force(force)
+        self.driver.entity.joints[1].rate = self.direction
         
         vel = abs(self.body.velocity.x)
         if vel < RUN_SPEED:
@@ -122,13 +123,14 @@ class walkState(State):
             self.driver.entity.avatar.play('sprint')
 
     def exit(self):
+        self.driver.entity.joints[1].rate = 0
         self.body.reset_forces()
 
 
 class crouchState(State):
     def enter(self):
         self.driver.entity.avatar.play('crouch', loop_frame=4)
-        body = self.driver.entity.parent.getBody(self.driver.entity)
+        body = self.driver.entity.body
         body.velocity.x = 0
         space = self.driver.entity.parent.space
         for old_shape in space.shapes:
@@ -147,7 +149,7 @@ class crouchState(State):
 class uncrouchState(State):
     def enter(self):
         self.driver.entity.avatar.play('uncrouch', callback=self.stop, loop=0)
-        body = self.driver.entity.parent.getBody(self.driver.entity)
+        body = self.driver.entity.body
         body.velocity.x = 0
         space = self.driver.entity.parent.space
         for old_shape in space.shapes:
@@ -167,7 +169,7 @@ class jumpingState(State):
     max_jumps = 2
 
     def init(self, trigger=None):
-        self.body = self.driver.entity.parent.getBody(self.driver.entity)
+        self.body = self.driver.entity.body
         self.jumps = 0
 
     def enter(self):
@@ -197,7 +199,7 @@ class jumpingState(State):
 class fallingState(State):
     def enter(self):
         self.driver.entity.avatar.play('falling')
-        self.body = self.driver.entity.parent.getBody(self.driver.entity)
+        self.body = self.driver.entity.body
  
     def update(self, time):
         if self.driver.entity.landed_previous or self.driver.entity.grounded:
@@ -207,7 +209,7 @@ class fallingState(State):
 class fallRecoverState(State):
     def enter(self):
         self.driver.entity.avatar.play('crouch', loop_frame=4)
-        self.body = self.driver.entity.parent.getBody(self.driver.entity)
+        self.body = self.driver.entity.body
         self.body.velocity.x /= 3.0
         space = self.driver.entity.parent.space
         for old_shape in space.shapes:
@@ -237,7 +239,7 @@ class airMoveState(State):
     LEFT = 1
    
     def init(self, trigger=None):
-        self.body = self.driver.entity.parent.getBody(self.driver.entity)
+        self.body = self.driver.entity.body
         self.trigger = trigger
 
     def enter(self):
@@ -270,7 +272,7 @@ class airMoveState(State):
 
 class idleState(State):
     def init(self, trigger=None):
-        self.body = self.driver.entity.parent.getBody(self.driver.entity)
+        self.body = self.driver.entity.body
 
     def enter(self):
         self.driver.entity.avatar.play('idle')
@@ -281,7 +283,7 @@ class idleState(State):
 
 class brakeState(State):
     def enter(self):
-        self.body = self.driver.entity.parent.getBody(self.driver.entity)
+        self.body = self.driver.entity.body
         self.driver.entity.avatar.play('brake', loop_frame=5)
         self.driver.entity.parent.emitSound('stop.wav', entity=self.driver.entity)
 
@@ -293,7 +295,7 @@ class brakeState(State):
 class unbrakeState(State):
     def enter(self):
         self.driver.entity.avatar.play('unbrake', callback=self.stop, loop=0)
-        body = self.driver.entity.parent.getBody(self.driver.entity)
+        body = self.driver.entity.body
 
 
 class wallGrabState(State):
@@ -312,7 +314,7 @@ class wallGrabState(State):
         # can safely get the values from the previous context, which in this
         # case will always be airMoveState
         self.trigger = self.driver.current_context.trigger
-        self.body = self.driver.entity.parent.getBody(self.driver.entity)
+        self.body = self.driver.entity.body
 
     def enter(self):
         if self.trigger.cmd == P1_LEFT:
@@ -342,7 +344,7 @@ class wallJumpState(State):
         # can safely get the values from the previous context, which in this
         # case will always be wallGrabState
         self.trigger = self.driver.current_context.trigger
-        self.body = self.driver.entity.parent.getBody(self.driver.entity)
+        self.body = self.driver.entity.body
 
     def enter(self):
         if self.trigger.cmd == P1_LEFT:
@@ -365,7 +367,7 @@ class rollingState(State):
         self.original = self.original.convert_alpha()
         self.driver.entity.avatar.play('roll')
         self.angle = 0.0
-        self.body = self.driver.entity.parent.getBody(self.driver.entity)
+        self.body = self.driver.entity.body
         space = self.driver.entity.parent.space
         for old_shape in space.shapes:
             if old_shape.body is self.body:
@@ -424,7 +426,7 @@ class fallingT(transition):
 
 class checkFallingT(transition):
     def pick(self, driver, entity):
-        body = entity.parent.getBody(entity)
+        body = entity.body
         print abs(entity.grounding['impulse'].y) / body.mass
         if abs(entity.grounding['impulse'].y) / body.mass == 0:
             return fallingState()
@@ -434,7 +436,7 @@ class checkFallingT(transition):
 
 class idleT(transition):
     def pick(self, driver, entity):
-        body = entity.parent.getBody(entity)
+        body = entity.body
         if body.velocity.y > 0:
             driver.append(idleState())
             return fallingState()
@@ -449,11 +451,11 @@ class unbrakeT(transition):
 
 class brakeT(transition):
     def pick(self, driver, entity):
-        body = entity.parent.getBody(entity)
+        body = entity.body
         friction = body.velocity.x * body.mass * entity.parent.gravity[1]
         print "FRICTION", friction
         print body.velocity.x, RUN_SPEED, SPRINT_SPEED
-        if abs(body.velocity.x) >= SPRINT_SPEED / 2:
+        if abs(body.velocity.x) >= SPRINT_SPEED:
             return brakeState()
         else:
             return None
@@ -466,7 +468,7 @@ class moveT(transition):
 
 class crouchT(transition):
     def pick(self, driver, entity):
-        body = entity.parent.getBody(entity)
+        body = entity.body
         if abs(body.velocity.x) > 1.2:
             return rollingState()
         else:
@@ -484,7 +486,7 @@ class upT(transition):
 
 class fallRecoverT(transition):
     def pick(self, driver, entity):
-        body = entity.parent.getBody(entity)
+        body = entity.body
         if abs(body.velocity.x) >= SPRINT_SPEED:
             return rollingState()
         else:

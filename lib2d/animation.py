@@ -151,6 +151,7 @@ class StaticAnimation(Animation):
             print name, image
             raise
 
+        self.add(image)
         self.image = image
         self.name = name
         self.frames = [0]

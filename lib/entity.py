@@ -33,6 +33,11 @@ class Entity(InteractiveObject):
     def __init__(self, *args, **kwargs):
         InteractiveObject.__init__(self, *args, **kwargs)
         self.init()
+        self.shapes = []
+        self.bodies = []
+        self.joints = []
+        self._position = pymunk.Vec2d(0,0)
+        self._loaded = False
 
     def init(self):
         pass
@@ -43,22 +48,51 @@ class Entity(InteractiveObject):
     def build_agent(self):
         return None
 
-    def build_body(self):
-        """
-        should return the body as arg 0 and any shapes as remaining arguments
-        """
+    @property
+    def position(self):
+        if self._loaded:
+            return self.body.position
+        else:
+            return self._position
 
+    @position.setter
+    def position(self, pos):
+        self._position = pymunk.Vec2d(pos)
+        if self._loaded:
+            self.bodies[0].position = self._position
+
+    @property
+    def body(self):
+        return self.bodies[0]
+
+    def load(self):
         r = self.size[0]/ 2
+        w = self.size[0]
+        h = self.size[1] - r * 2
         m = pymunk.moment_for_circle(self.mass, r, r)
 
-        self.body = pymunk.Body(self.mass, pymunk.inf)
-        #self.body = pymunk.Body(self.mass, m)
-        return self.body
+        body = pymunk.Body(self.mass, pymunk.inf)
+        body.position = self._position
+        body_shape = pymunk.Poly.create_box(body, size=(w, h))
+        body_shape.friction = 1.0
+        body_shape.collision_type = 1
 
-    def build_shapes(self, body):
-        self.body_shape = pymunk.Poly.create_box(body, size=self.size[:2])
-        self.body_shape.friction = 1.0
-        self.feet = pymunk.Circle(body, self.size[0] / 2, (0, 8))
-        self.feet.friction = 1.0
+        feet = pymunk.Body(1, m)
+        feet.position = self._position + (0, r*2)
+        feet_shape = pymunk.Circle(feet, r)
+        feet_shape.friction = 1.0
+        feet_shape.collision_type = 2
 
-        return [self.body_shape]
+        joint = pymunk.PinJoint(body, feet, (0, r*2), (0,0))
+        motor = pymunk.SimpleMotor(body, feet, 0.0)
+
+        self.bodies = [body, feet]
+        self.shapes = [body_shape, feet_shape]
+        self.joints = [joint, motor]
+        self._loaded = True
+
+    def unload(self):
+        self._position = pymunk.Vec2d(self.body.position)
+        self.bodies = []
+        self.shapes = []
+        self._loaded = False

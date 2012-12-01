@@ -39,6 +39,8 @@ class Avatar(GameObject):
     Avatar is a graphics class that supports multiple animations, animation
     controls, directions, is pickleable, and has lazy image loading. 
     update must be called occasionally for animations and rotations to work.
+
+    Avatars are expected to be attached to a physics shape, not body.
     """
     acceptableChildren = (animation.Animation,
                           animation.StaticAnimation)
@@ -81,6 +83,13 @@ class Avatar(GameObject):
             self._updateCache()
             return self.curImage
 
+
+    @property
+    def rect(self):
+        if self._changed:
+            self._updateCache()
+            return self.curImage.get_rect()
+        
 
     def unload(self):
         self.curImage = None
