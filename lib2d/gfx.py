@@ -83,6 +83,9 @@ def init():
 
 # is it redundant to have a pygame buffer, and one for pixalization?  maybe...
 
+def update_flip(dirty):
+    pygame.display.flip()
+
 def update_display_scaled2x(dirty):
     scale2x(screen, screen_surface)
     flip()
@@ -108,8 +111,8 @@ def set_screen(dim, scale=1, transform=None):
         pixelize = False
         pixel_buffer = None
         pix_scale = 1
-        buffer_dim = None
-        update_display = pygame.display.update
+        buffer_dim = screen_dim
+        update_display = update_flip
         screen_surface = pygame.display.set_mode(screen_dim, surface_flags)
         screen = screen_surface
 

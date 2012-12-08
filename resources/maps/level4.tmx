@@ -6,7 +6,7 @@
  </tileset>
  <layer name="Full Background" width="200" height="60">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3csUoDURRF0XR+r01Ea4l/oPO5PsERCRxJ4MF93lnFqtJcMmczRSDbw+m0Dc/Dy/D4bQN+6AOy6z5egdgH3KPrfvTBDF33ow9m6LoffTBD1/3ogxm67kcfzNB1P/pghq770QczdN2PPpih636u+6j+vXIV1c/lHtXf1Zeu+/nr/fHfdkKdo7w/fn+mD26lD1ZyHp4WuGOnD1ZyGd4WuGOnD1byPnwscMfuqH3ALY7aR/V9UEkfkOkDMn1Apg/I9AGZPiDTB2T6gEwfkOkDMn1Apg/I9AGZPiDTB2T6gEwfkOkDMn1Apg/I9AGZPiDTB2T6gEwfkO19pP+NrL4PKu19VN8BK9IHZPqATB+Q6QMyfUCmD8j0AZk+INMHZPqATB+Q6QOyjfJnwLo+AcBx8/uAuwAA
+   H4sIAAAAAAAAA+3csUoDURRF0XT+r0VEa4l/oPO5PsERCRxJ4MF93lnFqtJcMmczRSDbw+m0Dc/Dy/D4bQN+6AOy6z5egdgH3KPrfvTBDF33ow9m6LoffTBD1/3ogxm67kcfzNB1P/pghq770QczdN2PPpih636u+6j+vXIV1c/lHtXf1Zeu+/nr/fHfdkKdo7w/fn+mD26lD1ZyHp4WuGOnD1ZyGd4WuGOnD1byPnwscMfuqH3ALY7aR/V9UEkfkOkDMn1Apg/I9AGZPiDTB2T6gEwfkOkDMn1Apg/I9AGZPiDTB2T6gEwfkOkDMn1Apg/I9AGZPiDTB2T6gEwfkO19pP+NrL4PKu19VN8BK9IHZPqATB+Q6QMyfUCmD8j0AZk+INMHZPqATB+Q6QOyjfJnwLo+AXdBrx2AuwAA
   </data>
  </layer>
  <layer name="Partial Background" width="200" height="60">

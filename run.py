@@ -13,6 +13,7 @@ class TestGame(Game):
     def start(self):
         from lib.titlescreen import TitleScreen
         gfx.set_screen((1024, 600), 3, "scale")
+        #gfx.set_screen((1024, 600), 2, 'scale2x')
         self.sd.inputs.append(KeyboardPlayerInput())
         self.sd.reload_screen()
         self.sd.append(TitleScreen())

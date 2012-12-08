@@ -68,6 +68,8 @@ def fromTMX(parent, mapname):
         rects.append(Rect(rect))
 
     area.setLayerGeometry(0, rects)
+    area.tileheight = data.tileheight
+    area.tilewidth = data.tilewidth
 
     # load the npc's and place them in the default positions 
     npcs = [ p for p in props if p[1].get('group', None) == 'npc' ] 

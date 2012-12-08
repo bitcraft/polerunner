@@ -12,12 +12,14 @@ import math
 
 DEBUG = 1
 
-parallax = 1
+parallax = 0
 
 
 def screenSorter(a):
     return a[-1].x
 
+def toBB(rect):
+    return pymunk.BB(rect.left, rect.top, rect.right, rect.bottom)
 
 class LevelCamera(Element):
     """
@@ -110,16 +112,20 @@ class LevelCamera(Element):
             self.blank = False
             self.maprender.blank = True
 
-        # TODO: query chipmunk to find visible objects
+        visible_shapes = self.area.space.bb_query(toBB(self.extent))
+
         for child in [ child for child in self.area if child.avatar]:
+            shape = child.shapes[0]
+            if shape not in visible_shapes:
+                continue
+
             bb = child.bb
             x = bb.left - self.extent.left - child.avatar.axis.x
             y = bb.top - self.extent.top
 
-            shape = child.shapes[0]
             if hasattr(shape, "radius"):
                 w, h = child.avatar.image.get_size()
-                angle = -int(math.degrees(shape.body.angle)) % 360
+                angle = -(math.degrees(shape.body.angle)) % 360
                 image = rotozoom(child.avatar.image.convert_alpha(), angle, 1.0)
                 ww, hh = image.get_size()
                 rrect = Rect(x, y-h, ww, hh)
