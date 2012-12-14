@@ -350,7 +350,7 @@ class wallJumpState(State):
 
 class RollAction(State):
     def enter(self):
-        self.original = self.parent.entity.avatar.animations['roll'].image
+        self.original = self.parent.entity.avatar.animations['roll'].surface
         self.original = self.original.convert_alpha()
         self.parent.entity.avatar.play('roll')
 

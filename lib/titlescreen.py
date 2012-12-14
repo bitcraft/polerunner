@@ -36,9 +36,9 @@ class InstructionScreen(game.GameContext):
 
 
 class TitleScreen(game.GameContext):
-    borderImage = Image("lpc-border0.png", colorkey=True)
 
     def init(self):
+        self.borderImage = Image("lpc-border0.png", colorkey=True)
         self.background = (109, 109, 109)
         self.border = draw.GraphicBox(self.borderImage)
         self.counter = 0

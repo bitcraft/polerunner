@@ -81,13 +81,13 @@ class Animation(GameObject):
         return self
 
 
-    def load(self, force=False):
+    def load(self):
         """
         load the images for use with pygame
         returns a new Animation Object
         """
 
-        image = self.image.load()
+        image = self.image.image
 
         iw, ih = image.get_size()
         tw = iw / self.real_frames
@@ -105,6 +105,7 @@ class Animation(GameObject):
                     raise ValueError, msg.format(self.image.filename)
                 self.images[(x/tw)+d*self.real_frames] = frame
             d += 1
+        print self, self.images
 
 
     def unload(self):
@@ -143,35 +144,20 @@ class StaticAnimation(Animation):
     """
 
     def __init__(self, name, image):
-        GameObject.__init__(self)
-
-        try:
-            assert isinstance(image, Image) or isinstance(image, ImageTile)
-        except AssertionError:
-            print name, image
-            raise
-
-        self.add(image)
-        self.image = image
-        self.name = name
-        self.frames = [0]
-        self.timing = [-1]
-
+        Animation.__init__(self, name, image, frames=[0], timing=-1)
+        self.surface = None
 
     def load(self):
         """
         load the images for use with pygame
         """
-
-        self.image = self.image.load()
+        self.surface = self.image.image
 
     def returnNew(self):
         return self
 
-
     def unload(self):
-        self.image = None
-
+        self.surface = None
 
     def getImage(self, number, direction=0):
         """
@@ -179,8 +165,8 @@ class StaticAnimation(Animation):
         direction should be expressed in radians
         """
 
-        if self.image is None:
+        if self.surface is None:
             raise Exception, "Avatar hasn't loaded images yet"
 
-        return self.image
+        return self.surface
 

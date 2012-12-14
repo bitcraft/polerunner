@@ -23,11 +23,11 @@ class Image(GameObject):
         self.args = args
         self.kwargs = get_defaults()
         self.kwargs.update(kwargs)
-        self.loaded = False
+        self.image = None
 
     def load(self):
-        self.loaded = True
-        return res.loadImage(self.filename, *self.args, **self.kwargs)
+        self.image = res.loadImage(self.filename, *self.args, **self.kwargs)
+        return self.image
 
 
 class ImageTile(GameObject):
@@ -38,21 +38,20 @@ class ImageTile(GameObject):
     def __init__(self, filename, tile, tilesize):
         GameObject.__init__(self)
 
-        self.image = Image(filename)
+        self._image = Image(filename)
+        self.add(self._image)
         self.tile = tile
         self.tilesize = tilesize
 
     def load(self):
-        self.loaded = True
-        if self.image.loaded:
-            surface = self.image.load()
-        else:
-            surface = self.image.load()
+        surface = self._image.image
         temp = pygame.Surface(self.tilesize).convert(surface)
         temp.blit(surface, (0,0),
                   ((self.tilesize[0] * self.tile[0],
                     self.tilesize[1] * self.tile[1]),
                     self.tilesize))
-        if self.image.kwargs['colorkey']:
+        if self._image.kwargs['colorkey']:
             temp.set_colorkey(temp.get_at((0,0)), pygame.RLEACCEL)
-        return temp
+
+        self.image = temp
+        return self.image

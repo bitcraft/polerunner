@@ -28,6 +28,11 @@ class FreeWheel(InteractiveObject):
             self.points = None
         self.name = data.name
 
+        size = (self.radius*2, self.radius*2)
+        self.add(Avatar([
+            StaticAnimation('idle', Image('wheel.png', alpha=1, resize=size))
+        ]))
+
     @property
     def body(self):
         return self.bodies[0]
@@ -62,12 +67,6 @@ class FreeWheel(InteractiveObject):
         self.shapes = [body_shape]
         #self.joints = [joint]
         self.joints = []
-
-        size = (self.radius*2, self.radius*2)
-
-        self.add(Avatar([
-            StaticAnimation('idle', Image('wheel.png', alpha=1, resize=size))
-        ]))
 
         self._avatar = None
         self._loaded = True

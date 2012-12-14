@@ -138,16 +138,36 @@ class GameObject(object):
 
     def loadAll(self):
         """
-        load this and the children
+        Load this object and the all children of it.
         """
-        c = [ c for c in self.getChildren() ]
-        print "loading", self, c
-        [ child.load() for child in self.getChildren() ]
+        self.__load__()
+
+    def __load__(self):
+        """
+        Do not override this.  Use load instead.
+        """
+        print "__LOAD__", self
+        [ child.__load__() for child in self._children ]
         self.load()
+        [ child.post_load() for child in self._children ]
 
     def load(self):
         """
-        If any data needs to be read from disk, do it here
+        If any data needs to be read from disk, do it here.
+
+        This hook will be called *after* all the children have been loaded.
+
+        NOTE: The parent only loads after all of the children have loaded, so
+              if this object requires any data in the parent that needs to be
+              loaded too, then you will have to use the post_load hook.
+        """
+        pass
+
+    def post_load(self):
+        """
+        If this object needs any data from the parent that may not be ready
+        during load, then use this hook.  This will be called after the parent
+        has loaded completely.
         """
         pass
 
